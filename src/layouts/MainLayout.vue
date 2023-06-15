@@ -5,6 +5,10 @@ import type { MenuOption } from "naive-ui";
 import {
   BookOutline as BookIcon,
   PersonOutline as PersonIcon,
+  HomeOutline as HomeIcon,
+  ListOutline as ListOutline,
+  PeopleOutline as PeopleOutline,
+  SchoolOutline as SchoolOutline,
 } from "@vicons/ionicons5";
 import router from "../router.ts";
 
@@ -18,7 +22,7 @@ const menuOptions: MenuOption[] = [
   {
     label: "Home",
     key: "Home",
-    icon: renderIcon(BookIcon),
+    icon: renderIcon(HomeIcon),
     onClick: () => {
       router.push("/");
     },
@@ -42,7 +46,7 @@ const menuOptions: MenuOption[] = [
   {
     label: "Classes",
     key: "Classes",
-    icon: renderIcon(BookIcon),
+    icon: renderIcon(PeopleOutline),
     onClick: () => {
       router.push("/classes"); // Перенаправление на главную страницу
     },
@@ -50,7 +54,7 @@ const menuOptions: MenuOption[] = [
   {
     label: "Lessons",
     key: "Lessons",
-    icon: renderIcon(BookIcon),
+    icon: renderIcon(SchoolOutline),
     onClick: () => {
       router.push("/lessons"); // Перенаправление на главную страницу
     },
@@ -66,7 +70,7 @@ const menuOptions: MenuOption[] = [
   {
     label: "Tasks",
     key: "Tasks",
-    icon: renderIcon(BookIcon),
+    icon: renderIcon(ListOutline),
     onClick: () => {
       router.push("/tasks"); // Перенаправление на главную страницу
     },
@@ -81,6 +85,7 @@ const menuOptions: MenuOption[] = [
     :options="menuOptions"
     class="menu"
   />
+  <slot></slot>
 </template>
 
 <style>

@@ -36,9 +36,9 @@
     },
     "tasks": {
       "type": "relation",
-      "relation": "manyToMany",
+      "relation": "oneToMany",
       "target": "api::task.task",
-      "mappedBy": "teachers"
+      "mappedBy": "teacher"
     }
   }
 }
