@@ -3,15 +3,9 @@ import MainLayout from "./layouts/MainLayout.vue";
 </script>
 
 <template>
-  <div class="container">
-    <main-layout>
-      <RouterView></RouterView>
-    </main-layout>
-  </div>
+  <main-layout>
+    <RouterView></RouterView>
+  </main-layout>
 </template>
 
-<style scoped>
-.container {
-  display: flex;
-}
-</style>
+<style scoped></style>

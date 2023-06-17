@@ -1,6 +1,14 @@
 <script setup lang="ts">
+import {
+  NLayout,
+  NLayoutContent,
+  NLayoutHeader,
+  NLayoutSider,
+  NLayoutFooter,
+  NIcon,
+  NMenu,
+} from "naive-ui";
 import { h, ref, Ref, Component } from "vue";
-import { NIcon, NMenu } from "naive-ui";
 import type { MenuOption } from "naive-ui";
 import {
   BookOutline as BookIcon,
@@ -77,24 +85,38 @@ const menuOptions: MenuOption[] = [
   },
 ];
 </script>
-
 <template>
-  <n-menu
-    v-model:value="activeKey"
-    mode="vertical"
-    :options="menuOptions"
-    class="menu"
-  />
-  <slot></slot>
+  <n-layout>
+    <n-layout-header>Header</n-layout-header>
+    <n-layout has-sider>
+      <n-layout-sider content-style="padding: 24px;">
+        <n-menu
+          v-model:value="activeKey"
+          mode="vertical"
+          :options="menuOptions"
+          class="menu"
+        />
+      </n-layout-sider>
+      <n-layout-content content-style="padding: 24px;">
+        <slot></slot>
+      </n-layout-content>
+    </n-layout>
+    <n-layout-footer>Footer</n-layout-footer>
+  </n-layout>
 </template>
 
-<style>
-.menu {
-  position: fixed;
-  left: 0;
-  top: 0;
-  height: 100vh;
-  background-color: #f0f0f0;
-  padding: 20px;
+<style scoped>
+.n-layout-header {
+  background-color: #bfbfbf59;
+  padding: 24px;
+}
+
+.n-layout-sider {
+  background: #ffffff;
+}
+
+.n-layout-footer {
+  background: #bfbfbf59;
+  padding: 24px;
 }
 </style>
