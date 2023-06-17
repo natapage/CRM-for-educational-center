@@ -22,6 +22,10 @@ async function handleDeleteClass(id: number) {
   await fetchPage();
 }
 
+function handleCreateClass() {
+  showModal.value = false;
+  fetchPage();
+}
 // async function handleCreateClass() {
 //   const body = {
 //     name: className.value,
@@ -42,33 +46,37 @@ onMounted(() => {
 <template>
   <n-space align="start" vertical>
     <h2>Список учебных групп</h2>
-    <n-table :bordered="false" :single-line="false">
-      <thead>
-        <tr>
-          <th>Название</th>
-          <th>Педагог</th>
-          <th>Ученики</th>
-          <th>Образовательные задачи</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="group in classes" :key="group.id">
-          <td>{{ group.attributes.name }}</td>
-          <td>{{}}</td>
-          <td>{{}}</td>
-          <td>{{ group.attributes.description }}</td>
-          <td>
-            <n-button @click="handleDeleteClass(group.id)">Удалить</n-button>
-          </td>
-        </tr>
-      </tbody>
-    </n-table>
+    <div class="table-container">
+      <n-table :bordered="false" :single-line="false" full-width>
+        <thead>
+          <tr>
+            <th>Название</th>
+            <th>Педагог</th>
+            <th>Ученики</th>
+            <th>Образовательные задачи</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="group in classes" :key="group.id">
+            <td>{{ group.attributes.name }}</td>
+            <td>{{}}</td>
+            <td>{{}}</td>
+            <td>{{ group.attributes.description }}</td>
+            <td>
+              <n-button @click="handleDeleteClass(group.id)">Удалить</n-button>
+            </td>
+          </tr>
+        </tbody>
+      </n-table>
+    </div>
     <n-button class="add-button" type="primary" @click="showModal = true">
       Добавить группу
     </n-button>
   </n-space>
-  <n-modal v-model:show="showModal"><class-form></class-form></n-modal>
+  <n-modal v-model:show="showModal" @closeModal="handleCreateClass"
+    ><class-form></class-form
+  ></n-modal>
 </template>
 
 <style scoped></style>
