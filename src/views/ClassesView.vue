@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import {
   Entitie,
-  EntitiesResponse,
-  getClassesWithEntities,
+  EntitiesResponse} from '../types'
+import {getClassesWithEntities,
   deleteClass,
 } from "../api";
 import { ref, onMounted } from "vue";

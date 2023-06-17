@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import { Entitie, EntitiesResponse, getStudentsWithEntities } from "../api";
+import { Entitie } from "../types";
+import { getStudentsWithEntities } from "../api";
 import { ref, onMounted } from "vue";
 import { NTable, NButton, NSpace } from "naive-ui";
 
 let students = ref<Entitie[]>([]);
 
 async function fetchPage() {
-  const response: EntitiesResponse = await getStudentsWithEntities();
+  const response = await getStudentsWithEntities();
   students.value = response.data;
 }
 
