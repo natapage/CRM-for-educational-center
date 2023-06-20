@@ -1,25 +1,12 @@
-export interface Entitie {
+export interface Entity {
   id: number;
   attributes: {
-    name: string;
-    date: string;
-    phone: string;
-    description: string;
-    class: {
-      data: {
-        attributes: {
-          name: string;
-        };
-      };
-    };
     createdAt: string;
     updatedAt: string;
     publishedAt: string;
   };
 }
-
 export interface EntitiesResponse {
-  data: Entitie[];
   meta: {
     pagination: {
       page: number;
@@ -28,4 +15,10 @@ export interface EntitiesResponse {
       total: number;
     };
   };
+}
+
+export interface SharedAttributes {
+  createdAt: string;
+  updatedAt: string;
+  publishedAt: string;
 }

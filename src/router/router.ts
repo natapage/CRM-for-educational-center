@@ -1,10 +1,10 @@
-import HomeView from "./views/HomeView.vue";
-import ClassesView from "./views/ClassesView.vue";
-import LessonsView from "./views/LessonsView.vue";
-import ScheduleView from "./views/ScheduleView.vue";
-import StudentsView from "./views/StudentsView.vue";
-import TasksView from "./views/TasksView.vue";
-import TeachersView from "./views/TeachersView.vue";
+import HomeView from "../views/HomeView.vue";
+import ClassesView from "../views/ClassesView.vue";
+import LessonsView from "../views/LessonsView.vue";
+import ScheduleView from "../views/ScheduleView.vue";
+import StudentsView from "../views/StudentsView.vue";
+import TasksView from "../views/TasksView.vue";
+import TeachersView from "../views/TeachersView.vue";
 
 import { createRouter, createWebHistory } from "vue-router";
 

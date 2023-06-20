@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { NInput, NSpace, NButton } from "naive-ui";
-import { createClass } from "../api";
+import { createClass } from "../API/ClassesApi.ts";
 
 const className = ref<string>("");
 const classDescription = ref<string>("");
 
-const emit = defineEmits(["closeModal"]);
+const emit = defineEmits<{
+  (e: "closeModal"): void;
+}>();
 
 async function handleCreateClass() {
   const body = {
@@ -22,13 +24,13 @@ async function handleCreateClass() {
   <div class="container">
     <n-space vertical>
       <n-input
-        v-model:value="className"
+        v-model="className"
         size="large"
         type="text"
         placeholder="Название группы"
       />
       <n-input
-        v-model:value="classDescription"
+        v-model="classDescription"
         size="large"
         type="textarea"
         placeholder="Описание группы"

@@ -1,19 +1,18 @@
 <script setup lang="ts">
-import {
-  Entitie,
-  EntitiesResponse} from '../types'
-import {getClassesWithEntities,
-  deleteClass,
-} from "../api";
+import { Class } from "../types/ClassesTypes.ts";
+import { getClassesWithEntities, deleteClass } from "../API/ClassesApi.ts";
 import { ref, onMounted } from "vue";
-import { NTable, NButton, NSpace, NModal } from "naive-ui";
+import { NTable, NButton, NSpace, NModal, NSpin } from "naive-ui";
 import ClassForm from "../components/ClassForm.vue";
 
-const classes = ref<Entitie[]>([]);
+const classes = ref<Class[]>([]);
 const showModal = ref<boolean>(false);
+const showSpinner = ref<boolean>(false);
 
 async function fetchPage() {
-  const response: EntitiesResponse = await getClassesWithEntities();
+  showSpinner.value = true;
+  const response = await getClassesWithEntities();
+  showSpinner.value = false;
   classes.value = response.data;
 }
 
@@ -70,9 +69,17 @@ onMounted(() => {
         </tbody>
       </n-table>
     </div>
-    <n-button class="add-button" type="primary" @click="showModal = true">
+    <n-button
+      class="add-button"
+      type="primary"
+      @click="showModal = true"
+      v-if="!showSpinner"
+    >
       Добавить группу
     </n-button>
+  </n-space>
+  <n-space v-if="showSpinner">
+    <n-spin size="medium" />
   </n-space>
   <n-modal v-model:show="showModal" @closeModal="handleCreateClass"
     ><class-form></class-form

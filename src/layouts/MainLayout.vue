@@ -8,7 +8,7 @@ import {
   NIcon,
   NMenu,
 } from "naive-ui";
-import { h, ref, Ref, Component } from "vue";
+import { h, ref, Component } from "vue";
 import type { MenuOption } from "naive-ui";
 import {
   BookOutline as BookIcon,
@@ -18,9 +18,9 @@ import {
   PeopleOutline as PeopleOutline,
   SchoolOutline as SchoolOutline,
 } from "@vicons/ionicons5";
-import router from "../router.ts";
+import router from "../router/router.ts";
 
-const activeKey: Ref<string | null> = ref(null);
+const activeKey = ref<string | null>(null);
 
 function renderIcon(icon: Component) {
   return () => h(NIcon, null, { default: () => h(icon) });
@@ -86,23 +86,25 @@ const menuOptions: MenuOption[] = [
 ];
 </script>
 <template>
-  <n-layout>
-    <n-layout-header>Header</n-layout-header>
-    <n-layout has-sider>
-      <n-layout-sider content-style="padding: 24px;">
-        <n-menu
-          v-model:value="activeKey"
-          mode="vertical"
-          :options="menuOptions"
-          class="menu"
-        />
-      </n-layout-sider>
-      <n-layout-content content-style="padding: 24px;">
-        <slot></slot>
-      </n-layout-content>
+  <div class="container">
+    <n-layout>
+      <n-layout-header>Header</n-layout-header>
+      <n-layout has-sider>
+        <n-layout-sider content-style="padding: 24px;">
+          <n-menu
+            v-model:value="activeKey"
+            mode="vertical"
+            :options="menuOptions"
+            class="menu"
+          />
+        </n-layout-sider>
+        <n-layout-content content-style="padding: 24px;" class="content">
+          <slot></slot>
+        </n-layout-content>
+      </n-layout>
+      <n-layout-footer position="absolute">Footer</n-layout-footer>
     </n-layout>
-    <n-layout-footer>Footer</n-layout-footer>
-  </n-layout>
+  </div>
 </template>
 
 <style scoped>
@@ -118,5 +120,10 @@ const menuOptions: MenuOption[] = [
 .n-layout-footer {
   background: #bfbfbf59;
   padding: 24px;
+}
+.container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 </style>
