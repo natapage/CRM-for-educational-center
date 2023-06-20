@@ -24,13 +24,13 @@ async function handleCreateClass() {
   <div class="container">
     <n-space vertical>
       <n-input
-        v-model="className"
+        v-model:value="className"
         size="large"
         type="text"
         placeholder="Название группы"
       />
       <n-input
-        v-model="classDescription"
+        v-model:value="classDescription"
         size="large"
         type="textarea"
         placeholder="Описание группы"

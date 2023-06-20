@@ -18,7 +18,7 @@ interface StudentClassAtributes extends StudentAttributes {
   class: {
     data: {
       attributes: {
-        name: string;
+        name: string | null;
       };
     };
   };

@@ -1,22 +1,52 @@
 <script setup lang="ts">
-import { ref } from "vue";
-import { NInput, NSpace, NButton } from "naive-ui";
+import { ref, onMounted } from "vue";
+import { NInput, NSpace, NButton, NDropdown, DropdownOption } from "naive-ui";
+import { Class } from "../types/ClassesTypes.ts";
 import { createStudent } from "../API/StudentsApi.ts";
+import { getClassesWithEntities } from "../API/ClassesApi";
 
-const className = ref<string>("");
-const classDescription = ref<string>("");
+const studentName = ref<string>("");
+const studentBirthDay = ref<string>("");
+const studentPhone = ref<number>(0);
+const studentDescription = ref<string>("");
+const studentClass = ref<string | number>("");
+const classOptions = ref<DropdownOption[]>([]);
 
 const emit = defineEmits<{
   (e: "closeModal"): void;
 }>();
 
-async function handleCreateClass() {
+async function getClassesOptions() {
+  const response = await getClassesWithEntities();
+  classOptions.value = response.data.map((item: Class) => ({
+    label: item.attributes.name,
+  }));
+}
+
+onMounted(() => {
+  getClassesOptions();
+});
+
+async function handleCreateStudent() {
   const body = {
-    name: className.value,
-    description: classDescription.value,
+    name: studentName.value,
+    date: studentBirthDay.value,
+    phone: studentPhone.value,
+    description: studentDescription.value,
+    class: {
+      data: {
+        attributes: {
+          name: studentClass.value,
+        },
+      },
+    },
   };
-  await createClass(body);
+  await createStudent(body);
   emit("closeModal");
+}
+
+function handleSelect(key: string | number) {
+  studentClass.value = String(key);
 }
 </script>
 
@@ -24,18 +54,39 @@ async function handleCreateClass() {
   <div class="container">
     <n-space vertical>
       <n-input
-        v-model="className"
+        v-model="studentName"
         size="large"
         type="text"
-        placeholder="Название группы"
+        placeholder="Имя ученика"
       />
       <n-input
-        v-model="classDescription"
+        v-model="studentBirthDay"
         size="large"
         type="textarea"
-        placeholder="Описание группы"
+        placeholder="Дата рождения"
       />
-      <n-button @click="handleCreateClass" type="primary">Создать</n-button>
+      <n-input
+        v-model="studentPhone"
+        size="large"
+        type="text"
+        placeholder="Номер телефона"
+      />
+      <n-input
+        v-model="studentDescription"
+        size="large"
+        type="text"
+        placeholder="Особые указания"
+      />
+      <n-dropdown
+        placement="bottom-start"
+        trigger="click"
+        size="medium"
+        :options="classOptions"
+        @select="handleSelect"
+      >
+        <n-button>Группа</n-button>
+      </n-dropdown>
+      <n-button @click="handleCreateStudent" type="primary">Создать</n-button>
     </n-space>
   </div>
 </template>

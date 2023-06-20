@@ -2,15 +2,27 @@
 import { Student } from "../types/StudentsTypes.ts";
 import { getStudentsWithEntities } from "../API/StudentsApi";
 import { ref, onMounted } from "vue";
-import { NTable, NButton, NSpace, Nmodal } from "naive-ui";
-import StudenForm from "../components/StudentForm.vue";
+import { NTable, NButton, NSpace, NModal } from "naive-ui";
+import StudentForm from "../components/StudentForm.vue";
 
 const students = ref<Student[]>([]);
 const showModal = ref<boolean>(false);
+const showSpinner = ref<boolean>(false);
 
 async function fetchPage() {
+  showSpinner.value = true;
   const response = await getStudentsWithEntities();
-  students.value = response.data;
+  showSpinner.value = false;
+  if (response) {
+    students.value = response.data;
+  } else {
+    students.value = [];
+  }
+}
+
+async function handleCreateStudent() {
+  showModal.value = false;
+  await fetchPage();
 }
 
 onMounted(() => {
@@ -46,7 +58,7 @@ onMounted(() => {
     </n-button>
   </n-space>
   <n-modal v-model:show="showModal" @closeModal="handleCreateStudent">
-    <student-form></student-form>
+    <student-form :students="students"></student-form>
   </n-modal>
 </template>
 

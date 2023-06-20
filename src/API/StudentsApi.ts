@@ -15,6 +15,24 @@ export const getStudentsWithEntities = async (): Promise<StudentsResponse> => {
   }
 };
 
+export const createStudent = async (body: {}): Promise<StudentsResponse> => {
+  try {
+    const response = await fetch(`${BASE}/api/students`, {
+      method: "POST",
+      body: JSON.stringify({ data: body }),
+      headers: {
+        "Content-type": "application/json",
+      },
+    });
+    if (!response.ok) {
+      throw new Error("Failed to create class");
+    }
+    return response.json();
+  } catch (error: unknown) {
+    throw new Error(error instanceof Error ? error.message : "unknown error");
+  }
+};
+
 // const s = getStudentsWithEntities()
 
 // const students: Awaited<ReturnType<typeof getStudentsWithEntities>>
