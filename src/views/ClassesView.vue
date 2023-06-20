@@ -13,7 +13,11 @@ async function fetchPage() {
   showSpinner.value = true;
   const response = await getClassesWithEntities();
   showSpinner.value = false;
-  classes.value = response.data;
+  if (response) {
+    classes.value = response.data;
+  } else {
+    classes.value = []; // если кака- то ошибка в fetch запросе, то оставляет масссив пустым
+  }
 }
 
 async function handleDeleteClass(id: number) {
@@ -25,17 +29,6 @@ function handleCreateClass() {
   showModal.value = false;
   fetchPage();
 }
-// async function handleCreateClass() {
-//   const body = {
-//     name: className.value,
-//     description: taskDescription.value,
-//   };
-
-//   await createTask(body);
-//   taskName.value = "";
-//   taskDescription.value = "";
-//   await fetchPage();
-// }
 
 onMounted(() => {
   fetchPage();
@@ -68,6 +61,9 @@ onMounted(() => {
           </tr>
         </tbody>
       </n-table>
+      <div class="spinner-container" v-if="showSpinner">
+        <n-spin size="medium" />
+      </div>
     </div>
     <n-button
       class="add-button"
@@ -78,12 +74,13 @@ onMounted(() => {
       Добавить группу
     </n-button>
   </n-space>
-  <n-space v-if="showSpinner">
-    <n-spin size="medium" />
-  </n-space>
-  <n-modal v-model:show="showModal" @closeModal="handleCreateClass"
-    ><class-form></class-form
-  ></n-modal>
+  <n-modal v-model:show="showModal" @closeModal="handleCreateClass">
+    <class-form></class-form>
+  </n-modal>
 </template>
 
-<style scoped></style>
+<style scoped>
+.spinner-container {
+  margin-top: 20px;
+}
+</style>

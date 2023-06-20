@@ -1,5 +1,5 @@
-import { BASE } from "../constsnts";
-import { ClassesResponse, Class } from "../types/ClassesTypes";
+import { BASE } from "../constаnts.ts";
+import { ClassesResponse } from "../types/ClassesTypes.ts";
 
 export const getClassesWithEntities = async (): Promise<ClassesResponse> => {
   try {
@@ -8,12 +8,12 @@ export const getClassesWithEntities = async (): Promise<ClassesResponse> => {
       throw new Error("Failed to fetch classes with entities");
     }
     return await response.json();
-  } catch (error) {
-    console.error(error);
+  } catch (error: unknown) {
+    throw new Error(error instanceof Error ? error.message : "unknown error");
   }
 };
 
-export const createClass = async (body: {}): Promise<any> => {
+export const createClass = async (body: {}): Promise<ClassesResponse> => {
   try {
     const response = await fetch(`${BASE}/api/classes`, {
       method: "POST",
@@ -28,12 +28,12 @@ export const createClass = async (body: {}): Promise<any> => {
     }
 
     return response.json();
-  } catch (error) {
-    console.error(error);
+  } catch (error: unknown) {
+    throw new Error(error instanceof Error ? error.message : "unknown error");
   }
 };
 
-export const deleteClass = async (id: number): Promise<any> => {
+export const deleteClass = async (id: number): Promise<ClassesResponse> => {
   try {
     const response = await fetch(`${BASE}/api/classes/${id}`, {
       method: "DELETE",
@@ -44,7 +44,7 @@ export const deleteClass = async (id: number): Promise<any> => {
     }
 
     return response.json();
-  } catch (error) {
-    console.error(error);
+  } catch (error: unknown) {
+    throw new Error(error instanceof Error ? error.message : "unknown error");
   }
 };

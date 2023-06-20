@@ -2,9 +2,11 @@
 import { Student } from "../types/StudentsTypes.ts";
 import { getStudentsWithEntities } from "../API/StudentsApi";
 import { ref, onMounted } from "vue";
-import { NTable, NButton, NSpace } from "naive-ui";
+import { NTable, NButton, NSpace, Nmodal } from "naive-ui";
+import StudenForm from "../components/StudentForm.vue";
 
-let students = ref<Student[]>([]);
+const students = ref<Student[]>([]);
+const showModal = ref<boolean>(false);
 
 async function fetchPage() {
   const response = await getStudentsWithEntities();
@@ -39,8 +41,13 @@ onMounted(() => {
         </tr>
       </tbody>
     </n-table>
-    <n-button class="add-button" type="primary"> Добавить ученика </n-button>
+    <n-button class="add-button" type="primary" @click="showModal = true">
+      Добавить ученика
+    </n-button>
   </n-space>
+  <n-modal v-model:show="showModal" @closeModal="handleCreateStudent">
+    <student-form></student-form>
+  </n-modal>
 </template>
 
 <style scoped></style>
