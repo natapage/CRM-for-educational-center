@@ -1,5 +1,5 @@
 import { BASE } from "../constаnts";
-import { StudentsResponse } from "../types/StudentsTypes";
+import { StudentsResponse } from "../types/StudentsTypes.ts";
 
 export const getStudentsWithEntities = async (): Promise<StudentsResponse> => {
   try {
@@ -25,8 +25,24 @@ export const createStudent = async (body: {}): Promise<StudentsResponse> => {
       },
     });
     if (!response.ok) {
-      throw new Error("Failed to create class");
+      throw new Error("Failed to create student");
     }
+    return await response.json();
+  } catch (error: unknown) {
+    throw new Error(error instanceof Error ? error.message : "unknown error");
+  }
+};
+
+export const deleteStudent = async (id: number): Promise<StudentsResponse> => {
+  try {
+    const response = await fetch(`${BASE}/api/students/${id}`, {
+      method: "DELETE",
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to delete class");
+    }
+
     return response.json();
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : "unknown error");

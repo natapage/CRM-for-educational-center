@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { Student } from "../types/StudentsTypes.ts";
-import { getStudentsWithEntities } from "../API/StudentsApi";
+import { getStudentsWithEntities, deleteStudent } from "../API/StudentsApi";
 import { ref, onMounted } from "vue";
-import { NTable, NButton, NSpace, NModal } from "naive-ui";
+import { NTable, NButton, NSpace, NModal, NSpin } from "naive-ui";
 import StudentForm from "../components/StudentForm.vue";
 
 const students = ref<Student[]>([]);
@@ -22,6 +22,11 @@ async function fetchPage() {
 
 async function handleCreateStudent() {
   showModal.value = false;
+  await fetchPage();
+}
+
+async function handleDeleteStudent(id: number) {
+  await deleteStudent(id);
   await fetchPage();
 }
 
@@ -50,9 +55,17 @@ onMounted(() => {
           <td>{{ student.attributes.phone }}</td>
           <td>{{ student.attributes.class.data.attributes.name }}</td>
           <td>{{ student.attributes.description }}</td>
+          <td>
+            <n-button @click="handleDeleteStudent(student.id)"
+              >Удалить</n-button
+            >
+          </td>
         </tr>
       </tbody>
     </n-table>
+    <div class="spinner-container" v-if="showSpinner">
+      <n-spin size="medium" />
+    </div>
     <n-button class="add-button" type="primary" @click="showModal = true">
       Добавить ученика
     </n-button>
@@ -62,4 +75,8 @@ onMounted(() => {
   </n-modal>
 </template>
 
-<style scoped></style>
+<style scoped>
+.spinner-container {
+  margin-top: 20px;
+}
+</style>
