@@ -8,7 +8,7 @@ import {
   NIcon,
   NMenu,
 } from "naive-ui";
-import { h, ref, Component } from "vue";
+import { h, ref, Component, onMounted } from "vue";
 import type { MenuOption } from "naive-ui";
 import {
   BookOutline as BookIcon,
@@ -24,6 +24,19 @@ const activeKey = ref<string | null>(null);
 
 function renderIcon(icon: Component) {
   return () => h(NIcon, null, { default: () => h(icon) });
+}
+
+onMounted(() => {
+  const savedActiveKey = localStorage.getItem("activeKey");
+  if (savedActiveKey) {
+    activeKey.value = savedActiveKey;
+  }
+});
+
+function updateActiveKey(value: string) {
+  activeKey.value = value;
+  // Сохранить значение в localStorage при изменении
+  localStorage.setItem("activeKey", value);
 }
 
 const menuOptions: MenuOption[] = [
@@ -96,6 +109,7 @@ const menuOptions: MenuOption[] = [
             mode="vertical"
             :options="menuOptions"
             class="menu"
+            @update:value="updateActiveKey"
           />
         </n-layout-sider>
         <n-layout-content content-style="padding: 24px;" class="content">

@@ -1,4 +1,4 @@
-import { BASE } from "../constаnts.ts";
+import { BASE } from "../constants.ts/constаnts.ts";
 import { ClassesResponse } from "../types/ClassesTypes.ts";
 
 export const getClassesWithEntities = async (): Promise<ClassesResponse> => {

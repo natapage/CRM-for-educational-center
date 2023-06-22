@@ -6,7 +6,9 @@ import { NTable, NButton, NSpace, NModal, NSpin } from "naive-ui";
 import StudentForm from "../components/StudentForm.vue";
 
 const students = ref<Student[]>([]);
-const showModal = ref<boolean>(false);
+const showModalCreate = ref<boolean>(false);
+const showModalConfirm = ref<boolean>(false);
+const studentIdToDelete = ref<number>();
 const showSpinner = ref<boolean>(false);
 
 async function fetchPage() {
@@ -21,15 +23,20 @@ async function fetchPage() {
 }
 
 async function handleCreateStudent() {
-  showModal.value = false;
+  showModalCreate.value = false;
   await fetchPage();
 }
 
-async function handleDeleteStudent(id: number) {
+async function handleConfirmation(id: number) {
+  showModalConfirm.value = true;
+  studentIdToDelete.value = id;
+}
+
+async function handleDeleteStudent() {
+  const id = studentIdToDelete.value as number;
   await deleteStudent(id);
   await fetchPage();
 }
-
 onMounted(() => {
   fetchPage();
 });
@@ -56,9 +63,7 @@ onMounted(() => {
           <td>{{ student.attributes.class.data.attributes.name }}</td>
           <td>{{ student.attributes.description }}</td>
           <td>
-            <n-button @click="handleDeleteStudent(student.id)"
-              >Удалить</n-button
-            >
+            <n-button @click="handleConfirmation(student.id)">Удалить</n-button>
           </td>
         </tr>
       </tbody>
@@ -66,13 +71,23 @@ onMounted(() => {
     <div class="spinner-container" v-if="showSpinner">
       <n-spin size="medium" />
     </div>
-    <n-button class="add-button" type="primary" @click="showModal = true">
+    <n-button class="add-button" type="primary" @click="showModalCreate = true">
       Добавить ученика
     </n-button>
   </n-space>
-  <n-modal v-model:show="showModal" @closeModal="handleCreateStudent">
+  <n-modal v-model:show="showModalCreate" @close-modal="handleCreateStudent">
     <student-form :students="students"></student-form>
   </n-modal>
+  <n-modal
+    v-model:show="showModalConfirm"
+    preset="dialog"
+    title="Подтвердите удаление"
+    content="Уверены что хотите удалить этого ученика?"
+    positive-text="Удалить"
+    negative-text="Отмена"
+    @positive-click="handleDeleteStudent"
+    @negative-click="showModalConfirm = false"
+  />
 </template>
 
 <style scoped>

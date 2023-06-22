@@ -1,4 +1,4 @@
-import { BASE } from "../constаnts";
+import { BASE } from "../constants.ts/constаnts.ts";
 import { StudentsResponse } from "../types/StudentsTypes.ts";
 
 export const getStudentsWithEntities = async (): Promise<StudentsResponse> => {

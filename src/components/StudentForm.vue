@@ -4,12 +4,10 @@ import {
   NInput,
   NSpace,
   NButton,
-  NDropdown,
-  DropdownOption,
+  SelectOption,
   NDatePicker,
-  NCard,
+  NSelect,
 } from "naive-ui";
-import { Class } from "../types/ClassesTypes.ts";
 import { createStudent } from "../API/StudentsApi.ts";
 import { getClassesWithEntities } from "../API/ClassesApi.ts";
 
@@ -17,9 +15,9 @@ const studentName = ref<string>("");
 const studentBirthDay = ref<number>();
 const studentPhone = ref<string>("");
 const studentDescription = ref<string>("");
-const studentClass = ref<string | number>("");
-const classOptionsList = ref<DropdownOption[]>([]);
-const classItem = ref<{ label: string; key: number | string } | undefined>();
+const classOptionsList = ref<SelectOption[]>([]);
+const classItem = ref<{ label: string; value: string | number } | null>(null);
+const classId = ref<string | number>("");
 
 const emit = defineEmits<{
   (e: "closeModal"): void;
@@ -27,9 +25,9 @@ const emit = defineEmits<{
 
 async function getClassesOptions() {
   const response = await getClassesWithEntities();
-  classOptionsList.value = response.data.map((item: Class) => ({
+  classOptionsList.value = response.data.map((item) => ({
     label: item.attributes.name,
-    key: item.id,
+    value: item.id,
   }));
   console.log(classOptionsList.value);
 }
@@ -39,24 +37,23 @@ onMounted(() => {
 });
 
 async function handleCreateStudent() {
+  console.log(classId.value);
+  const id = classId.value;
+  classItem.value =
+    classOptionsList.value.find((item) => item.value === id) ?? null;
+
   const body = {
     name: studentName.value,
     date: new Date(studentBirthDay.value ?? 0),
     phone: studentPhone.value,
     description: studentDescription.value,
     class: {
-      connect: [studentClass.value],
+      connect: [classItem.value?.value],
     },
   };
   console.log(body);
   await createStudent(body);
   emit("closeModal");
-}
-
-function handleSelect(key: string | number) {
-  studentClass.value = key;
-  classItem.value = classOptionsList.value.find((item) => item.key === key);
-  console.log(classOptionsList.value);
 }
 </script>
 
@@ -87,16 +84,12 @@ function handleSelect(key: string | number) {
         type="text"
         placeholder="Особые указания"
       />
-      <n-dropdown
-        placement="bottom-start"
-        trigger="click"
-        size="medium"
+
+      <n-select
+        v-model:value="classId"
         :options="classOptionsList"
-        @select="handleSelect"
-      >
-        <n-button>Группа</n-button>
-      </n-dropdown>
-      <n-card size="small"> {{ classItem?.label }} </n-card>
+        placeholder="Выберите группу"
+      />
       <n-button @click="handleCreateStudent" type="primary">Создать</n-button>
     </n-space>
   </div>
