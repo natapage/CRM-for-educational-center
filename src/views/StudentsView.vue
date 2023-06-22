@@ -2,8 +2,35 @@
 import { Student } from "../types/StudentsTypes.ts";
 import { getStudentsWithEntities, deleteStudent } from "../API/StudentsApi";
 import { ref, onMounted } from "vue";
-import { NTable, NButton, NSpace, NModal, NSpin } from "naive-ui";
+import {
+  NTable,
+  NButton,
+  NSpace,
+  NModal,
+  NSpin,
+  useNotification,
+  NotificationType,
+} from "naive-ui";
 import StudentForm from "../components/StudentForm.vue";
+const notification = useNotification();
+const notify = (type: NotificationType) => {
+  if (type === "error") {
+    return notification[type]({
+      content: "Ошибка при загрузке страницы",
+      meta: "попробуйте снова",
+      duration: 2500,
+      keepAliveOnHover: true,
+    });
+  }
+  if (type === "success") {
+    return notification[type]({
+      content: "Новый ученик успешно добавлен",
+      // meta: "",
+      duration: 2500,
+      keepAliveOnHover: true,
+    });
+  }
+};
 
 const students = ref<Student[]>([]);
 const showModalCreate = ref<boolean>(false);
@@ -13,16 +40,24 @@ const showSpinner = ref<boolean>(false);
 
 async function fetchPage() {
   showSpinner.value = true;
-  const response = await getStudentsWithEntities();
-  showSpinner.value = false;
-  if (response) {
-    students.value = response.data;
-  } else {
+  try {
+    const response = await getStudentsWithEntities();
+    showSpinner.value = false;
+    if (response) {
+      students.value = response.data;
+    } else {
+      students.value = [];
+    }
+  } catch (error) {
+    console.log(error);
+    notify("error");
+    showSpinner.value = false;
     students.value = [];
   }
 }
 
 async function handleCreateStudent() {
+  notify("success");
   showModalCreate.value = false;
   await fetchPage();
 }
