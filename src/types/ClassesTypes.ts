@@ -1,6 +1,6 @@
 import { SharedAttributes, EntitiesResponse, Entity } from "./GeneralTypes";
 
-interface ClassesAttributes {
+export interface ClassesAttributes {
   name: "string";
   description: "string";
 }

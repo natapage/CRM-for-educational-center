@@ -1,41 +1,41 @@
 <script setup lang="ts">
-import { ref } from "vue";
-import { NInput, NSpace, NButton } from "naive-ui";
+// import { ref } from "vue";
+import { NSpace, NButton } from "naive-ui";
 import { createClass } from "../API/ClassesApi.ts";
-
-const className = ref<string>("");
-const classDescription = ref<string>("");
+import MyTextInput from "./MyTextInput.vue";
+import { useForm } from "vee-validate";
+import * as yup from "yup";
+import { ClassesAttributes } from "../types/ClassesTypes";
 
 const emit = defineEmits<{
   (e: "closeModal"): void;
 }>();
 
-async function handleCreateClass() {
-  const body = {
-    name: className.value,
-    description: classDescription.value,
-  };
-  await createClass(body);
+const schema = yup.object({
+  class: yup.string().required().min(1),
+  description: yup.string().required().min(1),
+});
+
+const { handleSubmit } = useForm<ClassesAttributes>({
+  validationSchema: schema,
+});
+
+const handleCreateClass = handleSubmit(async (values: ClassesAttributes) => {
+  await createClass(values);
   emit("closeModal");
-}
+});
 </script>
 
 <template>
   <div class="container">
     <n-space vertical>
-      <n-input
-        v-model:value="className"
-        size="large"
-        type="text"
-        placeholder="Название группы"
-      />
-      <n-input
-        v-model:value="classDescription"
-        size="large"
-        type="textarea"
+      <my-text-input name="class" placeholder="Название группы" />
+      <my-text-input
+        name="description"
         placeholder="Описание группы"
+        type="textarea"
       />
-      <n-button @click="handleCreateClass" type="primary">Создать</n-button>
+      <n-button @click="handleCreateClass">Создать</n-button>
     </n-space>
   </div>
 </template>

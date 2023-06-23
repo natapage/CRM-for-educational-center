@@ -10,6 +10,7 @@ import {
   NSpin,
   useNotification,
   NotificationType,
+  NFormItem,
 } from "naive-ui";
 import ClassForm from "../components/ClassForm.vue";
 
@@ -125,7 +126,7 @@ onMounted(() => {
     v-model:show="showModalConfirm"
     preset="dialog"
     title="Подтвердите удаление"
-    content="Уверены что хотите удалить этого ученика?"
+    content="Уверены что хотите удалить эту группу?"
     positive-text="Удалить"
     negative-text="Отмена"
     @positive-click="handleDeleteClass"

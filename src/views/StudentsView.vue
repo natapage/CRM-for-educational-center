@@ -25,7 +25,6 @@ const notify = (type: NotificationType) => {
   if (type === "success") {
     return notification[type]({
       content: "Новый ученик успешно добавлен",
-      // meta: "",
       duration: 2500,
       keepAliveOnHover: true,
     });
