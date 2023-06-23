@@ -92,7 +92,7 @@ onMounted(() => {
       <tbody>
         <tr v-for="student in students" :key="student.id">
           <td>{{ student.attributes.name }}</td>
-          <td>{{ student.attributes.date }}</td>
+          <td>{{ new Date(student.attributes.date).toLocaleDateString() }}</td>
           <td>{{ student.attributes.phone }}</td>
           <td>{{ student.attributes.class.data.attributes.name }}</td>
           <td>{{ student.attributes.description }}</td>

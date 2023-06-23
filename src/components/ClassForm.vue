@@ -1,11 +1,10 @@
 <script setup lang="ts">
-// import { ref } from "vue";
 import { NSpace, NButton } from "naive-ui";
 import { createClass } from "../API/ClassesApi.ts";
-import MyTextInput from "./MyTextInput.vue";
 import { useForm } from "vee-validate";
 import * as yup from "yup";
 import { ClassesAttributes } from "../types/ClassesTypes";
+import MyTextInput from "./MyTextInput.vue";
 
 const emit = defineEmits<{
   (e: "closeModal"): void;

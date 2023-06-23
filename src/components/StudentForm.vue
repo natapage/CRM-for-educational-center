@@ -1,20 +1,14 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import {
-  NInput,
-  NSpace,
-  NButton,
-  SelectOption,
-  NDatePicker,
-  NSelect,
-} from "naive-ui";
+import { NSpace, NButton, SelectOption, NDatePicker, NSelect } from "naive-ui";
 import { createStudent } from "../API/StudentsApi.ts";
 import { getClassesWithEntities } from "../API/ClassesApi.ts";
+import MyTextInput from "./MyTextInput.vue";
+import { useForm } from "vee-validate";
+import * as yup from "yup";
+import { StudentAttributes } from "../types/StudentsTypes";
 
-const studentName = ref<string>("");
 const studentBirthDay = ref<number>();
-const studentPhone = ref<string>("");
-const studentDescription = ref<string>("");
 const classOptionsList = ref<SelectOption[]>([]);
 const classItem = ref<{ label: string; value: string | number } | null>(null);
 const classId = ref<string | number>("");
@@ -22,6 +16,16 @@ const classId = ref<string | number>("");
 const emit = defineEmits<{
   (e: "closeModal"): void;
 }>();
+
+const schema = yup.object({
+  name: yup.string().required().min(1),
+  phone: yup.number().required().min(1),
+  description: yup.string().min(1),
+});
+
+const { handleSubmit } = useForm<StudentAttributes>({
+  validationSchema: schema,
+});
 
 async function getClassesOptions() {
   const response = await getClassesWithEntities();
@@ -36,55 +40,42 @@ onMounted(() => {
   getClassesOptions();
 });
 
-async function handleCreateStudent() {
-  console.log(classId.value);
+const handleCreateStudent = handleSubmit(async (values: StudentAttributes) => {
   const id = classId.value;
   classItem.value =
     classOptionsList.value.find((item) => item.value === id) ?? null;
 
   const body = {
-    name: studentName.value,
+    name: values.name,
     date: new Date(studentBirthDay.value ?? 0),
-    phone: studentPhone.value,
-    description: studentDescription.value,
+    phone: values.phone,
+    description: values.description,
     class: {
       connect: [classItem.value?.value],
     },
   };
-  console.log(body);
   await createStudent(body);
   emit("closeModal");
-}
+});
 </script>
 
 <template>
   <div class="container">
     <n-space vertical>
-      <n-input
-        v-model:value="studentName"
-        size="large"
-        type="text"
-        placeholder="Имя ученика"
-      />
+      <my-text-input name="name" placeholder="Имя ученика" />
       <n-date-picker
+        format="dd.MM.yyyy"
+        required="true"
         v-model:value="studentBirthDay"
         type="date"
         placeholder="Дата рождения"
       />
-
-      <n-input
-        v-model:value="studentPhone"
-        size="large"
-        type="text"
-        placeholder="Номер телефона"
-      />
-      <n-input
-        v-model:value="studentDescription"
-        size="large"
-        type="text"
+      <my-text-input name="phone" placeholder="Номер телефона" />
+      <my-text-input
+        name="description"
         placeholder="Особые указания"
+        type="text"
       />
-
       <n-select
         v-model:value="classId"
         :options="classOptionsList"

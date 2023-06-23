@@ -1,8 +1,8 @@
 import { SharedAttributes, EntitiesResponse, Entity } from "./GeneralTypes";
 
-interface StudentAttributes {
+export interface StudentAttributes {
   name: string;
-  date: string;
+  date?: string;
   phone: string;
   description: string;
 }
