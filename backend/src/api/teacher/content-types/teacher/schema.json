@@ -18,21 +18,22 @@
       "target": "api::class.class",
       "inversedBy": "teacher"
     },
-    "Name": {
+    "name": {
       "type": "string"
     },
-    "Phone": {
+    "phone": {
       "type": "biginteger"
     },
     "Foto": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
       "allowedTypes": [
         "images",
         "files",
         "videos",
         "audios"
-      ],
-      "type": "media",
-      "multiple": false
+      ]
     },
     "tasks": {
       "type": "relation",
