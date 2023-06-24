@@ -77,7 +77,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <n-space align="start" vertical>
+  <n-space align="stretch" vertical>
     <h2>Список учащихся</h2>
     <n-table :bordered="false" :single-line="false">
       <thead>
@@ -87,6 +87,7 @@ onMounted(() => {
           <th>Номер телефона</th>
           <th>Группа</th>
           <th>Особая информация</th>
+          <th></th>
         </tr>
       </thead>
       <tbody>

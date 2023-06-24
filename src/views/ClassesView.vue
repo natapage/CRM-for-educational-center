@@ -80,9 +80,9 @@ onMounted(() => {
 </script>
 
 <template>
-  <n-space align="start" vertical>
-    <h2>Список учебных групп</h2>
-    <div class="table-container">
+  <div>
+    <n-space align="stretch" vertical>
+      <h2>Список учебных групп</h2>
       <n-table :bordered="false" :single-line="false" full-width>
         <thead>
           <tr>
@@ -108,29 +108,29 @@ onMounted(() => {
       <div class="spinner-container" v-if="showSpinner">
         <n-spin size="medium" />
       </div>
-    </div>
-    <n-button
-      class="add-button"
-      type="primary"
-      @click="showModalCreate = true"
-      v-if="!showSpinner"
-    >
-      Добавить группу
-    </n-button>
-  </n-space>
-  <n-modal v-model:show="showModalCreate" @closeModal="handleCreateClass">
-    <class-form></class-form>
-  </n-modal>
-  <n-modal
-    v-model:show="showModalConfirm"
-    preset="dialog"
-    title="Подтвердите удаление"
-    content="Уверены что хотите удалить эту группу?"
-    positive-text="Удалить"
-    negative-text="Отмена"
-    @positive-click="handleDeleteClass"
-    @negative-click="showModalConfirm = false"
-  />
+      <n-button
+        class="add-button"
+        type="primary"
+        @click="showModalCreate = true"
+        v-if="!showSpinner"
+      >
+        Добавить группу
+      </n-button>
+    </n-space>
+    <n-modal v-model:show="showModalCreate" @closeModal="handleCreateClass">
+      <class-form></class-form>
+    </n-modal>
+    <n-modal
+      v-model:show="showModalConfirm"
+      preset="dialog"
+      title="Подтвердите удаление"
+      content="Уверены что хотите удалить эту группу?"
+      positive-text="Удалить"
+      negative-text="Отмена"
+      @positive-click="handleDeleteClass"
+      @negative-click="showModalConfirm = false"
+    />
+  </div>
 </template>
 
 <style scoped>

@@ -8,6 +8,9 @@ import {
   NTable,
   NButton,
   NModal,
+  NCollapse,
+  NCollapseItem,
+  NSpin,
 } from "naive-ui";
 
 const teachers = ref<Teacher[]>([]);
@@ -78,6 +81,7 @@ onMounted(() => {
           <th>Группа</th>
           <th>Задачи</th>
           <th>Фото</th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
@@ -85,7 +89,13 @@ onMounted(() => {
           <td>{{ teacher.attributes.name }}</td>
           <td>{{ teacher.attributes.phone }}</td>
           <td>{{ teacher.attributes.class.data.attributes.name }}</td>
-          <td>ссылка на задачи</td>
+          <td width="200px">
+            <n-collapse>
+              <n-collapse-item title="Задачи" name="1">
+                <div>сделать всякое</div>
+              </n-collapse-item>
+            </n-collapse>
+          </td>
           <td>фото</td>
           <td>
             <n-button @click="handleConfirmation(teacher.id)">Удалить</n-button>
@@ -93,6 +103,9 @@ onMounted(() => {
         </tr>
       </tbody>
     </n-table>
+    <div class="spinner-container" v-if="showSpinner">
+      <n-spin size="medium" />
+    </div>
     <n-modal
       v-model:show="showModalConfirm"
       preset="dialog"
@@ -106,4 +119,8 @@ onMounted(() => {
   </div>
 </template>
 
-<style lang="scss" scoped></style>
+<style scoped>
+.spinner-container {
+  margin-top: 20px;
+}
+</style>
