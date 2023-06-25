@@ -89,6 +89,7 @@ const handleCreateStudent = handleSubmit(async (values: StudentAttributes) => {
 <style scoped>
 .container {
   background-color: #ffffff;
+  width: 400px;
   padding: 60px 120px;
   border-radius: 5px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);

@@ -13,6 +13,13 @@ export interface TeachersResponse extends EntitiesResponse {
   data: Teacher[];
 }
 
+interface TeachersTask {
+  attributes: {
+    date: string;
+    description: string;
+  };
+}
+
 interface TeacherClassAtributes extends TeachersAttributes {
   class: {
     data: {
@@ -21,12 +28,7 @@ interface TeacherClassAtributes extends TeachersAttributes {
       };
     };
   };
-  task: {
-    data: {
-      attributes: {
-        description: string | null;
-        date: string;
-      };
-    };
+  tasks: {
+    data: TeachersTask[];
   };
 }

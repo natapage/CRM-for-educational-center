@@ -4,7 +4,7 @@
   "info": {
     "singularName": "task",
     "pluralName": "tasks",
-    "displayName": "Task",
+    "displayName": "Tasks",
     "description": ""
   },
   "options": {
@@ -12,7 +12,7 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "Description": {
+    "description": {
       "type": "richtext"
     },
     "teacher": {
@@ -21,7 +21,7 @@
       "target": "api::teacher.teacher",
       "inversedBy": "tasks"
     },
-    "Date": {
+    "date": {
       "type": "datetime"
     }
   }

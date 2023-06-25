@@ -1,8 +1,7 @@
-<script setup lang="ts"></script>
 <template>
-  <div>
-    <h1>Tasks View</h1>
-  </div>
+  <div></div>
 </template>
 
-<style lang="scss" scoped></style>
+<script setup lang="ts"></script>
+
+<style scoped></style>
