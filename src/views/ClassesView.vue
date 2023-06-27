@@ -1,82 +1,41 @@
 <script setup lang="ts">
 import { Class } from "../types/ClassesTypes.ts";
-import { getClassesWithEntities, deleteClass } from "../API/ClassesApi.ts";
-import { ref, onMounted } from "vue";
-import {
-  NTable,
-  NButton,
-  NSpace,
-  NModal,
-  NSpin,
-  useNotification,
-  NotificationType,
-} from "naive-ui";
+import { NTable, NButton, NSpace, NModal, NSpin } from "naive-ui";
 import ClassForm from "../components/ClassForm.vue";
+import { useFetchPage } from "../composable/useFetchPage";
+import { useNotificationHandler } from "../composable/useNotification";
+import { useDeleteEntity } from "../composable/useDeleteEntity";
+import { useCreateEntity } from "../composable/useCreateEntity";
 
-const classes = ref<Class[]>([]);
-const showModalCreate = ref<boolean>(false);
-const showModalConfirm = ref<boolean>(false);
-const classIdToDelete = ref<number>();
+const {
+  entities: classes,
+  error,
+  showSpinner,
+  fetchPage,
+} = useFetchPage<Class>("classes");
 
-const showSpinner = ref<boolean>(false);
-const notification = useNotification();
-const notify = (type: NotificationType) => {
-  if (type === "error") {
-    return notification[type]({
-      content: "Ошибка при загрузке страницы",
-      meta: "попробуйте снова",
-      duration: 2500,
-      keepAliveOnHover: true,
-    });
-  }
-  if (type === "success") {
-    return notification[type]({
-      content: "Новая группа успешно добавлена",
-      // meta: "",
-      duration: 2500,
-      keepAliveOnHover: true,
-    });
-  }
-};
+const { useConfirmation, useDelete, showModalConfirm } =
+  useDeleteEntity<Class>("classes");
 
-async function fetchPage() {
-  showSpinner.value = true;
-  try {
-    const response = await getClassesWithEntities();
-    showSpinner.value = false;
-    if (response) {
-      classes.value = response.data;
-    } else {
-      classes.value = [];
-    }
-  } catch (error) {
-    console.log(error);
-    notify("error");
-    showSpinner.value = false;
-    classes.value = [];
-  }
-}
+const { notify } = useNotificationHandler();
+const { showModalCreate } = useCreateEntity();
 
-async function handleConfirmation(id: number) {
-  showModalConfirm.value = true;
-  classIdToDelete.value = id;
-}
-
-async function handleDeleteClass() {
-  const id = classIdToDelete.value as number;
-  await deleteClass(id);
+async function handleCreateClass() {
+  notify("success");
+  showModalCreate.value = false;
   await fetchPage();
 }
 
-function handleCreateClass() {
-  notify("success");
-  showModalCreate.value = false;
-  fetchPage();
+async function handleDelete() {
+  await useDelete().catch((err) => {
+    console.log(err);
+    notify("error");
+  });
+  await fetchPage().catch((err) => {
+    console.log(err);
+    notify("error");
+  });
 }
-
-onMounted(() => {
-  fetchPage();
-});
 </script>
 
 <template>
@@ -100,7 +59,7 @@ onMounted(() => {
             <td>{{}}</td>
             <td>{{ group.attributes.description }}</td>
             <td>
-              <n-button @click="handleConfirmation(group.id)">Удалить</n-button>
+              <n-button @click="useConfirmation(group.id)">Удалить</n-button>
             </td>
           </tr>
         </tbody>
@@ -127,7 +86,7 @@ onMounted(() => {
       content="Уверены что хотите удалить эту группу?"
       positive-text="Удалить"
       negative-text="Отмена"
-      @positive-click="handleDeleteClass"
+      @positive-click="handleDelete"
       @negative-click="showModalConfirm = false"
     />
   </div>

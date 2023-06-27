@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { NSpace, NButton } from "naive-ui";
-import { createClass } from "../API/ClassesApi.ts";
+import { useCreateEntity } from "../composable/useCreateEntity";
 import { useForm } from "vee-validate";
 import * as yup from "yup";
-import { ClassesAttributes } from "../types/ClassesTypes";
+import { ClassesAttributes, ClassesResponse } from "../types/ClassesTypes";
 import MyTextInput from "./MyTextInput.vue";
 
 const emit = defineEmits<{
@@ -11,16 +11,17 @@ const emit = defineEmits<{
 }>();
 
 const schema = yup.object({
-  class: yup.string().required().min(1),
+  name: yup.string().required().min(1),
   description: yup.string().required().min(1),
 });
+const { useCreate } = useCreateEntity();
 
 const { handleSubmit } = useForm<ClassesAttributes>({
   validationSchema: schema,
 });
 
 const handleCreateClass = handleSubmit(async (values: ClassesAttributes) => {
-  await createClass(values);
+  await useCreate<ClassesResponse, ClassesAttributes>(values, "classes");
   emit("closeModal");
 });
 </script>
@@ -28,7 +29,7 @@ const handleCreateClass = handleSubmit(async (values: ClassesAttributes) => {
 <template>
   <div class="container">
     <n-space vertical>
-      <my-text-input name="class" placeholder="Название группы" />
+      <my-text-input name="name" placeholder="Название группы" />
       <my-text-input
         name="description"
         placeholder="Описание группы"
