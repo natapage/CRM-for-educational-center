@@ -57,7 +57,7 @@ const handleCreateStudent = handleSubmit(async (values: StudentAttributes) => {
   };
   // TODO: изменить тип unknown
   await createItem<StudentsResponse, unknown>(body, "students");
-  if (!createError) {
+  if (!createError.value) {
     notify("success");
   }
   emit("closeModal");

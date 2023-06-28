@@ -5,8 +5,7 @@ import { useDeleteEntity } from "../composable/useDeleteEntity";
 import { useCreateEntity } from "../composable/useCreateEntity";
 import { watch } from "vue";
 import { useNotificationHandler } from "../composable/useNotification";
-
-// import TeacherForm from "../components/TeacherForm.vue";
+import TeacherForm from "../components/TeacherForm.vue";
 
 import {
   NTable,
@@ -61,6 +60,7 @@ async function handleCreateTeacher() {
             <th>Задачи</th>
             <th>Фото</th>
             <th></th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
@@ -90,10 +90,18 @@ async function handleCreateTeacher() {
             <td>
               <n-button @click="showConfirmation(teacher.id)">Удалить</n-button>
             </td>
+            <td>
+              <n-button>Изменить</n-button>
+            </td>
           </tr>
         </tbody>
       </n-table>
-      <n-button class="add-button" type="primary" v-if="!showSpinner">
+      <n-button
+        class="add-button"
+        type="primary"
+        @click="isShowModalCreate = true"
+        v-if="!showSpinner"
+      >
         Добавить учителя
       </n-button>
       <div class="spinner-container" v-if="showSpinner">

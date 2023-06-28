@@ -33,6 +33,7 @@ async function handleCreateClass() {
 }
 
 async function handleDelete() {
+  console.log(classes.value);
   await deleteItem();
   await fetchPage();
 }
@@ -50,16 +51,20 @@ async function handleDelete() {
             <th>Ученики</th>
             <th>Образовательные задачи</th>
             <th></th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="group in classes" :key="group.id">
             <td>{{ group.attributes.name }}</td>
-            <td>{{}}</td>
+            <td>{{ group.attributes.teacher.data.attributes.name }}</td>
             <td>{{}}</td>
             <td>{{ group.attributes.description }}</td>
             <td>
               <n-button @click="showConfirmation(group.id)">Удалить</n-button>
+            </td>
+            <td>
+              <n-button>Изменить</n-button>
             </td>
           </tr>
         </tbody>

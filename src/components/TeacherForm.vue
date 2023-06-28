@@ -1,5 +1,5 @@
-<!-- <script setup lang="ts">
-import { NSpace, NButton } from "naive-ui";
+<script setup lang="ts">
+import { NSpace, NButton, NUpload } from "naive-ui";
 import { useCreateEntity } from "../composable/useCreateEntity";
 import { useForm } from "vee-validate";
 import * as yup from "yup";
@@ -8,40 +8,48 @@ import MyTextInput from "./MyTextInput.vue";
 import { useNotificationHandler } from "../composable/useNotification";
 import { watch } from "vue";
 
-// const emit = defineEmits<{
-//   (e: "closeModal"): void;
-// }>();
+const emit = defineEmits<{
+  (e: "closeModal"): void;
+}>();
 
-// const schema = yup.object({
-//   name: yup.string().required().min(1),
-//   description: yup.string().required().min(1),
-// });
-// const { error: createError, createItem } = useCreateEntity();
-// const { notify } = useNotificationHandler();
-// watch(createError, () => notify("error"));
+const schema = yup.object({
+  name: yup.string().required().min(1),
+  phone: yup.number().required().min(1),
+});
+const { error: createError, createItem } = useCreateEntity();
+const { notify } = useNotificationHandler();
+watch(createError, () => notify("error"));
 
-// const { handleSubmit } = useForm<TeachersAttributes>({
-//   validationSchema: schema,
-// });
+const { handleSubmit } = useForm<TeachersAttributes>({
+  validationSchema: schema,
+});
 
-// const handleCreateClass = handleSubmit(async (values: TeachersAttributes) => {
-//   await createItem<TeachersResponse, TeachersAttributes>(values, "classes");
-    if (!createError) {
+const handleCreateTeacher = handleSubmit(async (values: TeachersAttributes) => {
+  await createItem<TeachersResponse, unknown>(values, "teachers");
+  if (!createError.value) {
     notify("success");
-//   emit("closeModal");
-// });
+  }
+  emit("closeModal");
+});
 </script>
 
 <template>
   <div class="container">
     <n-space vertical>
-      <my-text-input name="name" placeholder="Название группы" />
-      <my-text-input
-        name="description"
-        placeholder="Описание группы"
-        type="textarea"
-      />
-      <n-button @click="handleCreateClass">Создать</n-button>
+      <my-text-input name="name" placeholder="Имя педагога" />
+      <my-text-input name="phone" placeholder="Номер телефона" />
+      <n-upload
+        action="https://www.mocky.io/v2/5e4bafc63100007100d8b70f"
+        :headers="{
+          'naive-info': 'hello!',
+        }"
+        :data="{
+          'naive-data': 'cool! naive!',
+        }"
+      >
+        <n-button>Загрузить фото</n-button>
+      </n-upload>
+      <n-button @click="handleCreateTeacher">Создать</n-button>
     </n-space>
   </div>
 </template>
@@ -56,4 +64,4 @@ import { watch } from "vue";
   margin: 0 auto; /* Center the container horizontally */
   /* margin-top: 100px; Adjust the top margin as per your preference */
 }
-</style> -->
+</style>

@@ -52,6 +52,7 @@ async function handleCreateStudent() {
           <th>Группа</th>
           <th>Особая информация</th>
           <th></th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
@@ -63,6 +64,9 @@ async function handleCreateStudent() {
           <td>{{ student.attributes.description }}</td>
           <td>
             <n-button @click="showConfirmation(student.id)">Удалить</n-button>
+          </td>
+          <td>
+            <n-button>Изменить</n-button>
           </td>
         </tr>
       </tbody>

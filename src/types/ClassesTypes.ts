@@ -1,4 +1,5 @@
 import { SharedAttributes, EntitiesResponse, Entity } from "./GeneralTypes";
+import { Teacher } from "./TeachersTypes";
 
 export interface ClassesAttributes {
   name: "string";
@@ -6,7 +7,8 @@ export interface ClassesAttributes {
 }
 
 export interface Class extends Entity {
-  attributes: SharedAttributes & ClassesAttributes;
+  attributes: SharedAttributes &
+    ClassesAttributes & { teacher: { data: Teacher } };
 }
 
 export interface ClassesResponse extends EntitiesResponse {
