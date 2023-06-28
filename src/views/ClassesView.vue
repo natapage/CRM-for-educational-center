@@ -22,8 +22,7 @@ const {
   isShowModalConfirm,
 } = useDeleteEntity<Class>("classes");
 
-watch(fetchError, () => notify("error"));
-watch(deleteError, () => notify("error"));
+watch([fetchError, deleteError], () => notify("error"));
 
 const { notify } = useNotificationHandler();
 const { isShowModalCreate } = useCreateEntity();

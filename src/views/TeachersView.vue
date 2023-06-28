@@ -35,8 +35,7 @@ const {
 
 const { notify } = useNotificationHandler();
 
-watch(fetchError, () => notify("error"));
-watch(deleteError, () => notify("error"));
+watch([fetchError, deleteError], () => notify("error"));
 
 const { isShowModalCreate } = useCreateEntity();
 
