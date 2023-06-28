@@ -1,79 +1,44 @@
 <script setup lang="ts">
 import { Student } from "../types/StudentsTypes.ts";
-import { getStudentsWithEntities, deleteStudent } from "../API/StudentsApi";
-import { ref, onMounted } from "vue";
-import {
-  NTable,
-  NButton,
-  NSpace,
-  NModal,
-  NSpin,
-  useNotification,
-  NotificationType,
-} from "naive-ui";
+import { useFetchPage } from "../composable/useFetchPage";
+import { useDeleteEntity } from "../composable/useDeleteEntity";
+import { useCreateEntity } from "../composable/useCreateEntity";
+import { NTable, NButton, NSpace, NModal, NSpin } from "naive-ui";
 import StudentForm from "../components/StudentForm.vue";
-const notification = useNotification();
-const notify = (type: NotificationType) => {
-  if (type === "error") {
-    return notification[type]({
-      content: "Ошибка при загрузке страницы",
-      meta: "попробуйте снова",
-      duration: 2500,
-      keepAliveOnHover: true,
-    });
-  }
-  if (type === "success") {
-    return notification[type]({
-      content: "Новый ученик успешно добавлен",
-      duration: 2500,
-      keepAliveOnHover: true,
-    });
-  }
-};
+import { watch } from "vue";
+import { useNotificationHandler } from "../composable/useNotification";
 
-const students = ref<Student[]>([]);
-const showModalCreate = ref<boolean>(false);
-const showModalConfirm = ref<boolean>(false);
-const studentIdToDelete = ref<number>();
-const showSpinner = ref<boolean>(false);
+const {
+  entities: students,
+  error: fetchError,
+  showSpinner,
+  fetchPage,
+} = useFetchPage<Student>("students");
 
-async function fetchPage() {
-  showSpinner.value = true;
-  try {
-    const response = await getStudentsWithEntities();
-    showSpinner.value = false;
-    if (response) {
-      students.value = response.data;
-    } else {
-      students.value = [];
-    }
-  } catch (error) {
-    console.log(error);
-    notify("error");
-    showSpinner.value = false;
-    students.value = [];
-  }
+const {
+  error: deleteError,
+  showConfirmation,
+  deleteItem,
+  isShowModalConfirm,
+} = useDeleteEntity<Student>("students");
+
+const { notify } = useNotificationHandler();
+
+watch(fetchError, () => notify("error"));
+watch(deleteError, () => notify("error"));
+
+const { isShowModalCreate } = useCreateEntity();
+
+async function handleDeleteStudent() {
+  console.log(students.value);
+  await deleteItem();
+  await fetchPage();
 }
 
 async function handleCreateStudent() {
-  notify("success");
-  showModalCreate.value = false;
+  isShowModalCreate.value = false;
   await fetchPage();
 }
-
-async function handleConfirmation(id: number) {
-  showModalConfirm.value = true;
-  studentIdToDelete.value = id;
-}
-
-async function handleDeleteStudent() {
-  const id = studentIdToDelete.value as number;
-  await deleteStudent(id);
-  await fetchPage();
-}
-onMounted(() => {
-  fetchPage();
-});
 </script>
 
 <template>
@@ -98,7 +63,7 @@ onMounted(() => {
           <td>{{ student.attributes.class.data.attributes.name }}</td>
           <td>{{ student.attributes.description }}</td>
           <td>
-            <n-button @click="handleConfirmation(student.id)">Удалить</n-button>
+            <n-button @click="showConfirmation(student.id)">Удалить</n-button>
           </td>
         </tr>
       </tbody>
@@ -106,22 +71,26 @@ onMounted(() => {
     <div class="spinner-container" v-if="showSpinner">
       <n-spin size="medium" />
     </div>
-    <n-button class="add-button" type="primary" @click="showModalCreate = true">
+    <n-button
+      class="add-button"
+      type="primary"
+      @click="isShowModalCreate = true"
+    >
       Добавить ученика
     </n-button>
   </n-space>
-  <n-modal v-model:show="showModalCreate" @close-modal="handleCreateStudent">
+  <n-modal v-model:show="isShowModalCreate" @close-modal="handleCreateStudent">
     <student-form :students="students"></student-form>
   </n-modal>
   <n-modal
-    v-model:show="showModalConfirm"
+    v-model:show="isShowModalConfirm"
     preset="dialog"
     title="Подтвердите удаление"
     content="Уверены что хотите удалить этого ученика?"
     positive-text="Удалить"
     negative-text="Отмена"
     @positive-click="handleDeleteStudent"
-    @negative-click="showModalConfirm = false"
+    @negative-click="isShowModalConfirm = false"
   />
 </template>
 

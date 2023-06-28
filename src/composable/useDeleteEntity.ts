@@ -1,29 +1,33 @@
-import { ref } from "vue";
+import { ref, Ref } from "vue";
 import { deleteEntity } from "../API/requestsApi";
 import { BASE } from "../constants.ts/constаnts.ts";
 
 export function useDeleteEntity<T>(entity: string) {
-  const showModalConfirm = ref<boolean>(false);
+  const isShowModalConfirm = ref<boolean>(false);
   const classIdToDelete = ref<number>();
+  const error: Ref<string | null> = ref(null);
 
-  function useConfirmation(id: number) {
-    showModalConfirm.value = true;
+  function showConfirmation(id: number) {
+    isShowModalConfirm.value = true;
     classIdToDelete.value = id;
   }
 
-  async function useDelete() {
+  async function deleteItem() {
     const idToDelete = classIdToDelete.value as number;
     const url = `${BASE}/api/${entity}/${idToDelete}`;
     try {
       await deleteEntity<T>(url);
+      error.value = null;
     } catch (err) {
+      error.value = err instanceof Error ? err.message : "Unknown error";
       console.log(err);
     }
   }
 
   return {
-    useConfirmation,
-    useDelete,
-    showModalConfirm,
+    error,
+    deleteItem,
+    showConfirmation,
+    isShowModalConfirm,
   };
 }

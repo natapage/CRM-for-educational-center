@@ -1,17 +1,24 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
-import { NSpace, NButton, SelectOption, NDatePicker, NSelect } from "naive-ui";
-import { createStudent } from "../API/StudentsApi.ts";
-import { getClassesWithEntities } from "../API/ClassesApi.ts";
+import { ref, computed } from "vue";
+import { NSpace, NButton, NDatePicker, NSelect } from "naive-ui";
 import MyTextInput from "./MyTextInput.vue";
 import { useForm } from "vee-validate";
 import * as yup from "yup";
-import { StudentAttributes } from "../types/StudentsTypes";
+import { useCreateEntity } from "../composable/useCreateEntity";
+import { useFetchPage } from "../composable/useFetchPage";
+import { Class } from "../types/ClassesTypes.ts";
+import { StudentsResponse, StudentAttributes } from "../types/StudentsTypes";
+import { useNotificationHandler } from "../composable/useNotification";
+import { watch } from "vue";
 
 const studentBirthDay = ref<number>();
-const classOptionsList = ref<SelectOption[]>([]);
 const classItem = ref<{ label: string; value: string | number } | null>(null);
 const classId = ref<string | number>("");
+const { error: createError, createItem } = useCreateEntity();
+
+const { entities: classes } = useFetchPage<Class>("classes");
+const { notify } = useNotificationHandler();
+watch(createError, () => notify("error"));
 
 const emit = defineEmits<{
   (e: "closeModal"): void;
@@ -27,18 +34,12 @@ const { handleSubmit } = useForm<StudentAttributes>({
   validationSchema: schema,
 });
 
-async function getClassesOptions() {
-  const response = await getClassesWithEntities();
-  classOptionsList.value = response.data.map((item) => ({
+const classOptionsList = computed(() =>
+  classes.value.map((item) => ({
     label: item.attributes.name,
     value: item.id,
-  }));
-  console.log(classOptionsList.value);
-}
-
-onMounted(() => {
-  getClassesOptions();
-});
+  }))
+);
 
 const handleCreateStudent = handleSubmit(async (values: StudentAttributes) => {
   const id = classId.value;
@@ -54,7 +55,11 @@ const handleCreateStudent = handleSubmit(async (values: StudentAttributes) => {
       connect: [classItem.value?.value],
     },
   };
-  await createStudent(body);
+  // TODO: изменить тип unknown
+  await createItem<StudentsResponse, unknown>(body, "students");
+  if (!createError) {
+    notify("success");
+  }
   emit("closeModal");
 });
 </script>

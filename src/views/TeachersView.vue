@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import { Teacher } from "../types/TeachersTypes.ts";
-import { ref, onMounted } from "vue";
-import { getTeachersWithEntities, deleteTeacher } from "../API/TeachersApi";
+import { useFetchPage } from "../composable/useFetchPage";
+import { useDeleteEntity } from "../composable/useDeleteEntity";
+import { useCreateEntity } from "../composable/useCreateEntity";
+import { watch } from "vue";
+import { useNotificationHandler } from "../composable/useNotification";
+
+// import TeacherForm from "../components/TeacherForm.vue";
 
 import {
-  useNotification,
-  NotificationType,
   NTable,
   NButton,
   NModal,
@@ -16,81 +19,35 @@ import {
   NCheckbox,
 } from "naive-ui";
 
-const teachers = ref<Teacher[]>([]);
-const showSpinner = ref<boolean>(false);
-const teacherIdToDelete = ref<number>();
-const showModalConfirm = ref<boolean>(false);
-// const tasks = ref<Task[]>([]);
+const {
+  entities: teachers,
+  error: fetchError,
+  showSpinner,
+  fetchPage,
+} = useFetchPage<Teacher>("teachers");
 
-async function fetchPage() {
-  showSpinner.value = true;
-  try {
-    const response = await getTeachersWithEntities();
-    showSpinner.value = false;
-    if (response) {
-      console.log(response);
-      teachers.value = response.data;
-    } else {
-      teachers.value = [];
-    }
-  } catch (error) {
-    console.log(error);
-    notify("error");
-    showSpinner.value = false;
-    teachers.value = [];
-  }
-}
+const {
+  error: deleteError,
+  showConfirmation,
+  deleteItem,
+  isShowModalConfirm,
+} = useDeleteEntity<Teacher>("teachers");
 
-// async function getTasks() {
-//   try {
-//     const response = await getTasksWithEntities();
-//     if (response) {
-//       tasks.value = response.data;
-//       console.log(tasks.value);
-//     } else {
-//       tasks.value = [];
-//     }
-//   } catch (error) {
-//     console.log(error);
-//     notify("error");
-//     tasks.value = [];
-//   }
-// }
+const { notify } = useNotificationHandler();
 
-const notification = useNotification();
-const notify = (type: NotificationType) => {
-  if (type === "error") {
-    return notification[type]({
-      content: "Ошибка при загрузке страницы",
-      meta: "попробуйте снова",
-      duration: 2500,
-      keepAliveOnHover: true,
-    });
-  }
-  if (type === "success") {
-    return notification[type]({
-      content: "Новый учитель успешно добавлен",
-      duration: 2500,
-      keepAliveOnHover: true,
-    });
-  }
-};
+watch(fetchError, () => notify("error"));
+watch(deleteError, () => notify("error"));
 
-async function handleConfirmation(id: number) {
-  showModalConfirm.value = true;
-  teacherIdToDelete.value = id;
-}
+const { isShowModalCreate } = useCreateEntity();
 
 async function handleDeleteTeacher() {
-  const id = teacherIdToDelete.value as number;
-  await deleteTeacher(id);
+  await deleteItem();
   await fetchPage();
 }
-
-onMounted(() => {
-  fetchPage();
-  // getTasks();
-});
+async function handleCreateTeacher() {
+  isShowModalCreate.value = false;
+  await fetchPage();
+}
 </script>
 <template>
   <div>
@@ -111,7 +68,7 @@ onMounted(() => {
           <tr v-for="teacher in teachers" :key="teacher.id">
             <td>{{ teacher.attributes.name }}</td>
             <td>{{ teacher.attributes.phone }}</td>
-            <td>{{ teacher.attributes.class.data.attributes.name }}</td>
+            <!-- <td>{{ teacher.attributes.class.data.attributes.name }}</td> -->
             <td width="200px">
               <div v-if="teacher.attributes.tasks.data.length === 0">
                 нет задач
@@ -132,9 +89,7 @@ onMounted(() => {
             </td>
             <td>фото</td>
             <td>
-              <n-button @click="handleConfirmation(teacher.id)"
-                >Удалить</n-button
-              >
+              <n-button @click="showConfirmation(teacher.id)">Удалить</n-button>
             </td>
           </tr>
         </tbody>
@@ -146,16 +101,22 @@ onMounted(() => {
         <n-spin size="medium" />
       </div>
       <n-modal
-        v-model:show="showModalConfirm"
+        v-model:show="isShowModalConfirm"
         preset="dialog"
         title="Подтвердите удаление"
         content="Уверены что хотите удалить этого учителя?"
         positive-text="Удалить"
         negative-text="Отмена"
         @positive-click="handleDeleteTeacher"
-        @negative-click="showModalConfirm = false"
+        @negative-click="isShowModalConfirm = false"
       />
     </n-space>
+    <n-modal
+      v-model:show="isShowModalCreate"
+      @close-modal="handleCreateTeacher"
+    >
+      <teacher-form :teachers="teachers"></teacher-form>
+    </n-modal>
   </div>
 </template>
 

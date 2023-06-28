@@ -6,35 +6,36 @@ import { useFetchPage } from "../composable/useFetchPage";
 import { useNotificationHandler } from "../composable/useNotification";
 import { useDeleteEntity } from "../composable/useDeleteEntity";
 import { useCreateEntity } from "../composable/useCreateEntity";
+import { watch } from "vue";
 
 const {
   entities: classes,
-  error,
+  error: fetchError,
   showSpinner,
   fetchPage,
 } = useFetchPage<Class>("classes");
 
-const { useConfirmation, useDelete, showModalConfirm } =
-  useDeleteEntity<Class>("classes");
+const {
+  error: deleteError,
+  deleteItem,
+  showConfirmation,
+  isShowModalConfirm,
+} = useDeleteEntity<Class>("classes");
+
+watch(fetchError, () => notify("error"));
+watch(deleteError, () => notify("error"));
 
 const { notify } = useNotificationHandler();
-const { showModalCreate } = useCreateEntity();
+const { isShowModalCreate } = useCreateEntity();
 
 async function handleCreateClass() {
-  notify("success");
-  showModalCreate.value = false;
+  isShowModalCreate.value = false;
   await fetchPage();
 }
 
 async function handleDelete() {
-  await useDelete().catch((err) => {
-    console.log(err);
-    notify("error");
-  });
-  await fetchPage().catch((err) => {
-    console.log(err);
-    notify("error");
-  });
+  await deleteItem();
+  await fetchPage();
 }
 </script>
 
@@ -59,7 +60,7 @@ async function handleDelete() {
             <td>{{}}</td>
             <td>{{ group.attributes.description }}</td>
             <td>
-              <n-button @click="useConfirmation(group.id)">Удалить</n-button>
+              <n-button @click="showConfirmation(group.id)">Удалить</n-button>
             </td>
           </tr>
         </tbody>
@@ -70,24 +71,24 @@ async function handleDelete() {
       <n-button
         class="add-button"
         type="primary"
-        @click="showModalCreate = true"
+        @click="isShowModalCreate = true"
         v-if="!showSpinner"
       >
         Добавить группу
       </n-button>
     </n-space>
-    <n-modal v-model:show="showModalCreate" @closeModal="handleCreateClass">
+    <n-modal v-model:show="isShowModalCreate" @closeModal="handleCreateClass">
       <class-form></class-form>
     </n-modal>
     <n-modal
-      v-model:show="showModalConfirm"
+      v-model:show="isShowModalConfirm"
       preset="dialog"
       title="Подтвердите удаление"
       content="Уверены что хотите удалить эту группу?"
       positive-text="Удалить"
       negative-text="Отмена"
       @positive-click="handleDelete"
-      @negative-click="showModalConfirm = false"
+      @negative-click="isShowModalConfirm = false"
     />
   </div>
 </template>
