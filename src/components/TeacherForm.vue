@@ -1,12 +1,15 @@
 <script setup lang="ts">
+import { watch } from "vue";
+
 import { NSpace, NButton, NUpload } from "naive-ui";
+import * as yup from "yup";
+
+import MyTextInput from "./MyTextInput.vue";
+import { TeachersAttributes, TeachersResponse } from "../types/TeachersTypes";
+
 import { useCreateEntity } from "../composable/useCreateEntity";
 import { useForm } from "vee-validate";
-import * as yup from "yup";
-import { TeachersAttributes, TeachersResponse } from "../types/TeachersTypes";
-import MyTextInput from "./MyTextInput.vue";
 import { useNotificationHandler } from "../composable/useNotification";
-import { watch } from "vue";
 
 const emit = defineEmits<{
   (e: "closeModal"): void;
@@ -16,8 +19,10 @@ const schema = yup.object({
   name: yup.string().required().min(1),
   phone: yup.number().required().min(1),
 });
+
 const { error: createError, createItem } = useCreateEntity();
 const { notify } = useNotificationHandler();
+
 watch(createError, () => notify("error"));
 
 const { handleSubmit } = useForm<TeachersAttributes>({

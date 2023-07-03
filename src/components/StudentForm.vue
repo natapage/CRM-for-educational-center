@@ -1,38 +1,71 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
-import { NSpace, NButton, NDatePicker, NSelect } from "naive-ui";
-import MyTextInput from "./MyTextInput.vue";
-import { useForm } from "vee-validate";
-import * as yup from "yup";
-import { useCreateEntity } from "../composable/useCreateEntity";
-import { useFetchPage } from "../composable/useFetchPage";
-import { Class } from "../types/ClassesTypes.ts";
-import { StudentsResponse, StudentAttributes } from "../types/StudentsTypes";
-import { useNotificationHandler } from "../composable/useNotification";
 import { watch } from "vue";
 
-const studentBirthDay = ref<number>();
-const classItem = ref<{ label: string; value: string | number } | null>(null);
-const classId = ref<string | number>("");
-const { error: createError, createItem } = useCreateEntity();
+import {
+  NDatePicker,
+  NSelect,
+  NForm,
+  NFormItem,
+  NInput,
+  NButton,
+  FormInst,
+} from "naive-ui";
 
+import { Class } from "../types/ClassesTypes.ts";
+import { StudentsResponse } from "../types/StudentsTypes";
+
+import { useCreateEntity } from "../composable/useCreateEntity";
+import { useFetchPage } from "../composable/useFetchPage";
+import { useNotificationHandler } from "../composable/useNotification";
+
+const { error: createError, createItem } = useCreateEntity();
 const { entities: classes } = useFetchPage<Class>("classes");
 const { notify } = useNotificationHandler();
+const formRef = ref<FormInst | null>(null);
+
+const model = ref({
+  studentName: null,
+  studentBirthDay: null,
+  studentPhone: null,
+  description: null,
+  studentClass: null,
+});
+
+const rules = {
+  studentName: {
+    required: true,
+    trigger: ["blur", "input"],
+    message: "Пожалуйста, введите имя ученика",
+  },
+  studentBirthDay: {
+    // type: number,
+    required: true,
+    // trigger: ["blur", "input"],
+    message: "Пожалуйста, введите дату",
+  },
+  studentPhone: {
+    // type: number,
+    required: true,
+    trigger: ["input"],
+    message: "Пожалуйста, введите номер",
+    // validator: (rule: FormItemRule, value: string) => {
+    //   return /^[1]+[3,8]+\\d{9}$/.test(value);
+    // },
+  },
+  // description: null,
+  studentClass: {
+    required: true,
+    // trigger: ["blur"],
+    message: "Пожалуйста, выберете группу",
+  },
+};
+
 watch(createError, () => notify("error"));
 
 const emit = defineEmits<{
   (e: "closeModal"): void;
 }>();
-
-const schema = yup.object({
-  name: yup.string().required().min(1),
-  phone: yup.number().required().min(1),
-  description: yup.string().min(1),
-});
-
-const { handleSubmit } = useForm<StudentAttributes>({
-  validationSchema: schema,
-});
 
 const classOptionsList = computed(() =>
   classes.value.map((item) => ({
@@ -41,59 +74,103 @@ const classOptionsList = computed(() =>
   }))
 );
 
-const handleCreateStudent = handleSubmit(async (values: StudentAttributes) => {
-  const id = classId.value;
-  classItem.value =
-    classOptionsList.value.find((item) => item.value === id) ?? null;
-
-  const body = {
-    name: values.name,
-    date: new Date(studentBirthDay.value ?? 0),
-    phone: values.phone,
-    description: values.description,
-    class: {
-      connect: [classItem.value?.value],
-    },
-  };
-  // TODO: изменить тип unknown
-  await createItem<StudentsResponse, unknown>(body, "students");
-  if (!createError.value) {
-    notify("success");
-  }
-  emit("closeModal");
-});
+function handleCreateStudent(e: MouseEvent) {
+  e.preventDefault();
+  formRef.value?.validate(async (errors) => {
+    if (!errors) {
+      const body = {
+        name: model.value.studentName,
+        date: new Date(model.value.studentBirthDay ?? 0),
+        phone: model.value.studentPhone,
+        description: model.value.description,
+        class: {
+          connect: [model.value.studentClass],
+        },
+      };
+      // TODO: изменить тип unknown
+      await createItem<StudentsResponse, unknown>(body, "students");
+      if (!createError.value) {
+        notify("success");
+      }
+      emit("closeModal");
+    } else {
+      console.log(errors);
+      notify("error");
+    }
+  });
+}
 </script>
 
 <template>
   <div class="container">
-    <n-space vertical>
-      <my-text-input name="name" placeholder="Имя ученика" />
-      <n-date-picker
-        format="dd.MM.yyyy"
-        required="true"
-        v-model:value="studentBirthDay"
-        type="date"
-        placeholder="Дата рождения"
-      />
-      <my-text-input name="phone" placeholder="Номер телефона" />
-      <my-text-input
-        name="description"
-        placeholder="Особые указания"
-        type="text"
-      />
-      <n-select
-        v-model:value="classId"
-        :options="classOptionsList"
-        placeholder="Выберите группу"
-      />
-      <n-button @click="handleCreateStudent" type="primary">Создать</n-button>
-    </n-space>
+    <n-form
+      ref="formRef"
+      :model="model"
+      :rules="rules"
+      label-placement="left"
+      require-mark-placement="right-hanging"
+      label-width="auto"
+      :style="{
+        maxWidth: '640px',
+      }"
+    >
+      <n-form-item label="ФИО ученика" path="studentName">
+        <n-input
+          v-model:value="model.studentName"
+          placeholder="Введите фамилию, имя и отчество"
+        />
+      </n-form-item>
+      <n-form-item label="Дата рождения" path="studentBirthDay">
+        <n-date-picker
+          v-model:value="model.studentBirthDay"
+          type="date"
+          placeholder="Выберете дату"
+        />
+      </n-form-item>
+      <n-form-item label="Номер телефона" path="studentPhone">
+        <n-input
+          v-model:value="model.studentPhone"
+          placeholder="Введите номер"
+        />
+      </n-form-item>
+      <n-form-item label="Особые указания" path="description">
+        <n-input
+          v-model:value="model.description"
+          placeholder="Напишите пару слов о ребенке"
+          type="textarea"
+          :autosize="{
+            minRows: 3,
+            maxRows: 5,
+          }"
+        />
+      </n-form-item>
+      <n-form-item label="Группа" path="studentClass">
+        <n-select
+          v-model:value="model.studentClass"
+          placeholder="Выберете группу"
+          :options="classOptionsList"
+        />
+      </n-form-item>
+    </n-form>
+    <n-button
+      round
+      :disabled="
+        model.studentName === null ||
+        model.studentBirthDay === null ||
+        model.studentClass === null ||
+        model.studentPhone === null
+      "
+      class="add-button"
+      @click="handleCreateStudent"
+      type="primary"
+      >Создать</n-button
+    >
   </div>
 </template>
 
 <style scoped>
 .container {
-  background-color: #ffffff;
+  background-color: #fff;
   width: 400px;
   padding: 60px 120px;
   border-radius: 5px;
@@ -101,5 +178,10 @@ const handleCreateStudent = handleSubmit(async (values: StudentAttributes) => {
   max-width: 400px; /* Set the maximum width of the container */
   margin: 0 auto; /* Center the container horizontally */
   /* margin-top: 100px; Adjust the top margin as per your preference */
+}
+.add-button {
+  position: absolute;
+  bottom: 20px;
+  right: 120px;
 }
 </style>

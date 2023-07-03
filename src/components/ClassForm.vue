@@ -1,14 +1,17 @@
 <script setup lang="ts">
-import { NSpace, NButton, NSelect } from "naive-ui";
-import { useCreateEntity } from "../composable/useCreateEntity";
-import { useForm } from "vee-validate";
+import { ref, computed, watch } from "vue";
+
 import * as yup from "yup";
+import { NSpace, NButton, NSelect } from "naive-ui";
+
+import { Teacher } from "../types/TeachersTypes";
 import { ClassesAttributes, ClassesResponse } from "../types/ClassesTypes";
 import MyTextInput from "./MyTextInput.vue";
+
+import { useCreateEntity } from "../composable/useCreateEntity";
+import { useForm } from "vee-validate";
 import { useNotificationHandler } from "../composable/useNotification";
-import { ref, computed, watch } from "vue";
 import { useFetchPage } from "../composable/useFetchPage";
-import { Teacher } from "../types/TeachersTypes";
 
 const emit = defineEmits<{
   (e: "closeModal"): void;

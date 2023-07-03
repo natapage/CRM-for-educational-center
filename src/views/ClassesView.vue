@@ -1,12 +1,15 @@
 <script setup lang="ts">
+import { watch } from "vue";
+
 import { Class } from "../types/ClassesTypes.ts";
-import { NTable, NButton, NSpace, NModal, NSpin } from "naive-ui";
 import ClassForm from "../components/ClassForm.vue";
+
+import { NTable, NButton, NSpace, NModal, NSpin } from "naive-ui";
+
 import { useFetchPage } from "../composable/useFetchPage";
 import { useNotificationHandler } from "../composable/useNotification";
 import { useDeleteEntity } from "../composable/useDeleteEntity";
 import { useCreateEntity } from "../composable/useCreateEntity";
-import { watch } from "vue";
 
 const {
   entities: classes,

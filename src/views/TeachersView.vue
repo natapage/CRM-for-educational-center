@@ -1,11 +1,13 @@
 <script setup lang="ts">
+import { watch } from "vue";
+
 import { Teacher } from "../types/TeachersTypes.ts";
+import TeacherForm from "../components/TeacherForm.vue";
+
 import { useFetchPage } from "../composable/useFetchPage";
 import { useDeleteEntity } from "../composable/useDeleteEntity";
 import { useCreateEntity } from "../composable/useCreateEntity";
-import { watch } from "vue";
 import { useNotificationHandler } from "../composable/useNotification";
-import TeacherForm from "../components/TeacherForm.vue";
 
 import {
   NTable,
