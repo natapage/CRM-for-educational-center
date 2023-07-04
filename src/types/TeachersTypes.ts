@@ -20,13 +20,15 @@ export interface TeachersTask {
   };
 }
 
+export interface TeachersClass {
+  attributes: {
+    name: string | null;
+  };
+}
+
 export interface TeacherClassAtributes extends TeachersAttributes {
   class: {
-    data: {
-      attributes: {
-        name: string | null;
-      };
-    };
+    data: TeachersClass;
   };
   tasks: {
     data: TeachersTask[];

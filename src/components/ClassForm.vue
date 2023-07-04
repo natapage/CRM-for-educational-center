@@ -1,15 +1,12 @@
 <script setup lang="ts">
 import { ref, computed, watch } from "vue";
 
-import * as yup from "yup";
-import { NSpace, NButton, NSelect } from "naive-ui";
+import { NButton, NSelect, FormInst, NForm, NFormItem, NInput } from "naive-ui";
 
 import { Teacher } from "../types/TeachersTypes";
-import { ClassesAttributes, ClassesResponse } from "../types/ClassesTypes";
-import MyTextInput from "./MyTextInput.vue";
+import { ClassesResponse } from "../types/ClassesTypes";
 
 import { useCreateEntity } from "../composable/useCreateEntity";
-import { useForm } from "vee-validate";
 import { useNotificationHandler } from "../composable/useNotification";
 import { useFetchPage } from "../composable/useFetchPage";
 
@@ -17,12 +14,11 @@ const emit = defineEmits<{
   (e: "closeModal"): void;
 }>();
 
-const schema = yup.object({
-  name: yup.string().required().min(1),
-  description: yup.string().required().min(1),
-});
-const teacherId = ref<string | number>("");
+const { error: createError, createItem } = useCreateEntity();
+const { notify } = useNotificationHandler();
+// const teacherId = ref<string | number>("");
 const { entities: teachers } = useFetchPage<Teacher>("teachers");
+const formRef = ref<FormInst | null>(null);
 
 const teacherOptionsList = computed(() =>
   teachers.value.map((item) => ({
@@ -31,39 +27,98 @@ const teacherOptionsList = computed(() =>
   }))
 );
 
-const { error: createError, createItem } = useCreateEntity();
-const { notify } = useNotificationHandler();
+const model = ref({
+  className: null,
+  classDescription: null,
+  teacherName: null,
+});
+
+const rules = {
+  className: {
+    required: true,
+    trigger: ["blur", "input"],
+    message: "Пожалуйста, введите название",
+  },
+  classDescription: {
+    trigger: ["blur", "input"],
+    message: "Пожалуйста, опишите задачи и цели",
+  },
+  teacherName: {
+    required: true,
+    message: "Пожалуйста, выберете педагога",
+  },
+};
 watch(createError, () => notify("error"));
 
-const { handleSubmit } = useForm<ClassesAttributes>({
-  validationSchema: schema,
-});
-
-const handleCreateClass = handleSubmit(async (values: ClassesAttributes) => {
-  await createItem<ClassesResponse, ClassesAttributes>(values, "classes");
-  if (!createError.value) {
-    notify("success");
-  }
-  emit("closeModal");
-});
+function handleCreateClass(e: MouseEvent) {
+  e.preventDefault();
+  formRef.value?.validate(async (errors) => {
+    if (!errors) {
+      const body = {
+        name: model.value.className,
+        description: model.value.classDescription,
+        teacher: {
+          connect: [model.value.teacherName],
+        },
+      };
+      // TODO: изменить тип unknown
+      await createItem<ClassesResponse, unknown>(body, "classes");
+      if (!createError.value) {
+        notify("success");
+      }
+      emit("closeModal");
+    }
+  });
+}
 </script>
 
 <template>
   <div class="container">
-    <n-space vertical>
-      <my-text-input name="name" placeholder="Название группы" />
-      <my-text-input
-        name="description"
-        placeholder="Описание группы"
-        type="textarea"
-      />
-      <n-select
-        placeholder="Выберите учителя"
-        v-model:value="teacherId"
-        :options="teacherOptionsList"
-      />
-      <n-button @click="handleCreateClass">Создать</n-button>
-    </n-space>
+    <n-form
+      ref="formRef"
+      :model="model"
+      :rules="rules"
+      label-placement="left"
+      require-mark-placement="right-hanging"
+      label-width="auto"
+      :style="{
+        maxWidth: '640px',
+      }"
+    >
+      <n-form-item label="Название группы" path="className">
+        <n-input
+          v-model:value="model.className"
+          placeholder="Введите название группы"
+        />
+      </n-form-item>
+
+      <n-form-item label="Описание группы" path="classDescriprion">
+        <n-input
+          v-model:value="model.classDescription"
+          placeholder="Опишите цели и задачи"
+          type="textarea"
+          :autosize="{
+            minRows: 3,
+            maxRows: 5,
+          }"
+        />
+      </n-form-item>
+      <n-form-item label="Педагог" path="teacherName">
+        <n-select
+          v-model:value="model.teacherName"
+          placeholder="Выберете педагога"
+          :options="teacherOptionsList"
+        />
+      </n-form-item>
+    </n-form>
+    <n-button
+      round
+      :disabled="model.className === null || model.teacherName === null"
+      class="add-button"
+      @click="handleCreateClass"
+      type="primary"
+      >Создать</n-button
+    >
   </div>
 </template>
 
@@ -73,8 +128,15 @@ const handleCreateClass = handleSubmit(async (values: ClassesAttributes) => {
   padding: 60px 120px;
   border-radius: 5px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  max-width: 400px; /* Set the maximum width of the container */
-  margin: 0 auto; /* Center the container horizontally */
-  /* margin-top: 100px; Adjust the top margin as per your preference */
+  width: 400px; /* Set the width of the container */
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.add-button {
+  position: absolute;
+  bottom: 20px;
+  right: 120px;
 }
 </style>

@@ -25,6 +25,8 @@ const {
   isShowModalConfirm,
 } = useDeleteEntity<Class>("classes");
 
+console.log(classes);
+
 watch([fetchError, deleteError], () => notify("error"));
 
 const { notify } = useNotificationHandler();

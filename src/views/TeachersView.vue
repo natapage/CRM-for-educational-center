@@ -27,6 +27,8 @@ const {
   fetchPage,
 } = useFetchPage<Teacher>("teachers");
 
+console.log(teachers);
+
 const {
   error: deleteError,
   showConfirmation,
@@ -69,7 +71,8 @@ async function handleCreateTeacher() {
           <tr v-for="teacher in teachers" :key="teacher.id">
             <td>{{ teacher.attributes.name }}</td>
             <td>{{ teacher.attributes.phone }}</td>
-            <!-- <td>{{ teacher.attributes.class.data.attributes.name }}</td> -->
+            <td>{{ teacher.attributes.class.data.attributes.name }}</td>
+            <td></td>
             <td width="200px">
               <div v-if="teacher.attributes.tasks.data.length === 0">
                 нет задач

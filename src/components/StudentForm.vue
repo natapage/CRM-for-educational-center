@@ -10,6 +10,7 @@ import {
   NInput,
   NButton,
   FormInst,
+  FormItemRule,
 } from "naive-ui";
 
 import { Class } from "../types/ClassesTypes.ts";
@@ -39,19 +40,18 @@ const rules = {
     message: "Пожалуйста, введите имя ученика",
   },
   studentBirthDay: {
-    // type: number,
     required: true,
     // trigger: ["blur", "input"],
     message: "Пожалуйста, введите дату",
   },
   studentPhone: {
-    // type: number,
     required: true,
     trigger: ["input"],
-    message: "Пожалуйста, введите номер",
-    // validator: (rule: FormItemRule, value: string) => {
-    //   return /^[1]+[3,8]+\\d{9}$/.test(value);
-    // },
+    message: "Пожалуйста, введите номер из 11 цифр",
+    validator: (rule: FormItemRule, value: string) => {
+      console.log(rule);
+      return /^(\+)?\d{11}$/.test(value);
+    },
   },
   // description: null,
   studentClass: {
@@ -170,14 +170,15 @@ function handleCreateStudent(e: MouseEvent) {
 
 <style scoped>
 .container {
-  background-color: #fff;
-  width: 400px;
+  background-color: #ffffff;
   padding: 60px 120px;
   border-radius: 5px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  max-width: 400px; /* Set the maximum width of the container */
-  margin: 0 auto; /* Center the container horizontally */
-  /* margin-top: 100px; Adjust the top margin as per your preference */
+  width: 400px; /* Set the width of the container */
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 .add-button {
   position: absolute;
