@@ -20,7 +20,7 @@ const {
 
 const {
   error: deleteError,
-  showConfirmation,
+  handleConfirmation,
   deleteItem,
   isShowModalConfirm,
 } = useDeleteEntity<Student>("students");
@@ -66,7 +66,7 @@ async function handleCreateStudent() {
           <td>{{ student.attributes.class.data.attributes.name }}</td>
           <td>{{ student.attributes.description }}</td>
           <td>
-            <n-button @click="showConfirmation(student.id)">Удалить</n-button>
+            <n-button @click="handleConfirmation(student.id)">Удалить</n-button>
           </td>
           <td>
             <n-button>Изменить</n-button>

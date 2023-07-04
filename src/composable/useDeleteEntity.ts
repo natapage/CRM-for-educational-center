@@ -7,7 +7,7 @@ export function useDeleteEntity<T>(entity: string) {
   const classIdToDelete = ref<number>();
   const error: Ref<string | null> = ref(null);
 
-  function showConfirmation(id: number) {
+  function handleConfirmation(id: number) {
     isShowModalConfirm.value = true;
     classIdToDelete.value = id;
   }
@@ -27,7 +27,7 @@ export function useDeleteEntity<T>(entity: string) {
   return {
     error,
     deleteItem,
-    showConfirmation,
+    handleConfirmation,
     isShowModalConfirm,
   };
 }

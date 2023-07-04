@@ -6,7 +6,7 @@ export interface TeachersAttributes {
 }
 
 export interface Teacher extends Entity {
-  attributes: SharedAttributes & TeacherClassAtributes;
+  attributes: SharedAttributes & TeacherClassAttributes;
 }
 
 export interface TeachersResponse extends EntitiesResponse {
@@ -26,7 +26,7 @@ export interface TeachersClass {
   };
 }
 
-export interface TeacherClassAtributes extends TeachersAttributes {
+export interface TeacherClassAttributes extends TeachersAttributes {
   class: {
     data: TeachersClass;
   };

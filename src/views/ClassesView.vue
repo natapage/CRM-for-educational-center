@@ -21,7 +21,7 @@ const {
 const {
   error: deleteError,
   deleteItem,
-  showConfirmation,
+  handleConfirmation,
   isShowModalConfirm,
 } = useDeleteEntity<Class>("classes");
 
@@ -66,7 +66,7 @@ async function handleDelete() {
             <td>{{}}</td>
             <td>{{ group.attributes.description }}</td>
             <td>
-              <n-button @click="showConfirmation(group.id)">Удалить</n-button>
+              <n-button @click="handleConfirmation(group.id)">Удалить</n-button>
             </td>
             <td>
               <n-button>Изменить</n-button>

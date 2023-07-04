@@ -31,7 +31,7 @@ console.log(teachers);
 
 const {
   error: deleteError,
-  showConfirmation,
+  handleConfirmation,
   deleteItem,
   isShowModalConfirm,
 } = useDeleteEntity<Teacher>("teachers");
@@ -93,7 +93,9 @@ async function handleCreateTeacher() {
             </td>
             <td>фото</td>
             <td>
-              <n-button @click="showConfirmation(teacher.id)">Удалить</n-button>
+              <n-button @click="handleConfirmation(teacher.id)"
+                >Удалить</n-button
+              >
             </td>
             <td>
               <n-button>Изменить</n-button>

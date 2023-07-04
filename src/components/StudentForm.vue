@@ -41,7 +41,6 @@ const rules = {
   },
   studentBirthDay: {
     required: true,
-    // trigger: ["blur", "input"],
     message: "Пожалуйста, введите дату",
   },
   studentPhone: {
@@ -53,10 +52,8 @@ const rules = {
       return /^(\+)?\d{11}$/.test(value);
     },
   },
-  // description: null,
   studentClass: {
     required: true,
-    // trigger: ["blur"],
     message: "Пожалуйста, выберете группу",
   },
 };
