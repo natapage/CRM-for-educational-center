@@ -53,7 +53,7 @@ const rules = {
     },
   },
   teacherClass: {
-    required: true,
+    // required: true
     message: "Пожалуйста, выберете группу",
   },
 };
@@ -72,6 +72,9 @@ function handleCreateTeacher(e: MouseEvent) {
       const body = {
         name: model.value.teacherName,
         phone: model.value.teacherPhone,
+        class: {
+          connect: [model.value.teacherClass],
+        },
       };
       // TODO: изменить тип unknown
       await createItem<TeachersResponse, unknown>(body, "teachers");

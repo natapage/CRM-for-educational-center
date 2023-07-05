@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import { ref, computed, watch } from "vue";
+import { ref, watch } from "vue";
 
-import { NButton, NSelect, FormInst, NForm, NFormItem, NInput } from "naive-ui";
+import { NButton, FormInst, NForm, NFormItem, NInput } from "naive-ui";
 
-import { Teacher } from "../types/TeachersTypes";
+// import { Teacher } from "../types/TeachersTypes";
 import { ClassesResponse } from "../types/ClassesTypes";
 
 import { useCreateEntity } from "../composable/useCreateEntity";
 import { useNotificationHandler } from "../composable/useNotification";
-import { useFetchPage } from "../composable/useFetchPage";
+// import { useFetchPage } from "../composable/useFetchPage";
 
 const emit = defineEmits<{
   (e: "closeModal"): void;
@@ -17,20 +17,20 @@ const emit = defineEmits<{
 const { error: createError, createItem } = useCreateEntity();
 const { notify } = useNotificationHandler();
 // const teacherId = ref<string | number>("");
-const { entities: teachers } = useFetchPage<Teacher>("teachers");
+// const { entities: teachers } = useFetchPage<Teacher>("teachers");
 const formRef = ref<FormInst | null>(null);
 
-const teacherOptionsList = computed(() =>
-  teachers.value.map((item) => ({
-    label: item.attributes.name,
-    value: item.id,
-  }))
-);
+// const teacherOptionsList = computed(() =>
+//   teachers.value.map((item) => ({
+//     label: item.attributes.name,
+//     value: item.id,
+//   }))
+// );
 
 const model = ref({
   className: null,
   classDescription: null,
-  teacherName: null,
+  // teacherName: null,
 });
 
 const rules = {
@@ -43,10 +43,10 @@ const rules = {
     trigger: ["blur", "input"],
     message: "Пожалуйста, опишите задачи и цели",
   },
-  teacherName: {
-    required: true,
-    message: "Пожалуйста, выберете педагога",
-  },
+  // teacherName: {
+  //   required: true,
+  //   message: "Пожалуйста, выберете педагога",
+  // },
 };
 watch(createError, () => notify("error"));
 
@@ -57,9 +57,9 @@ function handleCreateClass(e: MouseEvent) {
       const body = {
         name: model.value.className,
         description: model.value.classDescription,
-        teacher: {
-          connect: [model.value.teacherName],
-        },
+        // teacher: {
+        //   connect: [model.value.teacherName],
+        // },
       };
       // TODO: изменить тип unknown
       await createItem<ClassesResponse, unknown>(body, "classes");
@@ -103,17 +103,17 @@ function handleCreateClass(e: MouseEvent) {
           }"
         />
       </n-form-item>
-      <n-form-item label="Педагог" path="teacherName">
+      <!-- <n-form-item label="Педагог" path="teacherName">
         <n-select
           v-model:value="model.teacherName"
           placeholder="Выберете педагога"
           :options="teacherOptionsList"
         />
-      </n-form-item>
+      </n-form-item> -->
     </n-form>
     <n-button
       round
-      :disabled="model.className === null || model.teacherName === null"
+      :disabled="model.className === null"
       class="add-button"
       @click="handleCreateClass"
       type="primary"

@@ -62,11 +62,13 @@ async function handleDelete() {
         <tbody>
           <tr v-for="group in classes" :key="group.id">
             <td>{{ group.attributes.name }}</td>
-            <td>{{ group.attributes.teacher.data.attributes.name }}</td>
+            <td>{{ group.attributes.teacher.data.attributes.name || null }}</td>
             <td>{{}}</td>
             <td>{{ group.attributes.description }}</td>
             <td>
-              <n-button @click="handleConfirmation(group.id)">Удалить</n-button>
+              <n-button @click="handleConfirmation(group.id)" disabled
+                >Удалить</n-button
+              >
             </td>
             <td>
               <n-button>Изменить</n-button>

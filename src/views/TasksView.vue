@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { watch } from "vue";
+import { watch, ref, computed } from "vue";
 
 import { Task } from "../types/TasksTypes.ts";
 import TaskForm from "../components/TaskForm.vue";
 
-import { NTable, NSpace, NButton, NModal, NSpin } from "naive-ui";
+import { NTable, NSpace, NButton, NModal, NSpin, NSelect } from "naive-ui";
 
 import { useFetchPage } from "../composable/useFetchPage";
 import { useNotificationHandler } from "../composable/useNotification";
@@ -18,6 +18,18 @@ const {
   fetchPage,
 } = useFetchPage<Task>("tasks");
 
+const teachersWithTasks = computed(() => {
+  const teachersNames = tasks.value.map(
+    (item) => item.attributes.teacher.data.attributes.name
+  );
+  const sortedTeachersNames = [...new Set(teachersNames)];
+  sortedTeachersNames.unshift("Показать всех");
+  console.log(sortedTeachersNames);
+  return sortedTeachersNames.map((item) => {
+    return { label: item, value: item };
+  });
+});
+
 const {
   error: deleteError,
   deleteItem,
@@ -29,6 +41,7 @@ watch([fetchError, deleteError], () => notify("error"));
 
 const { notify } = useNotificationHandler();
 const { isShowModalCreate } = useCreateEntity();
+const selectedTeacher = ref(null);
 
 async function handleCreateClass() {
   isShowModalCreate.value = false;
@@ -39,12 +52,39 @@ async function handleDeleteTask() {
   await deleteItem();
   await fetchPage();
 }
+
+const filteredTasks = computed(() => {
+  if (selectedTeacher.value) {
+    return tasks.value.filter(
+      (task) =>
+        task.attributes.teacher.data.attributes.name === selectedTeacher.value
+    );
+  } else {
+    return tasks.value;
+  }
+});
+
+function handleTeacherChange() {
+  if (selectedTeacher.value === "Показать всех") {
+    selectedTeacher.value = null;
+  }
+}
 </script>
 
 <template>
   <div>
     <n-space align="stretch" vertical>
       <h2>Список задач для педагогов</h2>
+      <div class="select-container">
+        <n-select
+          v-model:value="selectedTeacher"
+          :options="teachersWithTasks"
+          clearable
+          placeholder="Выберите учителя"
+          @update:value="handleTeacherChange"
+        >
+        </n-select>
+      </div>
       <n-table :bordered="false" :single-line="false" full-width>
         <thead>
           <tr>
@@ -56,7 +96,7 @@ async function handleDeleteTask() {
           </tr>
         </thead>
         <tbody>
-          <tr v-for="task in tasks" :key="task.id">
+          <tr v-for="task in filteredTasks" :key="task.id">
             <!-- <td></td> -->
             <td>{{ task.attributes.teacher.data.attributes.name }}</td>
             <td>{{ task.attributes.description }}</td>
@@ -103,5 +143,9 @@ async function handleDeleteTask() {
 <style scoped>
 .spinner-container {
   margin-top: 20px;
+}
+.select-container {
+  width: 400px; /* Задайте желаемую ширину для контейнера выпадающего списка */
+  margin-bottom: 10px; /* Опционально: задайте отступ снизу, если требуется */
 }
 </style>
