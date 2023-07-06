@@ -1,15 +1,22 @@
 <script setup lang="ts">
-import { watch, ref, computed } from "vue";
-
-import { Task } from "../types/TasksTypes.ts";
 import TaskForm from "../components/TaskForm.vue";
-
-import { NTable, NSpace, NButton, NModal, NSpin, NSelect } from "naive-ui";
-
+import { Task } from "../types/TasksTypes.ts";
+import { watch, ref, computed } from "vue";
+import {
+  NTable,
+  NSpace,
+  NButton,
+  NModal,
+  NSpin,
+  NSelect,
+  SelectOption,
+} from "naive-ui";
 import { useFetchPage } from "../composable/useFetchPage";
 import { useNotificationHandler } from "../composable/useNotification";
 import { useDeleteEntity } from "../composable/useDeleteEntity";
 import { useCreateEntity } from "../composable/useCreateEntity";
+
+const { notify } = useNotificationHandler();
 
 const {
   entities: tasks,
@@ -25,32 +32,32 @@ const {
   isShowModalConfirm,
 } = useDeleteEntity<Task>("tasks");
 
-const teachersWithTasks = computed(() => {
-  const teachersNames = tasks.value.map(
-    (item) => item.attributes.teacher.data.attributes.name
-  );
-  const sortedTeachersNames = [...new Set(teachersNames)];
-  sortedTeachersNames.unshift("Показать всех");
-  return sortedTeachersNames.map((item) => {
-    return { label: item, value: item };
-  });
-});
+async function handleDeleteTask() {
+  await deleteItem();
+  await fetchPage();
+}
 
-watch([fetchError, deleteError], () => notify("error"));
-
-const { notify } = useNotificationHandler();
 const { isShowModalCreate } = useCreateEntity();
-const selectedTeacher = ref(null);
 
 async function handleCreateClass() {
   isShowModalCreate.value = false;
   await fetchPage();
 }
 
-async function handleDeleteTask() {
-  await deleteItem();
-  await fetchPage();
-}
+watch([fetchError, deleteError], () => notify("error"));
+
+const teachersWithTasks = computed<SelectOption[]>(() => {
+  const teachersNames = tasks.value.map(
+    (item) => item.attributes.teacher.data.attributes.name
+  );
+  const sortedTeachersNames = [...new Set(teachersNames)];
+  sortedTeachersNames.unshift("Показать всех");
+  return sortedTeachersNames.map((item) => {
+    return { label: item, value: item } as SelectOption;
+  });
+});
+
+const selectedTeacher = ref(null);
 
 const filteredTasks = computed(() => {
   if (selectedTeacher.value === "Показать всех") {

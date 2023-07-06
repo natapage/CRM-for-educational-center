@@ -1,15 +1,14 @@
 <script setup lang="ts">
-import { watch } from "vue";
-
-import { Student } from "../types/StudentsTypes.ts";
 import StudentForm from "../components/StudentForm.vue";
-
+import { Student } from "../types/StudentsTypes.ts";
+import { watch } from "vue";
 import { NTable, NButton, NSpace, NModal, NSpin } from "naive-ui";
-
 import { useFetchPage } from "../composable/useFetchPage";
 import { useDeleteEntity } from "../composable/useDeleteEntity";
 import { useCreateEntity } from "../composable/useCreateEntity";
 import { useNotificationHandler } from "../composable/useNotification";
+
+const { notify } = useNotificationHandler();
 
 const {
   entities: students,
@@ -25,22 +24,19 @@ const {
   isShowModalConfirm,
 } = useDeleteEntity<Student>("students");
 
-const { notify } = useNotificationHandler();
-
-watch([fetchError, deleteError], () => notify("error"));
-
-const { isShowModalCreate } = useCreateEntity();
-
 async function handleDeleteStudent() {
-  console.log(students.value);
   await deleteItem();
   await fetchPage();
 }
+
+const { isShowModalCreate } = useCreateEntity();
 
 async function handleCreateStudent() {
   isShowModalCreate.value = false;
   await fetchPage();
 }
+
+watch([fetchError, deleteError], () => notify("error"));
 </script>
 
 <template>

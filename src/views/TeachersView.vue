@@ -1,14 +1,7 @@
 <script setup lang="ts">
-import { watch } from "vue";
-
-import { Teacher } from "../types/TeachersTypes.ts";
 import TeacherForm from "../components/TeacherForm.vue";
-
-import { useFetchPage } from "../composable/useFetchPage";
-import { useDeleteEntity } from "../composable/useDeleteEntity";
-import { useCreateEntity } from "../composable/useCreateEntity";
-import { useNotificationHandler } from "../composable/useNotification";
-
+import { Teacher } from "../types/TeachersTypes.ts";
+import { watch } from "vue";
 import {
   NTable,
   NButton,
@@ -19,6 +12,12 @@ import {
   NSpace,
   NCheckbox,
 } from "naive-ui";
+import { useFetchPage } from "../composable/useFetchPage";
+import { useDeleteEntity } from "../composable/useDeleteEntity";
+import { useCreateEntity } from "../composable/useCreateEntity";
+import { useNotificationHandler } from "../composable/useNotification";
+
+const { notify } = useNotificationHandler();
 
 const {
   entities: teachers,
@@ -27,8 +26,6 @@ const {
   fetchPage,
 } = useFetchPage<Teacher>("teachers");
 
-console.log(teachers);
-
 const {
   error: deleteError,
   handleConfirmation,
@@ -36,20 +33,19 @@ const {
   isShowModalConfirm,
 } = useDeleteEntity<Teacher>("teachers");
 
-const { notify } = useNotificationHandler();
-
-watch([fetchError, deleteError], () => notify("error"));
-
-const { isShowModalCreate } = useCreateEntity();
-
 async function handleDeleteTeacher() {
   await deleteItem();
   await fetchPage();
 }
+
+const { isShowModalCreate } = useCreateEntity();
+
 async function handleCreateTeacher() {
   isShowModalCreate.value = false;
   await fetchPage();
 }
+
+watch([fetchError, deleteError], () => notify("error"));
 </script>
 <template>
   <div>
