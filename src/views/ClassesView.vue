@@ -1,11 +1,8 @@
 <script setup lang="ts">
-import { watch } from "vue";
-
 import { Class } from "../types/ClassesTypes.ts";
 import ClassForm from "../components/ClassForm.vue";
-
+import { watch } from "vue";
 import { NTable, NButton, NSpace, NModal, NSpin } from "naive-ui";
-
 import { useFetchPage } from "../composable/useFetchPage";
 import { useNotificationHandler } from "../composable/useNotification";
 import { useDeleteEntity } from "../composable/useDeleteEntity";
@@ -24,8 +21,6 @@ const {
   handleConfirmation,
   isShowModalConfirm,
 } = useDeleteEntity<Class>("classes");
-
-console.log(classes);
 
 watch([fetchError, deleteError], () => notify("error"));
 
@@ -62,13 +57,11 @@ async function handleDelete() {
         <tbody>
           <tr v-for="group in classes" :key="group.id">
             <td>{{ group.attributes.name }}</td>
-            <td>{{ group.attributes.teacher.data.attributes.name || null }}</td>
+            <td>{{ group.attributes.teacher?.data?.attributes?.name }}</td>
             <td>{{}}</td>
             <td>{{ group.attributes.description }}</td>
             <td>
-              <n-button @click="handleConfirmation(group.id)" disabled
-                >Удалить</n-button
-              >
+              <n-button @click="handleConfirmation(group.id)">Удалить</n-button>
             </td>
             <td>
               <n-button>Изменить</n-button>

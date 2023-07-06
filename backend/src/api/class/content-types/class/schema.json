@@ -18,12 +18,6 @@
       "target": "api::student.student",
       "mappedBy": "class"
     },
-    "teacher": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::teacher.teacher",
-      "mappedBy": "class"
-    },
     "lesson": {
       "type": "relation",
       "relation": "oneToOne",
@@ -41,6 +35,12 @@
     },
     "description": {
       "type": "richtext"
+    },
+    "teacher": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::teacher.teacher",
+      "inversedBy": "classes"
     }
   }
 }

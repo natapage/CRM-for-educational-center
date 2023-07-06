@@ -5,7 +5,7 @@ import {
   NButton,
   FormItemRule,
   FormInst,
-  NUpload,
+  // NUpload,
   NInput,
   NFormItem,
   NForm,
@@ -26,7 +26,7 @@ const { notify } = useNotificationHandler();
 const formRef = ref<FormInst | null>(null);
 
 const emit = defineEmits<{
-  (e: "closeModal"): void;
+  (e: "close-modal"): void;
 }>();
 
 watch(createError, () => notify("error"));
@@ -53,7 +53,7 @@ const rules = {
     },
   },
   teacherClass: {
-    // required: true
+    required: true,
     message: "Пожалуйста, выберете группу",
   },
 };
@@ -69,20 +69,22 @@ function handleCreateTeacher(e: MouseEvent) {
   e.preventDefault();
   formRef.value?.validate(async (errors) => {
     if (!errors) {
+      console.log(model.value.teacherClass);
       const body = {
         name: model.value.teacherName,
         phone: model.value.teacherPhone,
-        class: {
+        classes: {
           connect: [model.value.teacherClass],
         },
       };
       // TODO: изменить тип unknown
       await createItem<TeachersResponse, unknown>(body, "teachers");
+
+      if (!createError.value) {
+        notify("success");
+      }
     }
-    if (!createError.value) {
-      notify("success");
-    }
-    emit("closeModal");
+    emit("close-modal");
   });
 }
 </script>
@@ -120,11 +122,11 @@ function handleCreateTeacher(e: MouseEvent) {
           :options="classOptionsList"
         />
       </n-form-item>
-      <n-form-item label="Фото" path="uploadValue">
+      <!-- <n-form-item label="Фото" path="uploadValue">
         <n-upload>
           <n-button>Загрузить фото</n-button>
         </n-upload>
-      </n-form-item>
+      </n-form-item> -->
     </n-form>
     <n-button
       round

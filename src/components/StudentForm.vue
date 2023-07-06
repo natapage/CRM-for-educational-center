@@ -61,7 +61,7 @@ const rules = {
 watch(createError, () => notify("error"));
 
 const emit = defineEmits<{
-  (e: "closeModal"): void;
+  (e: "close-modal"): void;
 }>();
 
 const classOptionsList = computed(() =>
@@ -89,7 +89,7 @@ function handleCreateStudent(e: MouseEvent) {
       if (!createError.value) {
         notify("success");
       }
-      emit("closeModal");
+      emit("close-modal");
     } else {
       console.log(errors);
       notify("error");
@@ -146,6 +146,8 @@ function handleCreateStudent(e: MouseEvent) {
           v-model:value="model.studentClass"
           placeholder="Выберете группу"
           :options="classOptionsList"
+          filterable
+          tag
         />
       </n-form-item>
     </n-form>

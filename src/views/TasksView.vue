@@ -18,24 +18,23 @@ const {
   fetchPage,
 } = useFetchPage<Task>("tasks");
 
-const teachersWithTasks = computed(() => {
-  const teachersNames = tasks.value.map(
-    (item) => item.attributes.teacher.data.attributes.name
-  );
-  const sortedTeachersNames = [...new Set(teachersNames)];
-  sortedTeachersNames.unshift("Показать всех");
-  console.log(sortedTeachersNames);
-  return sortedTeachersNames.map((item) => {
-    return { label: item, value: item };
-  });
-});
-
 const {
   error: deleteError,
   deleteItem,
   handleConfirmation,
   isShowModalConfirm,
 } = useDeleteEntity<Task>("tasks");
+
+const teachersWithTasks = computed(() => {
+  const teachersNames = tasks.value.map(
+    (item) => item.attributes.teacher.data.attributes.name
+  );
+  const sortedTeachersNames = [...new Set(teachersNames)];
+  sortedTeachersNames.unshift("Показать всех");
+  return sortedTeachersNames.map((item) => {
+    return { label: item, value: item };
+  });
+});
 
 watch([fetchError, deleteError], () => notify("error"));
 
@@ -54,21 +53,17 @@ async function handleDeleteTask() {
 }
 
 const filteredTasks = computed(() => {
+  if (selectedTeacher.value === "Показать всех") {
+    return tasks.value;
+  }
   if (selectedTeacher.value) {
     return tasks.value.filter(
       (task) =>
         task.attributes.teacher.data.attributes.name === selectedTeacher.value
     );
-  } else {
-    return tasks.value;
   }
+  return tasks.value;
 });
-
-function handleTeacherChange() {
-  if (selectedTeacher.value === "Показать всех") {
-    selectedTeacher.value = null;
-  }
-}
 </script>
 
 <template>
@@ -78,10 +73,11 @@ function handleTeacherChange() {
       <div class="select-container">
         <n-select
           v-model:value="selectedTeacher"
+          filterable
+          tag
           :options="teachersWithTasks"
           clearable
           placeholder="Выберите учителя"
-          @update:value="handleTeacherChange"
         >
         </n-select>
       </div>
@@ -98,7 +94,7 @@ function handleTeacherChange() {
         <tbody>
           <tr v-for="task in filteredTasks" :key="task.id">
             <!-- <td></td> -->
-            <td>{{ task.attributes.teacher.data.attributes.name }}</td>
+            <td>{{ task.attributes.teacher?.data?.attributes?.name }}</td>
             <td>{{ task.attributes.description }}</td>
             <td>
               {{ new Date(task.attributes.date).toLocaleDateString() }}

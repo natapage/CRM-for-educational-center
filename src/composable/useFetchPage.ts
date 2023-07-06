@@ -11,6 +11,7 @@ export function useFetchPage<T>(entity: string) {
   async function fetchPage() {
     try {
       const data = await getEntity<T>(url);
+      console.log(data);
       entities.value = data;
       error.value = null;
     } catch (err) {

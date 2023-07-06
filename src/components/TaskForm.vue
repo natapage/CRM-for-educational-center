@@ -43,7 +43,7 @@ const model = ref({
 const rules = {
   taskDescription: {
     required: true,
-    trigger: ["blur", "input"],
+    trigger: ["input"],
     message: "Пожалуйста, опишите задачу",
   },
   taskDate: {
@@ -69,7 +69,8 @@ function handleCreateTask(e: MouseEvent) {
         },
       };
       // TODO: изменить тип unknown
-      await createItem<TasksResponse, unknown>(body, "tasks");
+      const response = await createItem<TasksResponse, unknown>(body, "tasks");
+      console.log(response);
       if (!createError.value) {
         notify("success");
       }
