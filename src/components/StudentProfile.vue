@@ -1,11 +1,21 @@
 <script setup lang="ts">
 import { Student } from "../types/StudentsTypes.ts";
+import { Class } from "../types/ClassesTypes.ts";
 import { StudentsResponse } from "../types/StudentsTypes";
 
 import { useFetch } from "../composable/useFetch";
 import { useRoute } from "vue-router";
-import { ref } from "vue";
-import { NList, NThing, NListItem, NButton, NSpace, NInput } from "naive-ui";
+import { ref, computed } from "vue";
+import {
+  NList,
+  NThing,
+  NListItem,
+  NButton,
+  NSpace,
+  NInput,
+  NDatePicker,
+  NSelect,
+} from "naive-ui";
 import { useEditEntity } from "../composable/useEditEntity";
 
 const route = useRoute();
@@ -14,9 +24,10 @@ studentId.value = Number(route.params.id);
 const isEditing = ref<boolean>(false);
 const nameToCreate = ref("");
 const phoneToCreate = ref("");
-const dateToCreate = ref("");
+const dateToCreate = ref();
 const descriptionToCreate = ref("");
 const classToCreate = ref("");
+const { data: classes } = useFetch<Class[]>("classes");
 
 const {
   data: student,
@@ -41,13 +52,13 @@ function formatBirthDate(date: string | undefined) {
 }
 async function handleEditEntity() {
   const body = {
-    name: nameToCreate.value,
-    date: new Date(dateToCreate.value ?? 0),
-    phone: phoneToCreate.value,
-    description: descriptionToCreate.value,
-    // class: {
-    //   connect: [classToCreate.value],
-    // },
+    name: nameToCreate.value || student.value?.attributes.name,
+    date: new Date(dateToCreate.value ?? 0) || student.value?.attributes.date,
+    phone: phoneToCreate.value || student.value?.attributes.phone,
+    description: descriptionToCreate.value || student.value?.attributes.date,
+    class: {
+      connect: [classToCreate.value],
+    },
   };
   // TODO: изменить тип unknown
   await editItem<StudentsResponse, unknown>(body);
@@ -65,6 +76,13 @@ function handleCancel() {
   isEditing.value = false;
   // скинуть значения инпутов
 }
+
+const classOptionsList = computed(() =>
+  classes.value?.map((item) => ({
+    label: item.attributes.name,
+    value: item.id,
+  }))
+);
 </script>
 
 <template>
@@ -99,12 +117,11 @@ function handleCancel() {
             {{ formatBirthDate(student?.attributes.date) }}
           </div>
           <n-date-picker
+            v-if="isEditing"
             v-model:value="dateToCreate"
             type="date"
             :placeholder="formatBirthDate(student?.attributes.date)"
           />
-
-          <n-input v-if="isEditing" v-model:value="value" type="text" />
         </n-thing>
       </n-list-item>
       <n-list-item>
@@ -123,12 +140,20 @@ function handleCancel() {
           <div v-if="!isEditing">
             {{ student?.attributes.class.data.attributes.name }}
           </div>
-          <n-input
+          <n-select
+            v-if="isEditing"
+            v-model:value="classToCreate"
+            :options="classOptionsList"
+            filterable
+            tag
+            :placeholder="(student?.attributes.class.data.attributes.name as string)"
+          />
+          <!-- <n-input
             v-if="isEditing"
             v-model:value="classToCreate"
             type="text"
             :placeholder="(student?.attributes.class.data.attributes.name as string)"
-          />
+          /> -->
         </n-thing>
       </n-list-item>
       <n-list-item>
