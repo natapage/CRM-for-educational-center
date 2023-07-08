@@ -2,9 +2,6 @@
 import { Student } from "../types/StudentsTypes.ts";
 import { Class } from "../types/ClassesTypes.ts";
 import { StudentsResponse } from "../types/StudentsTypes";
-
-import { useFetch } from "../composable/useFetch";
-import { useRoute } from "vue-router";
 import { ref, computed } from "vue";
 import {
   NList,
@@ -16,30 +13,37 @@ import {
   NDatePicker,
   NSelect,
 } from "naive-ui";
+import { useRoute } from "vue-router";
+import { useFetch } from "../composable/useFetch";
 import { useEditEntity } from "../composable/useEditEntity";
+import { useNotificationHandler } from "../composable/useNotification";
+
+const { notify } = useNotificationHandler();
 
 const route = useRoute();
+
 const studentId = ref<number>();
 studentId.value = Number(route.params.id);
+
 const isEditing = ref<boolean>(false);
 const nameToCreate = ref("");
 const phoneToCreate = ref("");
 const dateToCreate = ref();
 const descriptionToCreate = ref("");
 const classToCreate = ref("");
+
 const { data: classes } = useFetch<Class[]>("classes");
 
-const {
-  data: student,
-  // error: fetchError,
-  // fetchPage,
-} = useFetch<Student>(`students/${studentId.value}`);
+const classOptionsList = computed(() =>
+  classes.value?.map((item) => ({
+    label: item.attributes.name,
+    value: item.id,
+  }))
+);
 
-const {
-  // // error: editError,
-  editItem,
-  // data: updatedStudent,
-} = useEditEntity<Student>(`students/${studentId.value}`);
+const { data: student, refetch } = useFetch<Student>(
+  `students/${studentId.value}`
+);
 
 function formatBirthDate(date: string | undefined) {
   if (!date) return "";
@@ -50,55 +54,57 @@ function formatBirthDate(date: string | undefined) {
   };
   return new Date(date).toLocaleDateString("ru-RU", options);
 }
+
+const {
+  error: editError,
+  editItem,
+  // data: updatedStudent,
+} = useEditEntity<Student>(`students/${studentId.value}`);
+
 async function handleEditEntity() {
-  const body = {
+  const body: any = {
     name: nameToCreate.value || student.value?.attributes.name,
-    date: new Date(dateToCreate.value ?? 0) || student.value?.attributes.date,
+    date: new Date((dateToCreate.value ?? 0) || student.value?.attributes.date),
     phone: phoneToCreate.value || student.value?.attributes.phone,
-    description: descriptionToCreate.value || student.value?.attributes.date,
-    class: {
-      connect: [classToCreate.value],
-    },
+    description:
+      descriptionToCreate.value || student.value?.attributes.description,
   };
+  if (classToCreate.value) {
+    body.class = {
+      connect: [classToCreate.value],
+    };
+  }
   // TODO: изменить тип unknown
   await editItem<StudentsResponse, unknown>(body);
-  //   if (!createError.value) {
-  //     notify("success");
-  //   }
-  //   emit("close-modal");
-  // } else {
-  //   console.log(errors);
-  //   notify("error");
-  // }
+  if (!editError.value) {
+    notify("success");
+  }
+  if (editError.value) {
+    notify("error");
+  }
+  refetch();
+  isEditing.value = false;
 }
 
 function handleCancel() {
   isEditing.value = false;
-  // скинуть значения инпутов
 }
-
-const classOptionsList = computed(() =>
-  classes.value?.map((item) => ({
-    label: item.attributes.name,
-    value: item.id,
-  }))
-);
 </script>
 
 <template>
-  <NSpace horizontal justify="space-between" align="center">
-    <h2>Данные об ученике</h2>
-    <NButton type="primary" @click="isEditing = true" v-if="!isEditing">
-      Редактировать данные</NButton
-    >
-    <NSpace horizontal v-if="isEditing">
-      <NButton @click="handleCancel"> Отменить изменения</NButton>
-      <NButton type="primary" @click="handleEditEntity">
-        Сохранить изменения</NButton
-      >
-    </NSpace>
-  </NSpace>
   <div class="container">
+    <NSpace horizontal justify="space-between" align="center">
+      <h2>Данные об ученике</h2>
+      <NButton type="primary" @click="isEditing = true" v-if="!isEditing">
+        Редактировать данные</NButton
+      >
+      <NSpace horizontal v-if="isEditing">
+        <NButton @click="handleCancel"> Отменить изменения</NButton>
+        <NButton type="primary" @click="handleEditEntity">
+          Сохранить изменения</NButton
+        >
+      </NSpace>
+    </NSpace>
     <n-list>
       <n-list-item>
         <n-thing title="Имя ученика">
@@ -146,14 +152,7 @@ const classOptionsList = computed(() =>
             :options="classOptionsList"
             filterable
             tag
-            :placeholder="(student?.attributes.class.data.attributes.name as string)"
           />
-          <!-- <n-input
-            v-if="isEditing"
-            v-model:value="classToCreate"
-            type="text"
-            :placeholder="(student?.attributes.class.data.attributes.name as string)"
-          /> -->
         </n-thing>
       </n-list-item>
       <n-list-item>

@@ -44,7 +44,7 @@ const rules = {
     message: "Пожалуйста, опишите задачи и цели",
   },
   teacherName: {
-    // required: true,
+    required: true,
     message: "Пожалуйста, выберете педагога",
   },
 };
@@ -95,7 +95,7 @@ function handleCreateClass(e: MouseEvent) {
         />
       </n-form-item>
 
-      <n-form-item label="Описание группы" path="classDescriprion">
+      <n-form-item label="Описание группы" path="classDescription">
         <n-input
           v-model:value="model.classDescription"
           placeholder="Опишите цели и задачи"
