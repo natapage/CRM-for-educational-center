@@ -17,11 +17,11 @@ import { Class } from "../types/ClassesTypes.ts";
 import { StudentsResponse } from "../types/StudentsTypes";
 
 import { useCreateEntity } from "../composable/useCreateEntity";
-import { useFetchPage } from "../composable/useFetchPage";
+import { useFetch } from "../composable/useFetch";
 import { useNotificationHandler } from "../composable/useNotification";
 
 const { error: createError, createItem } = useCreateEntity();
-const { entities: classes } = useFetchPage<Class>("classes");
+const { data: classes } = useFetch<Class[]>("classes");
 const { notify } = useNotificationHandler();
 const formRef = ref<FormInst | null>(null);
 
@@ -65,7 +65,7 @@ const emit = defineEmits<{
 }>();
 
 const classOptionsList = computed(() =>
-  classes.value.map((item) => ({
+  classes.value?.map((item) => ({
     label: item.attributes.name,
     value: item.id,
   }))

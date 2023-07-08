@@ -11,7 +11,7 @@ import {
   NSelect,
   SelectOption,
 } from "naive-ui";
-import { useFetchPage } from "../composable/useFetchPage";
+import { useFetch } from "../composable/useFetch";
 import { useNotificationHandler } from "../composable/useNotification";
 import { useDeleteEntity } from "../composable/useDeleteEntity";
 import { useCreateEntity } from "../composable/useCreateEntity";
@@ -19,11 +19,11 @@ import { useCreateEntity } from "../composable/useCreateEntity";
 const { notify } = useNotificationHandler();
 
 const {
-  entities: tasks,
+  data: tasks,
   error: fetchError,
   showSpinner,
-  fetchPage,
-} = useFetchPage<Task>("tasks");
+  refetch,
+} = useFetch<Task[]>("tasks");
 
 const {
   error: deleteError,
@@ -34,20 +34,20 @@ const {
 
 async function handleDeleteTask() {
   await deleteItem();
-  await fetchPage();
+  await refetch();
 }
 
 const { isShowModalCreate } = useCreateEntity();
 
 async function handleCreateClass() {
   isShowModalCreate.value = false;
-  await fetchPage();
+  await refetch();
 }
 
 watch([fetchError, deleteError], () => notify("error"));
 
 const teachersWithTasks = computed<SelectOption[]>(() => {
-  const teachersNames = tasks.value.map(
+  const teachersNames = tasks.value?.map(
     (item) => item.attributes.teacher.data.attributes.name
   );
   const sortedTeachersNames = [...new Set(teachersNames)];
@@ -64,7 +64,7 @@ const filteredTasks = computed(() => {
     return tasks.value;
   }
   if (selectedTeacher.value) {
-    return tasks.value.filter(
+    return tasks.value?.filter(
       (task) =>
         task.attributes.teacher.data.attributes.name === selectedTeacher.value
     );

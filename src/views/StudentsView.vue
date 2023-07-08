@@ -3,19 +3,20 @@ import StudentForm from "../components/StudentForm.vue";
 import { Student } from "../types/StudentsTypes.ts";
 import { watch } from "vue";
 import { NTable, NButton, NSpace, NModal, NSpin } from "naive-ui";
-import { useFetchPage } from "../composable/useFetchPage";
+import { useFetch } from "../composable/useFetch";
 import { useDeleteEntity } from "../composable/useDeleteEntity";
 import { useCreateEntity } from "../composable/useCreateEntity";
 import { useNotificationHandler } from "../composable/useNotification";
+import router from "../router/router.ts";
 
 const { notify } = useNotificationHandler();
 
 const {
-  entities: students,
+  data: students,
   error: fetchError,
   showSpinner,
-  fetchPage,
-} = useFetchPage<Student>("students");
+  refetch,
+} = useFetch<Student[]>("students");
 
 const {
   error: deleteError,
@@ -26,17 +27,21 @@ const {
 
 async function handleDeleteStudent() {
   await deleteItem();
-  await fetchPage();
+  await refetch();
 }
 
 const { isShowModalCreate } = useCreateEntity();
 
 async function handleCreateStudent() {
   isShowModalCreate.value = false;
-  await fetchPage();
+  await refetch();
 }
 
 watch([fetchError, deleteError], () => notify("error"));
+
+function goToProfile(studentId: number) {
+  router.push(`/students/${studentId}`);
+}
 </script>
 
 <template>
@@ -62,10 +67,12 @@ watch([fetchError, deleteError], () => notify("error"));
           <td>{{ student.attributes.class.data.attributes.name }}</td>
           <td>{{ student.attributes.description }}</td>
           <td>
-            <n-button @click="handleConfirmation(student.id)">Удалить</n-button>
+            <n-button @click="goToProfile(student.id)"
+              >Перейти в профиль</n-button
+            >
           </td>
           <td>
-            <n-button>Изменить</n-button>
+            <n-button @click="handleConfirmation(student.id)">Удалить</n-button>
           </td>
         </tr>
       </tbody>

@@ -12,7 +12,7 @@ import {
   NSpace,
   NCheckbox,
 } from "naive-ui";
-import { useFetchPage } from "../composable/useFetchPage";
+import { useFetch } from "../composable/useFetch";
 import { useDeleteEntity } from "../composable/useDeleteEntity";
 import { useCreateEntity } from "../composable/useCreateEntity";
 import { useNotificationHandler } from "../composable/useNotification";
@@ -20,11 +20,11 @@ import { useNotificationHandler } from "../composable/useNotification";
 const { notify } = useNotificationHandler();
 
 const {
-  entities: teachers,
+  data: teachers,
   error: fetchError,
   showSpinner,
-  fetchPage,
-} = useFetchPage<Teacher>("teachers");
+  refetch,
+} = useFetch<Teacher[]>("teachers");
 
 const {
   error: deleteError,
@@ -35,14 +35,14 @@ const {
 
 async function handleDeleteTeacher() {
   await deleteItem();
-  await fetchPage();
+  await refetch();
 }
 
 const { isShowModalCreate } = useCreateEntity();
 
 async function handleCreateTeacher() {
   isShowModalCreate.value = false;
-  await fetchPage();
+  await refetch();
 }
 
 watch([fetchError, deleteError], () => notify("error"));

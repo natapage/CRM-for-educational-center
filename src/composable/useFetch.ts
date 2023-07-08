@@ -2,17 +2,16 @@ import { BASE } from "../constants.ts/constаnts.ts";
 import { getEntity } from "../API/requestsApi.ts";
 import { Ref, ref } from "vue";
 
-export function useFetchPage<T>(entity: string) {
+export function useFetch<T>(entity: string) {
   const url: string = `${BASE}/api/${entity}?populate=*`;
-  const entities: Ref<T[]> = ref([]);
+  const data: Ref<T | null> = ref(null);
   const error: Ref<string | null> = ref(null);
   const showSpinner = ref<boolean>(true);
 
-  async function fetchPage() {
+  async function fetch() {
     try {
-      const data = await getEntity<T>(url);
-      console.log(data);
-      entities.value = data;
+      const response = await getEntity<T>(url);
+      data.value = response;
       error.value = null;
     } catch (err) {
       error.value = err instanceof Error ? err.message : "Unknown error";
@@ -21,7 +20,7 @@ export function useFetchPage<T>(entity: string) {
     }
   }
 
-  fetchPage();
+  fetch();
 
-  return { entities, error, showSpinner, fetchPage };
+  return { data, error, showSpinner, refetch: fetch };
 }

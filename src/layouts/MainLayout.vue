@@ -140,4 +140,7 @@ const menuOptions: MenuOption[] = [
   flex-direction: column;
   min-height: 100vh;
 }
+.content {
+  text-align: left;
+}
 </style>

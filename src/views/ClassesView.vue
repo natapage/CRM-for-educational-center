@@ -3,7 +3,7 @@ import ClassForm from "../components/ClassForm.vue";
 import { Class } from "../types/ClassesTypes.ts";
 import { watch } from "vue";
 import { NTable, NButton, NSpace, NModal, NSpin } from "naive-ui";
-import { useFetchPage } from "../composable/useFetchPage";
+import { useFetch } from "../composable/useFetch";
 import { useNotificationHandler } from "../composable/useNotification";
 import { useDeleteEntity } from "../composable/useDeleteEntity";
 import { useCreateEntity } from "../composable/useCreateEntity";
@@ -11,11 +11,11 @@ import { useCreateEntity } from "../composable/useCreateEntity";
 const { notify } = useNotificationHandler();
 
 const {
-  entities: classes,
+  data: classes,
   error: fetchError,
   showSpinner,
-  fetchPage,
-} = useFetchPage<Class>("classes");
+  refetch,
+} = useFetch<Class[]>("classes");
 
 const {
   error: deleteError,
@@ -27,14 +27,14 @@ const {
 async function handleDelete() {
   console.log(classes.value);
   await deleteItem();
-  await fetchPage();
+  await refetch();
 }
 
 const { isShowModalCreate } = useCreateEntity();
 
 async function handleCreateClass() {
   isShowModalCreate.value = false;
-  await fetchPage();
+  await refetch();
 }
 
 watch([fetchError, deleteError], () => notify("error"));

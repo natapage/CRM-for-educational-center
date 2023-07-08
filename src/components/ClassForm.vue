@@ -8,7 +8,7 @@ import { ClassesResponse } from "../types/ClassesTypes";
 
 import { useCreateEntity } from "../composable/useCreateEntity";
 import { useNotificationHandler } from "../composable/useNotification";
-import { useFetchPage } from "../composable/useFetchPage";
+import { useFetch } from "../composable/useFetch";
 
 const emit = defineEmits<{
   (e: "closeModal"): void;
@@ -17,11 +17,11 @@ const emit = defineEmits<{
 const { error: createError, createItem } = useCreateEntity();
 const { notify } = useNotificationHandler();
 // const teacherId = ref<string | number>("");
-const { entities: teachers } = useFetchPage<Teacher>("teachers");
+const { data: teachers } = useFetch<Teacher[]>("teachers");
 const formRef = ref<FormInst | null>(null);
 
 const teacherOptionsList = computed(() =>
-  teachers.value.map((item) => ({
+  teachers.value?.map((item) => ({
     label: item.attributes.name,
     value: item.id,
   }))

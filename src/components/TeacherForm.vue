@@ -15,12 +15,12 @@ import {
 import { TeachersResponse } from "../types/TeachersTypes";
 import { Class } from "../types/ClassesTypes.ts";
 
-import { useFetchPage } from "../composable/useFetchPage";
+import { useFetch } from "../composable/useFetch";
 import { useCreateEntity } from "../composable/useCreateEntity";
 import { useNotificationHandler } from "../composable/useNotification";
 
 const { error: createError, createItem } = useCreateEntity();
-const { entities: classes } = useFetchPage<Class>("classes");
+const { data: classes } = useFetch<Class[]>("classes");
 
 const { notify } = useNotificationHandler();
 const formRef = ref<FormInst | null>(null);
@@ -59,7 +59,7 @@ const rules = {
 };
 
 const classOptionsList = computed(() =>
-  classes.value.map((item) => ({
+  classes.value?.map((item) => ({
     label: item.attributes.name,
     value: item.id,
   }))
