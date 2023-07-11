@@ -5,7 +5,8 @@ import ScheduleView from "../views/ScheduleView.vue";
 import StudentsView from "../views/StudentsView.vue";
 import TasksView from "../views/TasksView.vue";
 import TeachersView from "../views/TeachersView.vue";
-import StudentProfile from "../components/StudentProfile.vue";
+import StudentProfile from "../pages/StudentProfile.vue";
+import TeacherProfile from "../pages/TeacherProfile.vue";
 
 import { createRouter, createWebHistory } from "vue-router";
 
@@ -19,6 +20,10 @@ const routes = [
     component: ClassesView,
   },
   {
+    path: "/schedule",
+    component: ScheduleView,
+  },
+  {
     path: "/lessons",
     component: LessonsView,
   },
@@ -27,8 +32,8 @@ const routes = [
     component: StudentsView,
   },
   {
-    path: "/schedule",
-    component: ScheduleView,
+    path: "/students/:id",
+    component: StudentProfile,
   },
   {
     path: "/tasks",
@@ -39,8 +44,8 @@ const routes = [
     component: TeachersView,
   },
   {
-    path: "/students/:id",
-    component: StudentProfile,
+    path: "/teachers/:id",
+    component: TeacherProfile,
   },
 ];
 

@@ -20,7 +20,7 @@ export function useFetch<T>(entity: string) {
     }
   }
 
-  fetch();
+  // fetch();
 
   return { data, error, showSpinner, refetch: fetch };
 }

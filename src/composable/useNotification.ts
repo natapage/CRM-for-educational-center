@@ -1,11 +1,11 @@
 import { useNotification, NotificationType } from "naive-ui";
 
 export function useNotificationHandler() {
-  const notification = useNotification();
+  const toCreateNotification = useNotification();
 
   function notify(type: NotificationType) {
     if (type === "error") {
-      return notification[type]({
+      return toCreateNotification[type]({
         content: "Ошибка при загрузке страницы",
         meta: "попробуйте снова",
         duration: 2500,
@@ -13,7 +13,7 @@ export function useNotificationHandler() {
       });
     }
     if (type === "success") {
-      return notification[type]({
+      return toCreateNotification[type]({
         content: "Успешно добавлено",
         // meta: "",
         duration: 2500,
@@ -21,5 +21,5 @@ export function useNotificationHandler() {
       });
     }
   }
-  return { notify };
+  return { notify, toCreateNotification };
 }

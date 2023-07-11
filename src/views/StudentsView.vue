@@ -1,13 +1,15 @@
 <script setup lang="ts">
 import StudentForm from "../components/StudentForm.vue";
 import { Student } from "../types/StudentsTypes.ts";
-import { watch } from "vue";
+import router from "../router/router.ts";
+import { watch, onMounted } from "vue";
 import { NTable, NButton, NSpace, NModal, NSpin } from "naive-ui";
 import { useFetch } from "../composable/useFetch";
 import { useDeleteEntity } from "../composable/useDeleteEntity";
 import { useCreateEntity } from "../composable/useCreateEntity";
 import { useNotificationHandler } from "../composable/useNotification";
-import router from "../router/router.ts";
+
+onMounted(() => refetch());
 
 const { notify } = useNotificationHandler();
 
@@ -39,7 +41,7 @@ async function handleCreateStudent() {
 
 watch([fetchError, deleteError], () => notify("error"));
 
-function goToProfile(studentId: number) {
+function goToProfile(studentId: number | string) {
   router.push(`/students/${studentId}`);
 }
 </script>

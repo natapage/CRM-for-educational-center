@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import TeacherForm from "../components/TeacherForm.vue";
 import { Teacher } from "../types/TeachersTypes.ts";
-import { watch } from "vue";
+import router from "../router/router.ts";
+import { watch, onMounted } from "vue";
 import {
   NTable,
   NButton,
@@ -12,10 +13,13 @@ import {
   NSpace,
   NCheckbox,
 } from "naive-ui";
+
 import { useFetch } from "../composable/useFetch";
 import { useDeleteEntity } from "../composable/useDeleteEntity";
 import { useCreateEntity } from "../composable/useCreateEntity";
 import { useNotificationHandler } from "../composable/useNotification";
+
+onMounted(() => refetch());
 
 const { notify } = useNotificationHandler();
 
@@ -46,6 +50,10 @@ async function handleCreateTeacher() {
 }
 
 watch([fetchError, deleteError], () => notify("error"));
+
+function goToProfile(teacherID: number | string) {
+  router.push(`/teachers/${teacherID}`);
+}
 </script>
 <template>
   <div>
@@ -90,12 +98,14 @@ watch([fetchError, deleteError], () => notify("error"));
             </td>
             <td>фото</td>
             <td>
-              <n-button @click="handleConfirmation(teacher.id)"
-                >Удалить</n-button
+              <n-button @click="goToProfile(teacher.id)"
+                >Перейти в профиль</n-button
               >
             </td>
             <td>
-              <n-button>Изменить</n-button>
+              <n-button @click="handleConfirmation(teacher.id)"
+                >Удалить</n-button
+              >
             </td>
           </tr>
         </tbody>

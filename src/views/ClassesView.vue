@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import ClassForm from "../components/ClassForm.vue";
 import { Class } from "../types/ClassesTypes.ts";
-import { watch } from "vue";
+import { watch, onMounted } from "vue";
 import { NTable, NButton, NSpace, NModal, NSpin } from "naive-ui";
 import { useFetch } from "../composable/useFetch";
 import { useNotificationHandler } from "../composable/useNotification";
 import { useDeleteEntity } from "../composable/useDeleteEntity";
 import { useCreateEntity } from "../composable/useCreateEntity";
+
+onMounted(() => refetch());
 
 const { notify } = useNotificationHandler();
 

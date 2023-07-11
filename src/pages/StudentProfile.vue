@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { Student } from "../types/StudentsTypes.ts";
-import { Class } from "../types/ClassesTypes.ts";
+import { Student } from "../types/StudentsTypes";
+import { Class } from "../types/ClassesTypes";
 import { StudentsResponse } from "../types/StudentsTypes";
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import {
   NList,
   NThing,
@@ -18,12 +18,12 @@ import { useFetch } from "../composable/useFetch";
 import { useEditEntity } from "../composable/useEditEntity";
 import { useNotificationHandler } from "../composable/useNotification";
 
-const { notify } = useNotificationHandler();
+onMounted(() => refetch());
+const { notify, toCreateNotification } = useNotificationHandler();
 
 const route = useRoute();
 
-const studentId = ref<number>();
-studentId.value = Number(route.params.id);
+const studentId = ref<number>(Number(route.params.id));
 
 const isEditing = ref<boolean>(false);
 const nameToCreate = ref("");
@@ -61,7 +61,7 @@ const {
   // data: updatedStudent,
 } = useEditEntity<Student>(`students/${studentId.value}`);
 
-async function handleEditEntity() {
+async function handleEditStudent() {
   const body: any = {
     name: nameToCreate.value || student.value?.attributes.name,
     date: new Date((dateToCreate.value ?? 0) || student.value?.attributes.date),
@@ -77,7 +77,13 @@ async function handleEditEntity() {
   // TODO: изменить тип unknown
   await editItem<StudentsResponse, unknown>(body);
   if (!editError.value) {
-    notify("success");
+    toCreateNotification.create({
+      type: "success",
+      content: "Успешно отредактировано",
+      meta: "Данные ученика изменены",
+      duration: 2500,
+      keepAliveOnHover: true,
+    });
   }
   if (editError.value) {
     notify("error");
@@ -85,32 +91,28 @@ async function handleEditEntity() {
   refetch();
   isEditing.value = false;
 }
-
-function handleCancel() {
-  isEditing.value = false;
-}
 </script>
 
 <template>
   <div class="container">
-    <NSpace horizontal justify="space-between" align="center">
+    <n-space horizontal justify="space-between" align="center">
       <h2>Данные об ученике</h2>
-      <NButton type="primary" @click="isEditing = true" v-if="!isEditing">
-        Редактировать данные</NButton
+      <n-button type="primary" @click="isEditing = true" v-if="!isEditing">
+        Редактировать данные</n-button
       >
-      <NSpace horizontal v-if="isEditing">
-        <NButton @click="handleCancel"> Отменить изменения</NButton>
-        <NButton type="primary" @click="handleEditEntity">
-          Сохранить изменения</NButton
+      <n-space horizontal v-else>
+        <n-button @click="isEditing = false"> Отменить изменения</n-button>
+        <n-button type="primary" @click="handleEditStudent">
+          Сохранить изменения</n-button
         >
-      </NSpace>
-    </NSpace>
+      </n-space>
+    </n-space>
     <n-list>
       <n-list-item>
         <n-thing title="Имя ученика">
           <div v-if="!isEditing">{{ student?.attributes.name }}</div>
           <n-input
-            v-if="isEditing"
+            v-else
             v-model:value="nameToCreate"
             type="text"
             :placeholder="student?.attributes.name"
@@ -123,7 +125,7 @@ function handleCancel() {
             {{ formatBirthDate(student?.attributes.date) }}
           </div>
           <n-date-picker
-            v-if="isEditing"
+            v-else
             v-model:value="dateToCreate"
             type="date"
             :placeholder="formatBirthDate(student?.attributes.date)"
@@ -134,7 +136,7 @@ function handleCancel() {
         <n-thing title="Номер телефона">
           <div v-if="!isEditing">{{ student?.attributes.phone }}</div>
           <n-input
-            v-if="isEditing"
+            v-else
             v-model:value="phoneToCreate"
             type="text"
             :placeholder="student?.attributes.phone"
@@ -147,7 +149,7 @@ function handleCancel() {
             {{ student?.attributes.class.data.attributes.name }}
           </div>
           <n-select
-            v-if="isEditing"
+            v-else
             v-model:value="classToCreate"
             :options="classOptionsList"
             filterable
@@ -159,7 +161,7 @@ function handleCancel() {
         <n-thing title="Особоая информация">
           <div v-if="!isEditing">{{ student?.attributes.description }}</div>
           <n-input
-            v-if="isEditing"
+            v-else
             v-model:value="descriptionToCreate"
             type="text"
             :placeholder="student?.attributes.description"
