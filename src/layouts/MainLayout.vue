@@ -102,8 +102,8 @@ const menuOptions: MenuOption[] = [
   <div class="container">
     <n-layout>
       <n-layout-header>Header</n-layout-header>
-      <n-layout has-sider>
-        <n-layout-sider content-style="padding: 24px;">
+      <n-layout has-sider position="absolute" style="top: 64px; bottom: 64px">
+        <n-layout-sider bordered content-style="padding: 24px;">
           <n-menu
             v-model:value="activeKey"
             mode="vertical"
@@ -112,11 +112,20 @@ const menuOptions: MenuOption[] = [
             @update:value="updateActiveKey"
           />
         </n-layout-sider>
-        <n-layout-content content-style="padding: 24px;" class="content">
+        <n-layout-content
+          content-style="padding: 24px;"
+          :native-scrollbar="false"
+          class="content"
+        >
           <slot></slot>
         </n-layout-content>
       </n-layout>
-      <n-layout-footer position="absolute">Footer</n-layout-footer>
+      <n-layout-footer
+        bordered
+        position="absolute"
+        style="height: 64px; padding: 24px"
+        >Footer</n-layout-footer
+      >
     </n-layout>
   </div>
 </template>
@@ -139,8 +148,10 @@ const menuOptions: MenuOption[] = [
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  height: 100%;
 }
 .content {
   text-align: left;
+  overflow-y: auto;
 }
 </style>
