@@ -14,11 +14,16 @@ import {
   NSelect,
 } from "naive-ui";
 import { useRoute } from "vue-router";
+import router from "../router/router.ts";
 import { useFetch } from "../composable/useFetch";
 import { useEditEntity } from "../composable/useEditEntity";
 import { useNotificationHandler } from "../composable/useNotification";
 
-onMounted(() => refetch());
+onMounted(() => {
+  refetchClass();
+  refetchStudent();
+});
+
 const { notify, toCreateNotification } = useNotificationHandler();
 
 const route = useRoute();
@@ -32,7 +37,7 @@ const dateToCreate = ref();
 const descriptionToCreate = ref("");
 const classToCreate = ref("");
 
-const { data: classes } = useFetch<Class[]>("classes");
+const { data: classes, refetch: refetchClass } = useFetch<Class[]>("classes");
 
 const classOptionsList = computed(() =>
   classes.value?.map((item) => ({
@@ -41,7 +46,7 @@ const classOptionsList = computed(() =>
   }))
 );
 
-const { data: student, refetch } = useFetch<Student>(
+const { data: student, refetch: refetchStudent } = useFetch<Student>(
   `students/${studentId.value}`
 );
 
@@ -88,8 +93,9 @@ async function handleEditStudent() {
   if (editError.value) {
     notify("error");
   }
-  refetch();
+  refetchStudent();
   isEditing.value = false;
+  router.push(`/students`);
 }
 </script>
 

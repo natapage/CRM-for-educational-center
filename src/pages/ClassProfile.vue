@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { Teacher } from "../types/TeachersTypes";
-import { Class } from "../types/ClassesTypes";
-import { TeachersResponse } from "../types/TeachersTypes";
+import { Class, ClassesResponse } from "../types/ClassesTypes";
 import { ref, computed, onMounted } from "vue";
 import {
   NList,
@@ -11,9 +10,6 @@ import {
   NSpace,
   NInput,
   NSelect,
-  NUpload,
-  UploadInst,
-  UploadFileInfo,
 } from "naive-ui";
 import { useRoute } from "vue-router";
 import router from "../router/router.ts";
@@ -29,51 +25,49 @@ const { notify, toCreateNotification } = useNotificationHandler();
 
 const route = useRoute();
 
-const teacherId = ref<number>(Number(route.params.id));
+const classId = ref<number>(Number(route.params.id));
 
 const isEditing = ref<boolean>(false);
 const nameToCreate = ref("");
-const phoneToCreate = ref("");
-const classToCreate = ref("");
-// const fileListLength = ref(0);
-// const upload = ref<UploadInst | null>(null);
+const descriptionToCreate = ref("");
+const teacherToCreate = ref("");
 
-const { data: classes, refetch: refetchClass } = useFetch<Class[]>("classes");
+const { data: teachers, refetch: refetchTeacher } =
+  useFetch<Teacher[]>("teachers");
 
-const classOptionsList = computed(() => {
-  console.log(classes.value);
-
-  return classes.value?.map((item) => ({
+const teachersOptionsList = computed(() => {
+  return teachers.value?.map((item) => ({
     label: item.attributes.name,
     value: item.id,
   }));
 });
 
-const { data: teacher, refetch: refetchTeacher } = useFetch<Teacher>(
-  `teachers/${teacherId.value}`
+const { data: classItem, refetch: refetchClass } = useFetch<Class>(
+  `classes/${classId.value}`
 );
 
-const { error: editError, editItem } = useEditEntity<Teacher>(
-  `teachers/${teacherId.value}`
+const { error: editError, editItem } = useEditEntity<Class>(
+  `classes/${classId.value}`
 );
 
-async function handleEditTeacher() {
+async function handleEditClass() {
   const body: any = {
-    name: nameToCreate.value || teacher.value?.attributes.name,
-    phone: phoneToCreate.value || teacher.value?.attributes.phone,
+    name: nameToCreate.value || classItem.value?.attributes.name,
+    description:
+      descriptionToCreate.value || classItem.value?.attributes.description,
   };
-  if (classToCreate.value) {
-    body.class = {
-      connect: [classToCreate.value],
+  if (teacherToCreate.value) {
+    body.teacher = {
+      connect: [teacherToCreate.value],
     };
   }
   // TODO: изменить тип unknown
-  await editItem<TeachersResponse, unknown>(body);
+  await editItem<ClassesResponse, unknown>(body);
   if (!editError.value) {
     toCreateNotification.create({
       type: "success",
       content: "Успешно отредактировано",
-      meta: "Данные педагога изменены",
+      meta: "Данные группы изменены",
       duration: 2500,
       keepAliveOnHover: true,
     });
@@ -81,66 +75,58 @@ async function handleEditTeacher() {
   if (editError.value) {
     notify("error");
   }
-  refetchTeacher();
+  refetchClass();
   isEditing.value = false;
-  router.push(`/teachers`);
+  router.push(`/classes`);
 }
-
-// function handleClick() {
-//   upload.value?.submit();
-// }
-
-// function handleChange(data: { fileList: UploadFileInfo[] }) {
-//   fileListLength.value = data.fileList.length;
-// }
 </script>
 
 <template>
   <div class="container">
     <n-space horizontal justify="space-between" align="center">
-      <h2>Данные о педагоге</h2>
+      <h2>Данные об учебной группе</h2>
       <n-button type="primary" @click="isEditing = true" v-if="!isEditing">
         Редактировать данные</n-button
       >
       <n-space horizontal v-else>
         <n-button @click="isEditing = false"> Отменить изменения</n-button>
-        <n-button type="primary" @click="handleEditTeacher">
+        <n-button type="primary" @click="handleEditClass">
           Сохранить изменения</n-button
         >
       </n-space>
     </n-space>
     <n-list>
       <n-list-item>
-        <n-thing title="Имя педагога">
-          <div v-if="!isEditing">{{ teacher?.attributes.name }}</div>
+        <n-thing title="Название учебной группы">
+          <div v-if="!isEditing">{{ classItem?.attributes.name }}</div>
           <n-input
             v-else
             v-model:value="nameToCreate"
             type="text"
-            :placeholder="teacher?.attributes.name"
+            :placeholder="classItem?.attributes.name"
           />
         </n-thing>
       </n-list-item>
       <n-list-item>
-        <n-thing title="Номер телефона">
-          <div v-if="!isEditing">{{ teacher?.attributes.phone }}</div>
+        <n-thing title="Описание и рабочие задачи">
+          <div v-if="!isEditing">{{ classItem?.attributes.description }}</div>
           <n-input
             v-else
-            v-model:value="phoneToCreate"
+            v-model:value="descriptionToCreate"
             type="text"
-            :placeholder="teacher?.attributes.phone"
+            :placeholder="classItem?.attributes.description"
           />
         </n-thing>
       </n-list-item>
       <n-list-item>
-        <n-thing title="Группа">
+        <n-thing title="Педагог">
           <div v-if="!isEditing">
-            {{ teacher?.attributes?.classes?.data[0]?.attributes?.name }}
+            {{ classItem?.attributes?.teacher?.data.attributes?.name }}
           </div>
           <n-select
             v-else
-            v-model:value="classToCreate"
-            :options="classOptionsList"
+            v-model:value="teacherToCreate"
+            :options="teachersOptionsList"
             filterable
             tag
           />

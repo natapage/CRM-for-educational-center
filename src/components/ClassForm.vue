@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, computed } from "vue";
+import { ref, watch, computed, onMounted } from "vue";
 
 import { NButton, FormInst, NForm, NFormItem, NInput, NSelect } from "naive-ui";
 
@@ -14,10 +14,13 @@ const emit = defineEmits<{
   (e: "closeModal"): void;
 }>();
 
+onMounted(() => refetchTeachers());
+
 const { error: createError, createItem } = useCreateEntity();
 const { notify } = useNotificationHandler();
 // const teacherId = ref<string | number>("");
-const { data: teachers } = useFetch<Teacher[]>("teachers");
+const { data: teachers, refetch: refetchTeachers } =
+  useFetch<Teacher[]>("teachers");
 const formRef = ref<FormInst | null>(null);
 
 const teacherOptionsList = computed(() =>

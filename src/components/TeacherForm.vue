@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { watch, ref, computed } from "vue";
+import { watch, ref, computed, onMounted } from "vue";
 
 import {
   NButton,
@@ -20,7 +20,8 @@ import { useCreateEntity } from "../composable/useCreateEntity";
 import { useNotificationHandler } from "../composable/useNotification";
 
 const { error: createError, createItem } = useCreateEntity();
-const { data: classes } = useFetch<Class[]>("classes");
+const { data: classes, refetch: useFetchClasses } =
+  useFetch<Class[]>("classes");
 
 const { notify } = useNotificationHandler();
 const formRef = ref<FormInst | null>(null);
@@ -28,6 +29,8 @@ const formRef = ref<FormInst | null>(null);
 const emit = defineEmits<{
   (e: "close-modal"): void;
 }>();
+
+onMounted(() => useFetchClasses());
 
 watch(createError, () => notify("error"));
 
@@ -53,7 +56,7 @@ const rules = {
     },
   },
   teacherClass: {
-    required: true,
+    // required: true,
     message: "Пожалуйста, выберете группу",
   },
 };
@@ -70,13 +73,15 @@ function handleCreateTeacher(e: MouseEvent) {
   formRef.value?.validate(async (errors) => {
     if (!errors) {
       console.log(model.value.teacherClass);
-      const body = {
+      const body: any = {
         name: model.value.teacherName,
         phone: model.value.teacherPhone,
-        classes: {
-          connect: [model.value.teacherClass],
-        },
       };
+      if (model.value.teacherClass) {
+        body.classes = {
+          connect: [model.value.teacherClass],
+        };
+      }
       // TODO: изменить тип unknown
       await createItem<TeachersResponse, unknown>(body, "teachers");
 

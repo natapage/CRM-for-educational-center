@@ -2,6 +2,7 @@
 import ClassForm from "../components/ClassForm.vue";
 import { Class } from "../types/ClassesTypes.ts";
 import { watch, onMounted } from "vue";
+import router from "../router/router.ts";
 import { NTable, NButton, NSpace, NModal, NSpin } from "naive-ui";
 import { useFetch } from "../composable/useFetch";
 import { useNotificationHandler } from "../composable/useNotification";
@@ -40,6 +41,10 @@ async function handleCreateClass() {
 }
 
 watch([fetchError, deleteError], () => notify("error"));
+
+function goToProfile(groupId: number | string) {
+  router.push(`/classes/${groupId}`);
+}
 </script>
 
 <template>
@@ -64,10 +69,12 @@ watch([fetchError, deleteError], () => notify("error"));
             <td>{{}}</td>
             <td>{{ group.attributes.description }}</td>
             <td>
-              <n-button @click="handleConfirmation(group.id)">Удалить</n-button>
+              <n-button @click="goToProfile(group.id)"
+                >Редактировать группу</n-button
+              >
             </td>
             <td>
-              <n-button>Изменить</n-button>
+              <n-button @click="handleConfirmation(group.id)">Удалить</n-button>
             </td>
           </tr>
         </tbody>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { watch } from "vue";
 
 import {
@@ -21,7 +21,7 @@ import { useFetch } from "../composable/useFetch";
 import { useNotificationHandler } from "../composable/useNotification";
 
 const { error: createError, createItem } = useCreateEntity();
-const { data: classes } = useFetch<Class[]>("classes");
+const { data: classes, refetch: refetchClasses } = useFetch<Class[]>("classes");
 const { notify } = useNotificationHandler();
 const formRef = ref<FormInst | null>(null);
 
@@ -59,6 +59,8 @@ const rules = {
 };
 
 watch(createError, () => notify("error"));
+
+onMounted(() => refetchClasses());
 
 const emit = defineEmits<{
   (e: "close-modal"): void;
