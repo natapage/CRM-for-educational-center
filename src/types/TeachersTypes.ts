@@ -14,6 +14,7 @@ export interface TeachersResponse extends EntitiesResponse {
 }
 
 export interface TeachersTask {
+  id: number;
   attributes: {
     date: string;
     description: string;

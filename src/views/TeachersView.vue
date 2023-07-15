@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import TeacherForm from "../components/TeacherForm.vue";
 import { Teacher } from "../types/TeachersTypes.ts";
+import { Task } from "../types/TasksTypes";
+import { BASE } from "../constants.ts/constаnts.ts";
 import router from "../router/router.ts";
 import { watch, onMounted } from "vue";
 import {
@@ -13,7 +15,7 @@ import {
   NSpace,
   NCheckbox,
 } from "naive-ui";
-
+import { deleteEntity } from "../API/requestsApi";
 import { useFetch } from "../composable/useFetch";
 import { useDeleteEntity } from "../composable/useDeleteEntity";
 import { useCreateEntity } from "../composable/useCreateEntity";
@@ -31,14 +33,14 @@ const {
 } = useFetch<Teacher[]>("teachers");
 
 const {
-  error: deleteError,
+  error: deleteTeacherError,
   handleConfirmation,
-  deleteItem,
+  deleteItem: deleteTeacher,
   isShowModalConfirm,
 } = useDeleteEntity<Teacher>("teachers");
 
 async function handleDeleteTeacher() {
-  await deleteItem();
+  await deleteTeacher();
   await refetch();
 }
 
@@ -49,7 +51,13 @@ async function handleCreateTeacher() {
   await refetch();
 }
 
-watch([fetchError, deleteError], () => notify("error"));
+watch([fetchError, deleteTeacherError], () => notify("error"));
+
+async function updateTaskList(taskId: number) {
+  const url = `${BASE}/api/tasks/${taskId}`;
+  await deleteEntity<Task>(url);
+  setTimeout(refetch, 1000);
+}
 
 function goToProfile(teacherID: number | string) {
   router.push(`/teachers/${teacherID}`);
@@ -72,7 +80,12 @@ function goToProfile(teacherID: number | string) {
           </tr>
         </thead>
         <tbody>
-          <tr v-for="teacher in teachers" :key="teacher.id">
+          <tr
+            v-for="teacher in teachers"
+            :key="teacher.id"
+            class="row"
+            @click="goToProfile(teacher.id)"
+          >
             <td>{{ teacher.attributes.name }}</td>
             <td>{{ teacher.attributes.phone }}</td>
             <td>
@@ -82,13 +95,17 @@ function goToProfile(teacherID: number | string) {
               <div v-if="teacher.attributes.tasks.data.length === 0">
                 нет задач
               </div>
-              <n-collapse v-if="teacher.attributes.tasks.data.length !== 0">
+              <n-collapse
+                @click.stop
+                v-if="teacher.attributes.tasks.data.length !== 0"
+              >
                 <n-collapse-item title="Задачи" name="1">
                   <n-space item-style="display: flex;">
                     <n-checkbox
                       v-for="task in teacher.attributes.tasks.data"
                       :key="teacher.id"
                       :value="task.attributes.description"
+                      @update:checked="updateTaskList(task.id)"
                     >
                       {{ task.attributes.description }}
                     </n-checkbox>
@@ -98,12 +115,15 @@ function goToProfile(teacherID: number | string) {
             </td>
             <td>фото</td>
             <td>
-              <n-button @click="goToProfile(teacher.id)"
+              <n-button type="primary" ghost @click="goToProfile(teacher.id)"
                 >Перейти в профиль</n-button
               >
             </td>
             <td>
-              <n-button @click="handleConfirmation(teacher.id)"
+              <n-button
+                type="error"
+                ghost
+                @click.stop="handleConfirmation(teacher.id)"
                 >Удалить</n-button
               >
             </td>
@@ -144,5 +164,9 @@ function goToProfile(teacherID: number | string) {
 <style scoped>
 .spinner-container {
   margin-top: 20px;
+}
+.row:hover > td {
+  cursor: pointer;
+  background-color: rgba(24, 160, 88, 0.1);
 }
 </style>

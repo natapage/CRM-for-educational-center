@@ -63,18 +63,25 @@ function goToProfile(groupId: number | string) {
           </tr>
         </thead>
         <tbody>
-          <tr v-for="group in classes" :key="group.id">
+          <tr
+            v-for="group in classes"
+            :key="group.id"
+            class="row"
+            @click="goToProfile(group.id)"
+          >
             <td>{{ group.attributes.name }}</td>
             <td>{{ group.attributes.teacher?.data?.attributes?.name }}</td>
             <td>{{}}</td>
             <td>{{ group.attributes.description }}</td>
             <td>
-              <n-button @click="goToProfile(group.id)"
+              <n-button type="primary" ghost @click="goToProfile(group.id)"
                 >Редактировать группу</n-button
               >
             </td>
             <td>
-              <n-button @click="handleConfirmation(group.id)">Удалить</n-button>
+              <n-button type="error" ghost @click="handleConfirmation(group.id)"
+                >Удалить</n-button
+              >
             </td>
           </tr>
         </tbody>
@@ -110,5 +117,9 @@ function goToProfile(groupId: number | string) {
 <style scoped>
 .spinner-container {
   margin-top: 20px;
+}
+.row:hover > td {
+  cursor: pointer;
+  background-color: rgba(24, 160, 88, 0.1);
 }
 </style>

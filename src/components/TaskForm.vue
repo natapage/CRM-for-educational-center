@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch } from "vue";
+import { ref, computed, watch, onMounted } from "vue";
 
 import {
   NButton,
@@ -13,7 +13,7 @@ import {
 
 import { Teacher } from "../types/TeachersTypes";
 import { TasksResponse } from "../types/TasksTypes";
-
+import router from "../router/router.";
 import { useCreateEntity } from "../composable/useCreateEntity";
 import { useNotificationHandler } from "../composable/useNotification";
 import { useFetch } from "../composable/useFetch";
@@ -24,8 +24,11 @@ const emit = defineEmits<{
 
 const { error: createError, createItem } = useCreateEntity();
 const { notify } = useNotificationHandler();
-const { data: teachers } = useFetch<Teacher[]>("teachers");
+const { data: teachers, refetch: refetchTeachers } =
+  useFetch<Teacher[]>("teachers");
 const formRef = ref<FormInst | null>(null);
+
+onMounted(() => refetchTeachers());
 
 const tasksOptionsList = computed(() =>
   teachers.value?.map((item) => ({

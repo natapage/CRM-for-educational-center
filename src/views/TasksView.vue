@@ -17,18 +17,21 @@ import { useNotificationHandler } from "../composable/useNotification";
 import { useDeleteEntity } from "../composable/useDeleteEntity";
 import { useCreateEntity } from "../composable/useCreateEntity";
 
-onMounted(() => refetch());
-
 const { notify } = useNotificationHandler();
 
 const {
   data: tasks,
   error: fetchError,
   showSpinner,
-  refetch,
+  refetch: refetchTasks,
 } = useFetch<Task[]>("tasks");
 
-const { data: teachers } = useFetch<Teacher[]>("teachers");
+const { data: teachers, refetch: refetchTeachers } =
+  useFetch<Teacher[]>("teachers");
+
+onMounted(() => {
+  refetchTeachers(), refetchTasks();
+});
 
 const {
   error: deleteError,
@@ -39,14 +42,14 @@ const {
 
 async function handleDeleteTask() {
   await deleteItem();
-  await refetch();
+  await refetchTasks();
 }
 
 const { isShowModalCreate } = useCreateEntity();
 
-async function handleCreateClass() {
+async function handleCreateTask() {
   isShowModalCreate.value = false;
-  await refetch();
+  await refetchTasks();
 }
 
 watch([fetchError, deleteError], () => notify("error"));
@@ -99,17 +102,19 @@ const filteredTasks = computed(() => {
         <n-gradient-text v-if="filteredTasks?.length === 0" type="warning">
           У педагога нет текущих задач
         </n-gradient-text>
-        <tr v-for="task in filteredTasks" :key="task.id">
+        <tr v-for="task in filteredTasks" :key="task.id" class="row">
           <td>{{ task.attributes.teacher?.data?.attributes?.name }}</td>
           <td>{{ task.attributes.description }}</td>
           <td>
             {{ new Date(task.attributes.date).toLocaleDateString() }}
           </td>
           <td>
-            <n-button @click="handleConfirmation(task.id)">Удалить</n-button>
+            <n-button type="primary" ghost>Изменить</n-button>
           </td>
           <td>
-            <n-button>Изменить</n-button>
+            <n-button type="error" ghost @click="handleConfirmation(task.id)"
+              >Удалить</n-button
+            >
           </td>
         </tr>
       </tbody>
@@ -125,7 +130,7 @@ const filteredTasks = computed(() => {
     >
       Добавить задачу
     </n-button>
-    <n-modal v-model:show="isShowModalCreate" @closeModal="handleCreateClass">
+    <n-modal v-model:show="isShowModalCreate" @closeModal="handleCreateTask">
       <task-form></task-form>
     </n-modal>
     <n-modal
@@ -148,5 +153,9 @@ const filteredTasks = computed(() => {
 .select-container {
   width: 400px; /* Задайте желаемую ширину для контейнера выпадающего списка */
   margin-bottom: 10px; /* Опционально: задайте отступ снизу, если требуется */
+}
+.row:hover > td {
+  cursor: pointer;
+  background-color: rgba(24, 160, 88, 0.1);
 }
 </style>

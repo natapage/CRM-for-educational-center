@@ -62,19 +62,29 @@ function goToProfile(studentId: number | string) {
         </tr>
       </thead>
       <tbody>
-        <tr v-for="student in students" :key="student.id">
+        <tr
+          v-for="student in students"
+          :key="student.id"
+          class="row"
+          @click="goToProfile(student.id)"
+        >
           <td>{{ student.attributes.name }}</td>
           <td>{{ new Date(student.attributes.date).toLocaleDateString() }}</td>
           <td>{{ student.attributes.phone }}</td>
           <td>{{ student.attributes.class.data.attributes.name }}</td>
           <td>{{ student.attributes.description }}</td>
           <td>
-            <n-button @click="goToProfile(student.id)"
+            <n-button type="primary" ghost @click="goToProfile(student.id)"
               >Перейти в профиль</n-button
             >
           </td>
           <td>
-            <n-button @click="handleConfirmation(student.id)">Удалить</n-button>
+            <n-button
+              type="error"
+              ghost
+              @click.stop="handleConfirmation(student.id)"
+              >Удалить</n-button
+            >
           </td>
         </tr>
       </tbody>
@@ -108,5 +118,9 @@ function goToProfile(studentId: number | string) {
 <style scoped>
 .spinner-container {
   margin-top: 20px;
+}
+.row:hover > td {
+  cursor: pointer;
+  background-color: rgba(24, 160, 88, 0.1);
 }
 </style>
