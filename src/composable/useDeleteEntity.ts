@@ -13,7 +13,7 @@ export function useDeleteEntity<T>(entity: string) {
   }
 
   async function deleteItem() {
-    const idToDelete = classIdToDelete.value as number;
+    const idToDelete = classIdToDelete.value;
     const url = `${BASE}/api/${entity}/${idToDelete}`;
     try {
       await deleteEntity<T>(url);

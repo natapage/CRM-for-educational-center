@@ -8,6 +8,7 @@ import TeachersView from "../views/TeachersView.vue";
 import StudentProfile from "../pages/StudentProfile.vue";
 import TeacherProfile from "../pages/TeacherProfile.vue";
 import ClassProfile from "../pages/ClassProfile.vue";
+import TaskProfile from "../pages/TaskProfile.vue";
 
 import { createRouter, createWebHistory } from "vue-router";
 
@@ -43,6 +44,10 @@ const routes = [
   {
     path: "/tasks",
     component: TasksView,
+  },
+  {
+    path: "/tasks/:id",
+    component: TaskProfile,
   },
   {
     path: "/teachers",

@@ -2,7 +2,7 @@
 import { Teacher } from "../types/TeachersTypes";
 import { Class } from "../types/ClassesTypes";
 import { TeachersResponse } from "../types/TeachersTypes";
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
 import {
   NList,
   NThing,
@@ -11,9 +11,6 @@ import {
   NSpace,
   NInput,
   NSelect,
-  NUpload,
-  UploadInst,
-  UploadFileInfo,
 } from "naive-ui";
 import { useRoute } from "vue-router";
 import router from "../router/router.ts";
@@ -22,9 +19,10 @@ import { useEditEntity } from "../composable/useEditEntity";
 import { useNotificationHandler } from "../composable/useNotification";
 
 onMounted(() => {
-  refetchClass();
+  refetchClasses();
   refetchTeacher();
 });
+
 const { notify, toCreateNotification } = useNotificationHandler();
 
 const route = useRoute();
@@ -35,10 +33,8 @@ const isEditing = ref<boolean>(false);
 const nameToCreate = ref("");
 const phoneToCreate = ref("");
 const classToCreate = ref("");
-// const fileListLength = ref(0);
-// const upload = ref<UploadInst | null>(null);
 
-const { data: classes, refetch: refetchClass } = useFetch<Class[]>("classes");
+const { data: classes, refetch: refetchClasses, error: refetchClassesError } = useFetch<Class[]>("classes");
 
 const classOptionsList = computed(() => {
   console.log(classes.value);
@@ -49,7 +45,7 @@ const classOptionsList = computed(() => {
   }));
 });
 
-const { data: teacher, refetch: refetchTeacher } = useFetch<Teacher>(
+const { data: teacher, refetch: refetchTeacher, error: refetchTeacherError } = useFetch<Teacher>(
   `teachers/${teacherId.value}`
 );
 
@@ -86,13 +82,7 @@ async function handleEditTeacher() {
   router.push(`/teachers`);
 }
 
-// function handleClick() {
-//   upload.value?.submit();
-// }
-
-// function handleChange(data: { fileList: UploadFileInfo[] }) {
-//   fileListLength.value = data.fileList.length;
-// }
+watch([refetchClassesError, refetchTeacherError], () => notify("error"));
 </script>
 
 <template>

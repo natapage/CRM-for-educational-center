@@ -13,13 +13,12 @@ import {
 
 import { Teacher } from "../types/TeachersTypes";
 import { TasksResponse } from "../types/TasksTypes";
-import router from "../router/router.";
 import { useCreateEntity } from "../composable/useCreateEntity";
 import { useNotificationHandler } from "../composable/useNotification";
 import { useFetch } from "../composable/useFetch";
 
 const emit = defineEmits<{
-  (e: "closeModal"): void;
+  (e: "close-modal"): void;
 }>();
 
 const { error: createError, createItem } = useCreateEntity();
@@ -77,7 +76,7 @@ function handleCreateTask(e: MouseEvent) {
       if (!createError.value) {
         notify("success");
       }
-      emit("closeModal");
+      emit("close-modal");
     }
   });
 }

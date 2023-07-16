@@ -2,7 +2,7 @@
 import TaskForm from "../components/TaskForm.vue";
 import { Task } from "../types/TasksTypes.ts";
 import { Teacher } from "../types/TeachersTypes.ts";
-
+import router from "../router/router";
 import { watch, ref, computed, onMounted } from "vue";
 import {
   NTable,
@@ -72,6 +72,10 @@ const filteredTasks = computed(() => {
   }
   return tasks.value;
 });
+
+function goToProfile(taskId: number | string) {
+  router.push(`/tasks/${taskId}`);
+}
 </script>
 
 <template>
@@ -109,7 +113,9 @@ const filteredTasks = computed(() => {
             {{ new Date(task.attributes.date).toLocaleDateString() }}
           </td>
           <td>
-            <n-button type="primary" ghost>Изменить</n-button>
+            <n-button @click.stop="goToProfile(task.id)" type="primary" ghost
+              >Редактировать задачу</n-button
+            >
           </td>
           <td>
             <n-button type="error" ghost @click="handleConfirmation(task.id)"
@@ -130,7 +136,7 @@ const filteredTasks = computed(() => {
     >
       Добавить задачу
     </n-button>
-    <n-modal v-model:show="isShowModalCreate" @closeModal="handleCreateTask">
+    <n-modal v-model:show="isShowModalCreate" @close-modal="handleCreateTask">
       <task-form></task-form>
     </n-modal>
     <n-modal

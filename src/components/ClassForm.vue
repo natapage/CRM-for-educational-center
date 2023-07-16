@@ -11,7 +11,7 @@ import { useNotificationHandler } from "../composable/useNotification";
 import { useFetch } from "../composable/useFetch";
 
 const emit = defineEmits<{
-  (e: "closeModal"): void;
+  (e: "close-modal"): void;
 }>();
 
 onMounted(() => refetchTeachers());
@@ -72,7 +72,7 @@ function handleCreateClass(e: MouseEvent) {
       if (!createError.value) {
         notify("success");
       }
-      emit("closeModal");
+      emit("close-modal");
     }
   });
 }

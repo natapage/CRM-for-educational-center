@@ -2,7 +2,7 @@
 import { Student } from "../types/StudentsTypes";
 import { Class } from "../types/ClassesTypes";
 import { StudentsResponse } from "../types/StudentsTypes";
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
 import {
   NList,
   NThing,
@@ -20,7 +20,7 @@ import { useEditEntity } from "../composable/useEditEntity";
 import { useNotificationHandler } from "../composable/useNotification";
 
 onMounted(() => {
-  refetchClass();
+  refetchClasses();
   refetchStudent();
 });
 
@@ -37,7 +37,11 @@ const dateToCreate = ref();
 const descriptionToCreate = ref("");
 const classToCreate = ref("");
 
-const { data: classes, refetch: refetchClass } = useFetch<Class[]>("classes");
+const {
+  data: classes,
+  refetch: refetchClasses,
+  error: refetchClassesError,
+} = useFetch<Class[]>("classes");
 
 const classOptionsList = computed(() =>
   classes.value?.map((item) => ({
@@ -46,9 +50,11 @@ const classOptionsList = computed(() =>
   }))
 );
 
-const { data: student, refetch: refetchStudent } = useFetch<Student>(
-  `students/${studentId.value}`
-);
+const {
+  data: student,
+  refetch: refetchStudent,
+  error: refetchStudentError,
+} = useFetch<Student>(`students/${studentId.value}`);
 
 function formatBirthDate(date: string | undefined) {
   if (!date) return "";
@@ -63,7 +69,6 @@ function formatBirthDate(date: string | undefined) {
 const {
   error: editError,
   editItem,
-  // data: updatedStudent,
 } = useEditEntity<Student>(`students/${studentId.value}`);
 
 async function handleEditStudent() {
@@ -97,6 +102,8 @@ async function handleEditStudent() {
   isEditing.value = false;
   router.push(`/students`);
 }
+
+watch([refetchClassesError, refetchStudentError], () => notify("error"));
 </script>
 
 <template>

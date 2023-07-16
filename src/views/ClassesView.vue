@@ -98,7 +98,7 @@ function goToProfile(groupId: number | string) {
         Добавить группу
       </n-button>
     </n-space>
-    <n-modal v-model:show="isShowModalCreate" @closeModal="handleCreateClass">
+    <n-modal v-model:show="isShowModalCreate" @close-modal="handleCreateClass">
       <class-form></class-form>
     </n-modal>
     <n-modal

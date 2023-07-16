@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Teacher } from "../types/TeachersTypes";
 import { Class, ClassesResponse } from "../types/ClassesTypes";
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
 import {
   NList,
   NThing,
@@ -21,6 +21,7 @@ onMounted(() => {
   refetchClass();
   refetchTeacher();
 });
+
 const { notify, toCreateNotification } = useNotificationHandler();
 
 const route = useRoute();
@@ -32,8 +33,11 @@ const nameToCreate = ref("");
 const descriptionToCreate = ref("");
 const teacherToCreate = ref("");
 
-const { data: teachers, refetch: refetchTeacher } =
-  useFetch<Teacher[]>("teachers");
+const {
+  data: teachers,
+  refetch: refetchTeacher,
+  error: refetchTeacherError,
+} = useFetch<Teacher[]>("teachers");
 
 const teachersOptionsList = computed(() => {
   return teachers.value?.map((item) => ({
@@ -42,11 +46,13 @@ const teachersOptionsList = computed(() => {
   }));
 });
 
-const { data: classItem, refetch: refetchClass } = useFetch<Class>(
-  `classes/${classId.value}`
-);
+const {
+  data: classItem,
+  refetch: refetchClass,
+  error: refetchClassError,
+} = useFetch<Class>(`classes/${classId.value}`);
 
-const { error: editError, editItem } = useEditEntity<Class>(
+const { error: editClassError, editItem } = useEditEntity<Class>(
   `classes/${classId.value}`
 );
 
@@ -63,7 +69,7 @@ async function handleEditClass() {
   }
   // TODO: изменить тип unknown
   await editItem<ClassesResponse, unknown>(body);
-  if (!editError.value) {
+  if (!editClassError.value) {
     toCreateNotification.create({
       type: "success",
       content: "Успешно отредактировано",
@@ -72,13 +78,15 @@ async function handleEditClass() {
       keepAliveOnHover: true,
     });
   }
-  if (editError.value) {
+  if (editClassError.value) {
     notify("error");
   }
   refetchClass();
   isEditing.value = false;
   router.push(`/classes`);
 }
+
+watch([refetchTeacherError, refetchClassError], () => notify("error"));
 </script>
 
 <template>
@@ -132,30 +140,6 @@ async function handleEditClass() {
           />
         </n-thing>
       </n-list-item>
-      <!-- <n-list-item>
-        <n-button
-          :disabled="!fileListLength"
-          style="margin-bottom: 12px"
-          @click="handleClick"
-        >
-          Upload File
-        </n-button>
-        <n-upload
-          ref="upload"
-          action="http://localhost:1337/api/upload"
-          :default-upload="false"
-          multiple
-          @change="handleChange"
-        >
-          <n-button>Select File</n-button>
-        </n-upload> -->
-      <!-- <n-upload
-          action="http://localhost:1337/api/upload"
-          :headers="{ 'Content-Type': 'multipart/form-data' }"
-        >
-          <n-button>Загрузить фото педагога</n-button>
-        </n-upload> -->
-      <!-- </n-list-item> -->
     </n-list>
   </div>
 </template>
