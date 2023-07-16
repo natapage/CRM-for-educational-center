@@ -52,9 +52,17 @@ const {
   error: refetchClassError,
 } = useFetch<Class>(`classes/${classId.value}`);
 
-const { error: editClassError, editItem } = useEditEntity<Class>(
-  `classes/${classId.value}`
-);
+const { error: editClassError, editItem } = useEditEntity<
+  ClassesResponse,
+  Class
+>(`classes/${classId.value}`);
+
+function setEditMode() {
+  isEditing.value = true;
+  nameToCreate.value = "";
+  descriptionToCreate.value = "";
+  teacherToCreate.value = "";
+}
 
 async function handleEditClass() {
   const body: any = {
@@ -67,8 +75,8 @@ async function handleEditClass() {
       connect: [teacherToCreate.value],
     };
   }
-  // TODO: изменить тип unknown
-  await editItem<ClassesResponse, unknown>(body);
+
+  await editItem(body);
   if (!editClassError.value) {
     toCreateNotification.create({
       type: "success",
@@ -93,7 +101,7 @@ watch([refetchTeacherError, refetchClassError], () => notify("error"));
   <div class="container">
     <n-space horizontal justify="space-between" align="center">
       <h2>Данные об учебной группе</h2>
-      <n-button type="primary" @click="isEditing = true" v-if="!isEditing">
+      <n-button type="primary" @click="setEditMode" v-if="!isEditing">
         Редактировать данные</n-button
       >
       <n-space horizontal v-else>
@@ -107,23 +115,13 @@ watch([refetchTeacherError, refetchClassError], () => notify("error"));
       <n-list-item>
         <n-thing title="Название учебной группы">
           <div v-if="!isEditing">{{ classItem?.attributes.name }}</div>
-          <n-input
-            v-else
-            v-model:value="nameToCreate"
-            type="text"
-            :placeholder="classItem?.attributes.name"
-          />
+          <n-input v-else v-model:value="nameToCreate" type="text" />
         </n-thing>
       </n-list-item>
       <n-list-item>
         <n-thing title="Описание и рабочие задачи">
           <div v-if="!isEditing">{{ classItem?.attributes.description }}</div>
-          <n-input
-            v-else
-            v-model:value="descriptionToCreate"
-            type="text"
-            :placeholder="classItem?.attributes.description"
-          />
+          <n-input v-else v-model:value="descriptionToCreate" type="text" />
         </n-thing>
       </n-list-item>
       <n-list-item>

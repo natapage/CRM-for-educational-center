@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { Teacher } from "../types/TeachersTypes";
+import { Teacher, TeachersResponse } from "../types/TeachersTypes";
 import { Class } from "../types/ClassesTypes";
-import { TeachersResponse } from "../types/TeachersTypes";
 import { ref, computed, onMounted, watch } from "vue";
 import {
   NList,
@@ -34,7 +33,11 @@ const nameToCreate = ref("");
 const phoneToCreate = ref("");
 const classToCreate = ref("");
 
-const { data: classes, refetch: refetchClasses, error: refetchClassesError } = useFetch<Class[]>("classes");
+const {
+  data: classes,
+  refetch: refetchClasses,
+  error: refetchClassesError,
+} = useFetch<Class[]>("classes");
 
 const classOptionsList = computed(() => {
   console.log(classes.value);
@@ -45,11 +48,13 @@ const classOptionsList = computed(() => {
   }));
 });
 
-const { data: teacher, refetch: refetchTeacher, error: refetchTeacherError } = useFetch<Teacher>(
-  `teachers/${teacherId.value}`
-);
+const {
+  data: teacher,
+  refetch: refetchTeacher,
+  error: refetchTeacherError,
+} = useFetch<Teacher>(`teachers/${teacherId.value}`);
 
-const { error: editError, editItem } = useEditEntity<Teacher>(
+const { error: editError, editItem } = useEditEntity<TeachersResponse, Teacher>(
   `teachers/${teacherId.value}`
 );
 
@@ -64,7 +69,7 @@ async function handleEditTeacher() {
     };
   }
   // TODO: изменить тип unknown
-  await editItem<TeachersResponse, unknown>(body);
+  await editItem(body);
   if (!editError.value) {
     toCreateNotification.create({
       type: "success",

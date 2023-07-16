@@ -1,27 +1,22 @@
 import { SharedAttributes, EntitiesResponse, Entity } from "./GeneralTypes";
-// import { Teacher } from "./TeachersTypes";
+import { Teacher } from "./TeachersTypes";
 
 export interface ClassesAttributes {
   name: "string";
   description: "string";
+  teacher?: {
+    data: Teacher;
+  };
 }
 
 export interface Class extends Entity {
-  attributes: SharedAttributes & ClassTeacherAtributes;
+  attributes: SharedAttributes & ClassesAttributes;
 }
 
 export interface ClassesResponse extends EntitiesResponse {
-  data: Class[];
-}
-
-export interface ClassTeacher {
   attributes: {
-    name: string | null;
+    data: Class[];
   };
 }
 
-export interface ClassTeacherAtributes extends ClassesAttributes {
-  teacher: {
-    data: ClassTeacher;
-  };
-}
+

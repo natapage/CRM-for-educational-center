@@ -2,14 +2,14 @@ import { ref, Ref } from "vue";
 import { editEntity } from "../API/requestsApi";
 import { BASE } from "../constants.ts/constаnts.ts";
 
-export function useEditEntity<T>(entity: string) {
+export function useEditEntity<R, T>(entity: string) {
   const error: Ref<string | null> = ref(null);
-  const data: Ref<T | null> = ref(null);
+  const data: Ref<R | null> = ref(null);
 
-  async function editItem<M extends T, N>(body: N) {
+  async function editItem(body: T) {
     const url = `${BASE}/api/${entity}`;
     try {
-      const response = await editEntity<M, N>(body, url);
+      const response = await editEntity<R, T>(body, url);
       data.value = response;
       error.value = null;
     } catch (err) {

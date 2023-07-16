@@ -2,14 +2,14 @@ import { ref, Ref } from "vue";
 import { createEntity } from "../API/requestsApi";
 import { BASE } from "../constants.ts/constаnts.ts";
 
-export function useCreateEntity() {
+export function useCreateEntity<T>() {
   const isShowModalCreate = ref<boolean>(false);
   const error: Ref<string | null> = ref(null);
 
-  async function createItem<T, N>(body: N, entity: string) {
+  async function createItem(body: T, entity: string) {
     const url = `${BASE}/api/${entity}`;
     try {
-      await createEntity<T, N>(body, url);
+      await createEntity<unknown, T>(body, url);
       error.value = null;
     } catch (err) {
       error.value = err instanceof Error ? err.message : "Unknown error";

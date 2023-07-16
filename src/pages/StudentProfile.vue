@@ -69,7 +69,7 @@ function formatBirthDate(date: string | undefined) {
 const {
   error: editError,
   editItem,
-} = useEditEntity<Student>(`students/${studentId.value}`);
+} = useEditEntity<StudentsResponse, Student>(`students/${studentId.value}`);
 
 async function handleEditStudent() {
   const body: any = {
@@ -85,7 +85,7 @@ async function handleEditStudent() {
     };
   }
   // TODO: изменить тип unknown
-  await editItem<StudentsResponse, unknown>(body);
+  await editItem(body);
   if (!editError.value) {
     toCreateNotification.create({
       type: "success",
@@ -159,7 +159,7 @@ watch([refetchClassesError, refetchStudentError], () => notify("error"));
       <n-list-item>
         <n-thing title="Группа">
           <div v-if="!isEditing">
-            {{ student?.attributes.class.data.attributes.name }}
+            {{ student?.attributes.class?.data.attributes.name }}
           </div>
           <n-select
             v-else

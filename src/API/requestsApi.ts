@@ -1,4 +1,4 @@
-export const getEntity = async <T>(url: string): Promise<T> => {
+export const getEntity = async <R>(url: string): Promise<R> => {
   try {
     const response = await fetch(url);
     if (!response.ok) {
@@ -10,7 +10,7 @@ export const getEntity = async <T>(url: string): Promise<T> => {
   }
 };
 
-export const deleteEntity = async <T>(url: string): Promise<T[]> => {
+export const deleteEntity = async <R>(url: string): Promise<R> => {
   try {
     const response = await fetch(url, {
       method: "DELETE",
@@ -26,7 +26,7 @@ export const deleteEntity = async <T>(url: string): Promise<T[]> => {
   }
 };
 
-export const createEntity = async <T, N>(body: N, url: string): Promise<T> => {
+export const createEntity = async <R, T>(body: T, url: string): Promise<R> => {
   try {
     const response = await fetch(url, {
       method: "POST",
@@ -44,7 +44,7 @@ export const createEntity = async <T, N>(body: N, url: string): Promise<T> => {
   }
 };
 
-export const editEntity = async <T, N>(body: N, url: string): Promise<T> => {
+export const editEntity = async <R, T>(body: T, url: string): Promise<R> => {
   try {
     const response = await fetch(url, {
       method: "PUT",

@@ -39,7 +39,7 @@ const {
   refetch: refetchTask,
 } = useFetch<Task>(`tasks/${taskId.value}`);
 
-const { error: editError, editItem } = useEditEntity<Task>(
+const { error: editError, editItem } = useEditEntity<TasksResponse, Task>(
   `tasks/${taskId.value}`
 );
 
@@ -51,7 +51,7 @@ async function handleEditTask() {
   };
 
   // TODO: изменить тип unknown
-  await editItem<TasksResponse, unknown>(body);
+  await editItem(body);
   if (!editError.value) {
     toCreateNotification.create({
       type: "success",
