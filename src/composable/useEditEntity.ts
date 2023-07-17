@@ -1,6 +1,6 @@
 import { ref, Ref } from "vue";
 import { editEntity } from "../API/requestsApi";
-import { BASE } from "../constants.ts/constаnts.ts";
+import { BASE } from "../constants/constаnts.ts";
 
 export function useEditEntity<R, T>(entity: string) {
   const error: Ref<string | null> = ref(null);

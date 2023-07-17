@@ -24,18 +24,18 @@ onMounted(() => {
   refetchStudent();
 });
 
-const { notify, toCreateNotification } = useNotificationHandler();
+const { notify } = useNotificationHandler();
 
 const route = useRoute();
 
 const studentId = ref<number>(Number(route.params.id));
 
 const isEditing = ref<boolean>(false);
-const nameToCreate = ref("");
-const phoneToCreate = ref("");
-const dateToCreate = ref();
-const descriptionToCreate = ref("");
-const classToCreate = ref("");
+const nameToCreate = ref<string | undefined>();
+const phoneToCreate = ref<string | undefined>();
+const dateToCreate = ref<Date>();
+const descriptionToCreate = ref<string | undefined>();
+const classToCreate = ref<string | number>();
 
 const {
   data: classes,
@@ -66,51 +66,54 @@ function formatBirthDate(date: string | undefined) {
   return new Date(date).toLocaleDateString("ru-RU", options);
 }
 
-const {
-  error: editError,
-  editItem,
-} = useEditEntity<StudentsResponse, Student>(`students/${studentId.value}`);
+const { error: editError, editItem } = useEditEntity<StudentsResponse, Student>(
+  `students/${studentId.value}`
+);
 
 async function handleEditStudent() {
   const body: any = {
-    name: nameToCreate.value || student.value?.attributes.name,
-    date: new Date((dateToCreate.value ?? 0) || student.value?.attributes.date),
-    phone: phoneToCreate.value || student.value?.attributes.phone,
-    description:
-      descriptionToCreate.value || student.value?.attributes.description,
+    name: nameToCreate.value,
+    date: new Date(dateToCreate.value ?? 0),
+    phone: phoneToCreate.value,
+    description: descriptionToCreate.value,
   };
   if (classToCreate.value) {
     body.class = {
       connect: [classToCreate.value],
     };
   }
-  // TODO: изменить тип unknown
   await editItem(body);
   if (!editError.value) {
-    toCreateNotification.create({
-      type: "success",
-      content: "Успешно отредактировано",
-      meta: "Данные ученика изменены",
-      duration: 2500,
-      keepAliveOnHover: true,
-    });
+    notify("success", "Данные ученика успешно изменены");
   }
   if (editError.value) {
-    notify("error");
+    notify("error", "Ошибка редактирования данных");
   }
   refetchStudent();
   isEditing.value = false;
   router.push(`/students`);
 }
 
-watch([refetchClassesError, refetchStudentError], () => notify("error"));
+watch([refetchClassesError, refetchStudentError], () =>
+  notify("error", "Ошибка загрузки странички")
+);
+
+function setEditMode() {
+  if (!student.value) return;
+  isEditing.value = true;
+  nameToCreate.value = student.value.attributes.name;
+  phoneToCreate.value = student.value.attributes.phone;
+  dateToCreate.value = new Date(student.value.attributes.date);
+  descriptionToCreate.value = student.value.attributes.description;
+  classToCreate.value = student.value.attributes.class?.data.attributes.name;
+}
 </script>
 
 <template>
   <div class="container">
     <n-space horizontal justify="space-between" align="center">
       <h2>Данные об ученике</h2>
-      <n-button type="primary" @click="isEditing = true" v-if="!isEditing">
+      <n-button type="primary" @click="setEditMode" v-if="!isEditing">
         Редактировать данные</n-button
       >
       <n-space horizontal v-else>
@@ -124,12 +127,7 @@ watch([refetchClassesError, refetchStudentError], () => notify("error"));
       <n-list-item>
         <n-thing title="Имя ученика">
           <div v-if="!isEditing">{{ student?.attributes.name }}</div>
-          <n-input
-            v-else
-            v-model:value="nameToCreate"
-            type="text"
-            :placeholder="student?.attributes.name"
-          />
+          <n-input v-else v-model:value="nameToCreate" type="text" />
         </n-thing>
       </n-list-item>
       <n-list-item>
@@ -137,23 +135,13 @@ watch([refetchClassesError, refetchStudentError], () => notify("error"));
           <div v-if="!isEditing">
             {{ formatBirthDate(student?.attributes.date) }}
           </div>
-          <n-date-picker
-            v-else
-            v-model:value="dateToCreate"
-            type="date"
-            :placeholder="formatBirthDate(student?.attributes.date)"
-          />
+          <n-date-picker v-else v-model:value="dateToCreate" type="date" />
         </n-thing>
       </n-list-item>
       <n-list-item>
         <n-thing title="Номер телефона">
           <div v-if="!isEditing">{{ student?.attributes.phone }}</div>
-          <n-input
-            v-else
-            v-model:value="phoneToCreate"
-            type="text"
-            :placeholder="student?.attributes.phone"
-          />
+          <n-input v-else v-model:value="phoneToCreate" type="text" />
         </n-thing>
       </n-list-item>
       <n-list-item>
@@ -173,12 +161,7 @@ watch([refetchClassesError, refetchStudentError], () => notify("error"));
       <n-list-item>
         <n-thing title="Особоая информация">
           <div v-if="!isEditing">{{ student?.attributes.description }}</div>
-          <n-input
-            v-else
-            v-model:value="descriptionToCreate"
-            type="text"
-            :placeholder="student?.attributes.description"
-          />
+          <n-input v-else v-model:value="descriptionToCreate" type="text" />
         </n-thing>
       </n-list-item>
     </n-list>

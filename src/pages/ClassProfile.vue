@@ -22,16 +22,16 @@ onMounted(() => {
   refetchTeacher();
 });
 
-const { notify, toCreateNotification } = useNotificationHandler();
+const { notify } = useNotificationHandler();
 
 const route = useRoute();
 
 const classId = ref<number>(Number(route.params.id));
 
 const isEditing = ref<boolean>(false);
-const nameToCreate = ref("");
-const descriptionToCreate = ref("");
-const teacherToCreate = ref("");
+const nameToCreate = ref<string | undefined>("");
+const descriptionToCreate = ref<string | undefined>("");
+const teacherToCreate = ref<string | undefined | number>("");
 
 const {
   data: teachers,
@@ -59,16 +59,15 @@ const { error: editClassError, editItem } = useEditEntity<
 
 function setEditMode() {
   isEditing.value = true;
-  nameToCreate.value = "";
-  descriptionToCreate.value = "";
-  teacherToCreate.value = "";
+  nameToCreate.value = classItem.value?.attributes.name;
+  descriptionToCreate.value = classItem.value?.attributes.description;
+  teacherToCreate.value = classItem.value?.attributes?.teacher?.data?.id;
 }
 
 async function handleEditClass() {
   const body: any = {
-    name: nameToCreate.value || classItem.value?.attributes.name,
-    description:
-      descriptionToCreate.value || classItem.value?.attributes.description,
+    name: nameToCreate.value,
+    description: descriptionToCreate.value,
   };
   if (teacherToCreate.value) {
     body.teacher = {
@@ -78,23 +77,19 @@ async function handleEditClass() {
 
   await editItem(body);
   if (!editClassError.value) {
-    toCreateNotification.create({
-      type: "success",
-      content: "Успешно отредактировано",
-      meta: "Данные группы изменены",
-      duration: 2500,
-      keepAliveOnHover: true,
-    });
+    notify("success", "Группа успешно отредактирована");
   }
   if (editClassError.value) {
-    notify("error");
+    notify("error", "Невозможно отредактировать группу");
   }
   refetchClass();
   isEditing.value = false;
   router.push(`/classes`);
 }
 
-watch([refetchTeacherError, refetchClassError], () => notify("error"));
+watch([refetchTeacherError, refetchClassError], () =>
+  notify("error", "Ошибка загрузки страницы")
+);
 </script>
 
 <template>

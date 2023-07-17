@@ -3,23 +3,22 @@ import { useNotification, NotificationType } from "naive-ui";
 export function useNotificationHandler() {
   const toCreateNotification = useNotification();
 
-  function notify(type: NotificationType) {
+  function notify(type: NotificationType, message: string) {
     if (type === "error") {
       return toCreateNotification[type]({
-        content: "Ошибка при загрузке страницы",
-        meta: "попробуйте снова",
+        content: `${message}`,
+        meta: "Попробуйте снова",
         duration: 2500,
         keepAliveOnHover: true,
       });
     }
     if (type === "success") {
       return toCreateNotification[type]({
-        content: "Успешно добавлено",
-        // meta: "",
+        content: `${message}`,
         duration: 2500,
         keepAliveOnHover: true,
       });
     }
   }
-  return { notify, toCreateNotification };
+  return { notify };
 }

@@ -22,7 +22,7 @@ onMounted(() => {
   refetchTeacher();
 });
 
-const { notify, toCreateNotification } = useNotificationHandler();
+const { notify } = useNotificationHandler();
 
 const route = useRoute();
 
@@ -71,23 +71,17 @@ async function handleEditTeacher() {
   // TODO: изменить тип unknown
   await editItem(body);
   if (!editError.value) {
-    toCreateNotification.create({
-      type: "success",
-      content: "Успешно отредактировано",
-      meta: "Данные педагога изменены",
-      duration: 2500,
-      keepAliveOnHover: true,
-    });
+notify('success', 'Данные педагога отредактированы')
   }
   if (editError.value) {
-    notify("error");
+    notify("error", 'Ошибка редактирования данных');
   }
   refetchTeacher();
   isEditing.value = false;
   router.push(`/teachers`);
 }
 
-watch([refetchClassesError, refetchTeacherError], () => notify("error"));
+watch([refetchClassesError, refetchTeacherError], () => notify("error", "Ошибка загрущки странички"));
 </script>
 
 <template>

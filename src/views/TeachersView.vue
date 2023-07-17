@@ -2,7 +2,7 @@
 import TeacherForm from "../components/TeacherForm.vue";
 import { Teacher } from "../types/TeachersTypes.ts";
 import { Task } from "../types/TasksTypes";
-import { BASE } from "../constants.ts/constаnts.ts";
+import { BASE } from "../constants/constаnts.ts";
 import router from "../router/router.ts";
 import { watch, onMounted } from "vue";
 import {
@@ -170,3 +170,4 @@ function goToProfile(teacherID: number | string) {
   background-color: rgba(24, 160, 88, 0.1);
 }
 </style>
+../constants/constаnts.ts

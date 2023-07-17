@@ -1,6 +1,6 @@
 import { ref, Ref } from "vue";
 import { deleteEntity } from "../API/requestsApi";
-import { BASE } from "../constants.ts/constаnts.ts";
+import { BASE } from "../constants/constаnts.ts";
 
 export function useDeleteEntity<T>(entity: string) {
   const isShowModalConfirm = ref<boolean>(false);

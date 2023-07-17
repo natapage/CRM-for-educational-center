@@ -14,9 +14,5 @@ export interface Class extends Entity {
 }
 
 export interface ClassesResponse extends EntitiesResponse {
-  attributes: {
-    data: Class[];
-  };
+  data: Class[];
 }
-
-

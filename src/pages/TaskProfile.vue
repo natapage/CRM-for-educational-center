@@ -20,7 +20,7 @@ onMounted(() => {
   refetchTask();
 });
 
-const { notify, toCreateNotification } = useNotificationHandler();
+const { notify } = useNotificationHandler();
 
 const route = useRoute();
 
@@ -53,16 +53,10 @@ async function handleEditTask() {
   // TODO: изменить тип unknown
   await editItem(body);
   if (!editError.value) {
-    toCreateNotification.create({
-      type: "success",
-      content: "Успешно отредактировано",
-      meta: "Задача изменена",
-      duration: 2500,
-      keepAliveOnHover: true,
-    });
+    notify("success", "Задача успешно отредактирована");
   }
   if (editError.value) {
-    notify("error");
+    notify("error", "Ошибка редактирования");
   }
   refetchTasks();
   isEditing.value = false;
@@ -79,7 +73,9 @@ function formatDate(date: string | undefined) {
   return new Date(date).toLocaleDateString("ru-RU", options);
 }
 
-watch([refetchTasksError, fetchTaskError], () => notify("error"));
+watch([refetchTasksError, fetchTaskError], () =>
+  notify("error", "Ошибка загрузки странички")
+);
 </script>
 
 <template>

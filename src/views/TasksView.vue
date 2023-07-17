@@ -52,7 +52,9 @@ async function handleCreateTask() {
   await refetchTasks();
 }
 
-watch([fetchError, deleteError], () => notify("error"));
+watch([fetchError, deleteError], () =>
+  notify("error", "Ошибка загрузки странички")
+);
 
 const teachersOptionsList = computed(() =>
   teachers.value?.map((item) => ({
@@ -61,7 +63,7 @@ const teachersOptionsList = computed(() =>
   }))
 );
 
-const selectedTeacher = ref();
+const selectedTeacher = ref<string>();
 
 const filteredTasks = computed(() => {
   if (selectedTeacher.value) {
@@ -103,7 +105,7 @@ function goToProfile(taskId: number | string) {
         </tr>
       </thead>
       <tbody>
-        <n-gradient-text v-if="filteredTasks?.length === 0" type="warning">
+        <n-gradient-text v-if="!filteredTasks?.length" type="warning">
           У педагога нет текущих задач
         </n-gradient-text>
         <tr v-for="task in filteredTasks" :key="task.id" class="row">

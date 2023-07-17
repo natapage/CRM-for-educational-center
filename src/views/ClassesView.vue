@@ -40,7 +40,9 @@ async function handleCreateClass() {
   await refetch();
 }
 
-watch([fetchError, deleteError], () => notify("error"));
+watch([fetchError, deleteError], () =>
+  notify("error", "Ошибка загрузки странички")
+);
 
 function goToProfile(groupId: number | string) {
   router.push(`/classes/${groupId}`);
@@ -79,7 +81,10 @@ function goToProfile(groupId: number | string) {
               >
             </td>
             <td>
-              <n-button type="error" ghost @click="handleConfirmation(group.id)"
+              <n-button
+                type="error"
+                ghost
+                @click.stop="handleConfirmation(group.id)"
                 >Удалить</n-button
               >
             </td>
