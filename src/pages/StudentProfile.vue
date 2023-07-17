@@ -66,6 +66,12 @@ function formatBirthDate(date: string | undefined) {
   return new Date(date).toLocaleDateString("ru-RU", options);
 }
 
+function dateDisabled(ts: number) {
+  const date = new Date(ts);
+  const targetDate = new Date(2020, 8, 1);
+  return date > targetDate;
+}
+
 const { error: editError, editItem } = useEditEntity<StudentsResponse, Student>(
   `students/${studentId.value}`
 );
@@ -105,7 +111,7 @@ function setEditMode() {
   phoneToCreate.value = student.value.attributes.phone;
   dateToCreate.value = new Date(student.value.attributes.date);
   descriptionToCreate.value = student.value.attributes.description;
-  classToCreate.value = student.value.attributes.class?.data.attributes.name;
+  classToCreate.value = student.value.attributes.class?.data.id;
 }
 </script>
 
@@ -135,7 +141,14 @@ function setEditMode() {
           <div v-if="!isEditing">
             {{ formatBirthDate(student?.attributes.date) }}
           </div>
-          <n-date-picker v-else v-model:value="dateToCreate" type="date" />
+          <n-date-picker
+            v-else
+            :is-date-disabled="dateDisabled"
+            format="dd-MM-yyyy"
+            v-model:value="dateToCreate"
+            :default-formatted-value="student?.attributes.date"
+            type="date"
+          />
         </n-thing>
       </n-list-item>
       <n-list-item>
