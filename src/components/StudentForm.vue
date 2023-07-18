@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
 import { watch } from "vue";
-
 import {
   NDatePicker,
   NSelect,
@@ -12,10 +11,7 @@ import {
   FormInst,
   FormItemRule,
 } from "naive-ui";
-
 import { Class } from "../types/ClassesTypes.ts";
-import { StudentsResponse } from "../types/StudentsTypes";
-
 import { useCreateEntity } from "../composable/useCreateEntity";
 import { useFetch } from "../composable/useFetch";
 import { useNotificationHandler } from "../composable/useNotification";
@@ -58,7 +54,7 @@ const rules = {
   },
 };
 
-watch(createError, () => notify("error"));
+watch(createError, () => notify("error", "Ошибка добавления нового ученика"));
 
 onMounted(() => refetchClasses());
 
@@ -72,6 +68,12 @@ const classOptionsList = computed(() =>
     value: item.id,
   }))
 );
+
+function dateDisabled(ts: number) {
+  const date = new Date(ts);
+  const targetDate = new Date(2020, 8, 1);
+  return date > targetDate;
+}
 
 function handleCreateStudent(e: MouseEvent) {
   e.preventDefault();
@@ -87,14 +89,14 @@ function handleCreateStudent(e: MouseEvent) {
         },
       };
       // TODO: изменить тип unknown
-      await createItem<StudentsResponse, unknown>(body, "students");
+      await createItem(body, "students");
       if (!createError.value) {
-        notify("success");
+        notify("success", "Ученик успешно добавлен");
       }
       emit("close-modal");
     } else {
       console.log(errors);
-      notify("error");
+      notify("error", "Ошибка добавления нового ученика");
     }
   });
 }
@@ -121,6 +123,8 @@ function handleCreateStudent(e: MouseEvent) {
       </n-form-item>
       <n-form-item label="Дата рождения" path="studentBirthDay">
         <n-date-picker
+          format="dd-MM-yyyy"
+          :is-date-disabled="dateDisabled"
           v-model:value="model.studentBirthDay"
           type="date"
           placeholder="Выберете дату"

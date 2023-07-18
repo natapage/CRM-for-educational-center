@@ -27,8 +27,8 @@ const route = useRoute();
 const taskId = ref<number>(Number(route.params.id));
 
 const isEditing = ref<boolean>(false);
-const descriptionToCreate = ref("");
-const dateToCreate = ref();
+const descriptionToCreate = ref<string | undefined>();
+const dateToCreate = ref<Date>();
 
 const { refetch: refetchTasks, error: refetchTasksError } =
   useFetch<Task[]>("tasks");
@@ -73,6 +73,19 @@ function formatDate(date: string | undefined) {
   return new Date(date).toLocaleDateString("ru-RU", options);
 }
 
+function dateDisabled(ts: number) {
+  const currentDate = new Date(); // Текущая дата
+  const date = new Date(ts);
+  return date <= currentDate;
+}
+
+function setEditMode() {
+  if (!task.value) return;
+  isEditing.value = true;
+  descriptionToCreate.value = task.value?.attributes.description;
+  dateToCreate.value = new Date(task.value?.attributes?.date);
+}
+
 watch([refetchTasksError, fetchTaskError], () =>
   notify("error", "Ошибка загрузки странички")
 );
@@ -82,7 +95,7 @@ watch([refetchTasksError, fetchTaskError], () =>
   <div class="container">
     <n-space horizontal justify="space-between" align="center">
       <h2>Данные о педагоге</h2>
-      <n-button type="primary" @click="isEditing = true" v-if="!isEditing">
+      <n-button type="primary" @click="setEditMode" v-if="!isEditing">
         Редактировать данные</n-button
       >
       <n-space horizontal v-else>
@@ -111,9 +124,11 @@ watch([refetchTasksError, fetchTaskError], () =>
           </div>
           <n-date-picker
             v-else
-            v-model:value="dateToCreate"
+            format="dd-MM-yyyy"
+            :is-date-disabled="dateDisabled"
+            v-model="dateToCreate"
             type="date"
-            :placeholder="formatDate(task?.attributes.date)"
+            :default-formatted-value="task?.attributes.date"
           />
         </n-thing>
       </n-list-item>

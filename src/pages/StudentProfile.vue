@@ -145,7 +145,7 @@ function setEditMode() {
             v-else
             :is-date-disabled="dateDisabled"
             format="dd-MM-yyyy"
-            v-model:value="dateToCreate"
+            v-model="dateToCreate"
             :default-formatted-value="student?.attributes.date"
             type="date"
           />

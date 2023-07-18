@@ -82,7 +82,7 @@ function goToProfile(taskId: number | string) {
 
 <template>
   <div>
-    <h2>Список задач для педагогов</h2>
+    <h2>Задачи для педагогов</h2>
     <div class="select-container">
       <n-select
         v-model:value="selectedTeacher"

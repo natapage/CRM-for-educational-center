@@ -4,8 +4,6 @@ import { ref, watch, computed, onMounted } from "vue";
 import { NButton, FormInst, NForm, NFormItem, NInput, NSelect } from "naive-ui";
 
 import { Teacher } from "../types/TeachersTypes";
-import { ClassesResponse } from "../types/ClassesTypes";
-
 import { useCreateEntity } from "../composable/useCreateEntity";
 import { useNotificationHandler } from "../composable/useNotification";
 import { useFetch } from "../composable/useFetch";
@@ -51,7 +49,7 @@ const rules = {
     message: "Пожалуйста, выберете педагога",
   },
 };
-watch(createError, () => notify("error"));
+watch(createError, () => notify("error", "Ошибка добавления группы"));
 
 function handleCreateClass(e: MouseEvent) {
   e.preventDefault();
@@ -68,9 +66,9 @@ function handleCreateClass(e: MouseEvent) {
         };
       }
       // TODO: изменить тип unknown
-      await createItem<ClassesResponse, unknown>(body, "classes");
+      await createItem(body, "classes");
       if (!createError.value) {
-        notify("success");
+        notify("success", "Группа успешно добавлена");
       }
       emit("close-modal");
     }

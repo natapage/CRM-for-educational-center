@@ -39,7 +39,9 @@ async function handleCreateStudent() {
   await refetch();
 }
 
-watch([fetchError, deleteError], () => notify("error"));
+watch([fetchError, deleteError], () =>
+  notify("error", "Ошибка загрузки страницы")
+);
 
 function goToProfile(studentId: number | string) {
   router.push(`/students/${studentId}`);
@@ -71,7 +73,7 @@ function goToProfile(studentId: number | string) {
           <td>{{ student.attributes.name }}</td>
           <td>{{ new Date(student.attributes.date).toLocaleDateString() }}</td>
           <td>{{ student.attributes.phone }}</td>
-          <td>{{ student.attributes.class.data.attributes.name }}</td>
+          <td>{{ student?.attributes?.class?.data.attributes.name }}</td>
           <td>{{ student.attributes.description }}</td>
           <td>
             <n-button type="primary" ghost @click="goToProfile(student.id)"

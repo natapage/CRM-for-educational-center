@@ -12,7 +12,6 @@ import {
 } from "naive-ui";
 
 import { Teacher } from "../types/TeachersTypes";
-import { TasksResponse } from "../types/TasksTypes";
 import { useCreateEntity } from "../composable/useCreateEntity";
 import { useNotificationHandler } from "../composable/useNotification";
 import { useFetch } from "../composable/useFetch";
@@ -57,7 +56,13 @@ const rules = {
     message: "Пожалуйста, выберете педагога",
   },
 };
-watch(createError, () => notify("error"));
+watch(createError, () => notify("error", "Ошибка добавления новой задачи"));
+
+function dateDisabled(ts: number) {
+  const currentDate = new Date(); // Текущая дата
+  const date = new Date(ts);
+  return date <= currentDate;
+}
 
 function handleCreateTask(e: MouseEvent) {
   e.preventDefault();
@@ -71,10 +76,10 @@ function handleCreateTask(e: MouseEvent) {
         },
       };
       // TODO: изменить тип unknown
-      const response = await createItem<TasksResponse, unknown>(body, "tasks");
+      const response = await createItem(body, "tasks");
       console.log(response);
       if (!createError.value) {
-        notify("success");
+        notify("success", "Задача успешно добавлена");
       }
       emit("close-modal");
     }
@@ -108,9 +113,11 @@ function handleCreateTask(e: MouseEvent) {
       </n-form-item>
       <n-form-item label="Дата выполнения" path="taskDate">
         <n-date-picker
+          :is-date-disabled="dateDisabled"
           v-model:value="model.taskDate"
           type="datetime"
-          placeholder="Выберете дату"
+          format="dd-MM-yyyy"
+          placeholder="Выберите дату"
         />
       </n-form-item>
       <n-form-item label="Ответственный педагог" path="teacherName">
