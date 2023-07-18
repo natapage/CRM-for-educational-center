@@ -53,7 +53,7 @@ const menuOptions: MenuOption[] = [
     key: "Students",
     icon: renderIcon(PersonIcon),
     onClick: () => {
-      router.push("/students"); // Перенаправление на главную страницу
+      router.push({ name: "students" });
     },
   },
   {
@@ -61,7 +61,7 @@ const menuOptions: MenuOption[] = [
     key: "Teachers",
     icon: renderIcon(PersonIcon),
     onClick: () => {
-      router.push("/teachers"); // Перенаправление на главную страницу
+      router.push({ name: "teachers" });
     },
   },
   {
@@ -69,7 +69,7 @@ const menuOptions: MenuOption[] = [
     key: "Classes",
     icon: renderIcon(PeopleOutline),
     onClick: () => {
-      router.push("/classes"); // Перенаправление на главную страницу
+      router.push({ name: "classes" });
     },
   },
   {
@@ -77,7 +77,7 @@ const menuOptions: MenuOption[] = [
     key: "Lessons",
     icon: renderIcon(SchoolOutline),
     onClick: () => {
-      router.push("/lessons"); // Перенаправление на главную страницу
+      router.push({ name: "lessons" }); // Перенаправление на главную страницу
     },
   },
   {
@@ -85,7 +85,7 @@ const menuOptions: MenuOption[] = [
     key: "Schedule",
     icon: renderIcon(BookIcon),
     onClick: () => {
-      router.push("/schedule"); // Перенаправление на главную страницу
+      router.push({ name: "schedule" }); // Перенаправление на главную страницу
     },
   },
   {
@@ -93,7 +93,7 @@ const menuOptions: MenuOption[] = [
     key: "Tasks",
     icon: renderIcon(ListOutline),
     onClick: () => {
-      router.push("/tasks"); // Перенаправление на главную страницу
+      router.push({ name: "tasks" }); // Перенаправление на главную страницу
     },
   },
 ];

@@ -93,7 +93,7 @@ watch([refetchTasksError, fetchTaskError], () =>
 
 <template>
   <div class="container">
-    <n-button @click="router.push('/tasks')" type="tertiary">Назад</n-button>
+    <n-button @click="router.push({ name: 'tasks'})" type="tertiary">Назад</n-button>
     <n-space horizontal justify="space-between" align="center">
       <h2>Информация о задаче</h2>
       <n-button type="primary" @click="setEditMode" v-if="!isEditing">

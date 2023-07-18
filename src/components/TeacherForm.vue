@@ -11,10 +11,7 @@ import {
   NForm,
   NSelect,
 } from "naive-ui";
-
-import { TeachersResponse } from "../types/TeachersTypes";
 import { Class } from "../types/ClassesTypes.ts";
-
 import { useFetch } from "../composable/useFetch";
 import { useCreateEntity } from "../composable/useCreateEntity";
 import { useNotificationHandler } from "../composable/useNotification";
@@ -56,7 +53,6 @@ const rules = {
     },
   },
   teacherClass: {
-    // required: true,
     message: "Пожалуйста, выберете группу",
   },
 };
@@ -83,10 +79,10 @@ function handleCreateTeacher(e: MouseEvent) {
         };
       }
       // TODO: изменить тип unknown
-      await createItem<TeachersResponse, unknown>(body, "teachers");
+      await createItem(body, "teachers");
 
       if (!createError.value) {
-        notify("success");
+        notify("success", "Учитель успешно добавлен");
       }
     }
     emit("close-modal");

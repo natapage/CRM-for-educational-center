@@ -44,7 +44,7 @@ watch([fetchError, deleteError], () =>
 );
 
 function goToProfile(studentId: number | string) {
-  router.push(`/students/${studentId}`);
+  router.push({ name: "student-profile", params: { id: studentId } });
 }
 </script>
 

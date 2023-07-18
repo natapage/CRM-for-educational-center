@@ -76,7 +76,7 @@ const filteredTasks = computed(() => {
 });
 
 function goToProfile(taskId: number | string) {
-  router.push(`/tasks/${taskId}`);
+  router.push({ name: "task-profile", params: { id: taskId } });
 }
 </script>
 

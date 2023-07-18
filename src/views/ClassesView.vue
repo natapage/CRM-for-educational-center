@@ -45,7 +45,7 @@ watch([fetchError, deleteError], () =>
 );
 
 function goToProfile(groupId: number | string) {
-  router.push(`/classes/${groupId}`);
+  router.push({ name: "class-profile", params: { id: groupId } });
 }
 </script>
 

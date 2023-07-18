@@ -62,7 +62,7 @@ async function updateTaskList(taskId: number) {
 }
 
 function goToProfile(teacherID: number | string) {
-  router.push(`/teachers/${teacherID}`);
+  router.push({ name: "teacher-profile", params: { id: teacherID } });
 }
 </script>
 <template>
@@ -97,23 +97,22 @@ function goToProfile(teacherID: number | string) {
               <div v-if="teacher.attributes.tasks.data.length === 0">
                 нет задач
               </div>
-              <n-collapse
-                @click.stop
-                v-if="teacher.attributes.tasks.data.length !== 0"
-              >
-                <n-collapse-item title="Задачи" name="1">
-                  <n-space item-style="display: flex;">
-                    <n-checkbox
-                      v-for="task in teacher.attributes.tasks.data"
-                      :key="teacher.id"
-                      :value="task.attributes.description"
-                      @update:checked="updateTaskList(task.id)"
-                    >
-                      {{ task.attributes.description }}
-                    </n-checkbox>
-                  </n-space>
-                </n-collapse-item>
-              </n-collapse>
+              <div v-else @click.stop>
+                <n-collapse>
+                  <n-collapse-item title="Задачи" name="1">
+                    <n-space item-style="display: flex;">
+                      <n-checkbox
+                        v-for="task in teacher.attributes.tasks.data"
+                        :key="task.id"
+                        :value="task.attributes.description"
+                        @update:checked="updateTaskList(task.id)"
+                      >
+                        {{ task.attributes.description }}
+                      </n-checkbox>
+                    </n-space>
+                  </n-collapse-item>
+                </n-collapse>
+              </div>
             </td>
             <td>фото</td>
             <td>

@@ -16,49 +16,59 @@ const routes = [
   {
     path: "/",
     component: HomeView,
+    name: "home",
   },
   {
     path: "/classes",
     component: ClassesView,
+    name: "classes",
   },
   {
     path: "/classes/:id",
     component: ClassProfile,
+    name: "class-profile",
   },
   {
     path: "/schedule",
     component: ScheduleView,
+    name: "schedule",
   },
   {
     path: "/lessons",
     component: LessonsView,
+    name: "lessons",
   },
   {
     path: "/students",
     component: StudentsView,
+    name: "students",
   },
   {
     path: "/students/:id",
     component: StudentProfile,
+    name: "student-profile",
   },
   {
     path: "/tasks",
     component: TasksView,
+    name: "tasks",
   },
   {
     path: "/tasks/:id",
     component: TaskProfile,
+    name: "task-profile",
   },
   {
     path: "/teachers",
     component: TeachersView,
+    name: "teachers",
   },
   {
     path: "/teachers/:id",
     component: TeacherProfile,
+    name: "teacher-profile",
   },
 ];
-
 const router = createRouter({
   routes,
   history: createWebHistory(),

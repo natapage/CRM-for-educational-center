@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from "vue";
-
 import {
   NButton,
   NSelect,
@@ -10,7 +9,6 @@ import {
   NInput,
   NDatePicker,
 } from "naive-ui";
-
 import { Teacher } from "../types/TeachersTypes";
 import { useCreateEntity } from "../composable/useCreateEntity";
 import { useNotificationHandler } from "../composable/useNotification";
@@ -75,7 +73,6 @@ function handleCreateTask(e: MouseEvent) {
           connect: [model.value.teacherName],
         },
       };
-      // TODO: изменить тип unknown
       const response = await createItem(body, "tasks");
       console.log(response);
       if (!createError.value) {

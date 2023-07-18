@@ -97,7 +97,7 @@ async function handleEditStudent() {
   }
   refetchStudent();
   isEditing.value = false;
-  router.push(`/students`);
+  router.push({ name: "students" });
 }
 
 watch([refetchClassesError, refetchStudentError], () =>
@@ -117,7 +117,9 @@ function setEditMode() {
 
 <template>
   <div class="container">
-    <n-button type="tertiary" @click="router.push('/students')">Назад</n-button>
+    <n-button type="tertiary" @click="router.push({ name: 'students' })"
+      >Назад</n-button
+    >
     <n-space horizontal justify="space-between" align="center">
       <h2>Данные об ученике</h2>
       <n-button type="primary" @click="setEditMode" v-if="!isEditing">
