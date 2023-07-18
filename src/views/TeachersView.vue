@@ -51,7 +51,9 @@ async function handleCreateTeacher() {
   await refetch();
 }
 
-watch([fetchError, deleteTeacherError], () => notify("error"));
+watch([fetchError, deleteTeacherError], () =>
+  notify("error", "Ошибка загрузки страницы")
+);
 
 async function updateTaskList(taskId: number) {
   const url = `${BASE}/api/tasks/${taskId}`;

@@ -32,7 +32,7 @@ const emit = defineEmits<{
 
 onMounted(() => useFetchClasses());
 
-watch(createError, () => notify("error"));
+watch(createError, () => notify("error", "Ошибка загрузки страницы"));
 
 const model = ref({
   teacherName: null,

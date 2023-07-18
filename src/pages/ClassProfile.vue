@@ -94,6 +94,7 @@ watch([refetchTeacherError, refetchClassError], () =>
 
 <template>
   <div class="container">
+    <n-button type="tertiary" @click="router.push('/classes')">Назад</n-button>
     <n-space horizontal justify="space-between" align="center">
       <h2>Данные об учебной группе</h2>
       <n-button type="primary" @click="setEditMode" v-if="!isEditing">
