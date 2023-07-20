@@ -14,17 +14,20 @@ import { useCreateEntity } from "../composable/useCreateEntity";
 import { useNotificationHandler } from "../composable/useNotification";
 import { useFetch } from "../composable/useFetch";
 
+onMounted(async () => await refetchTeachers());
+
 const emit = defineEmits<{
   (e: "close-modal"): void;
 }>();
 
 const { error: createError, createItem } = useCreateEntity();
 const { notify } = useNotificationHandler();
-const { data: teachers, refetch: refetchTeachers } =
-  useFetch<Teacher[]>("teachers");
+const {
+  data: teachers,
+  refetch: refetchTeachers,
+  error: refetchTeachersError,
+} = useFetch<Teacher[]>("teachers");
 const formRef = ref<FormInst | null>(null);
-
-onMounted(() => refetchTeachers());
 
 const tasksOptionsList = computed(() =>
   teachers.value?.map((item) => ({
@@ -55,6 +58,9 @@ const rules = {
   },
 };
 watch(createError, () => notify("error", "Ошибка добавления новой задачи"));
+watch([refetchTeachersError], () =>
+  notify("error", "Ошибка при загрузке страницы")
+);
 
 function dateDisabled(ts: number) {
   const currentDate = new Date(); // Текущая дата

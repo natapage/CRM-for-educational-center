@@ -21,7 +21,7 @@ import { useDeleteEntity } from "../composable/useDeleteEntity";
 import { useCreateEntity } from "../composable/useCreateEntity";
 import { useNotificationHandler } from "../composable/useNotification";
 
-onMounted(() => refetch());
+onMounted(async () => await refetch());
 
 const { notify } = useNotificationHandler();
 

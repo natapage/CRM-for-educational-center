@@ -9,7 +9,7 @@ import { useNotificationHandler } from "../composable/useNotification";
 import { useDeleteEntity } from "../composable/useDeleteEntity";
 import { useCreateEntity } from "../composable/useCreateEntity";
 
-onMounted(() => refetch());
+onMounted(async () => await refetch());
 
 const { notify } = useNotificationHandler();
 

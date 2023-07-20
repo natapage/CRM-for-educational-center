@@ -29,8 +29,8 @@ const {
 const { data: teachers, refetch: refetchTeachers } =
   useFetch<Teacher[]>("teachers");
 
-onMounted(() => {
-  refetchTeachers(), refetchTasks();
+onMounted(async () => {
+  await refetchTeachers(), await refetchTasks();
 });
 
 const {

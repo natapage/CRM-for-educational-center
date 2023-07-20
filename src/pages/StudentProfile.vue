@@ -19,9 +19,9 @@ import { useFetch } from "../composable/useFetch";
 import { useEditEntity } from "../composable/useEditEntity";
 import { useNotificationHandler } from "../composable/useNotification";
 
-onMounted(() => {
-  refetchClasses();
-  refetchStudent();
+onMounted(async () => {
+  await refetchClasses();
+  await refetchStudent();
 });
 
 const { notify } = useNotificationHandler();

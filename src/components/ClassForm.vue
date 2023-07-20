@@ -8,17 +8,22 @@ import { useCreateEntity } from "../composable/useCreateEntity";
 import { useNotificationHandler } from "../composable/useNotification";
 import { useFetch } from "../composable/useFetch";
 
+onMounted(async () => {
+  await refetchTeachers();
+});
+
 const emit = defineEmits<{
   (e: "close-modal"): void;
 }>();
 
-onMounted(() => refetchTeachers());
-
 const { error: createError, createItem } = useCreateEntity();
 const { notify } = useNotificationHandler();
 // const teacherId = ref<string | number>("");
-const { data: teachers, refetch: refetchTeachers } =
-  useFetch<Teacher[]>("teachers");
+const {
+  data: teachers,
+  refetch: refetchTeachers,
+  error: refetchTeachersError,
+} = useFetch<Teacher[]>("teachers");
 const formRef = ref<FormInst | null>(null);
 
 const teacherOptionsList = computed(() =>
@@ -50,6 +55,9 @@ const rules = {
   },
 };
 watch(createError, () => notify("error", "Ошибка добавления группы"));
+watch([refetchTeachersError], () =>
+  notify("error", "Ошибка загруpки странички")
+);
 
 function handleCreateClass(e: MouseEvent) {
   e.preventDefault();

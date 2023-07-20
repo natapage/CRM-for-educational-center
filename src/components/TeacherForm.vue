@@ -17,8 +17,11 @@ import { useCreateEntity } from "../composable/useCreateEntity";
 import { useNotificationHandler } from "../composable/useNotification";
 
 const { error: createError, createItem } = useCreateEntity();
-const { data: classes, refetch: useFetchClasses } =
-  useFetch<Class[]>("classes");
+const {
+  data: classes,
+  refetch: useFetchClasses,
+  error: fetchClassesError,
+} = useFetch<Class[]>("classes");
 
 const { notify } = useNotificationHandler();
 const formRef = ref<FormInst | null>(null);
@@ -27,7 +30,7 @@ const emit = defineEmits<{
   (e: "close-modal"): void;
 }>();
 
-onMounted(() => useFetchClasses());
+onMounted(async () => await useFetchClasses());
 
 watch(createError, () => notify("error", "Ошибка загрузки страницы"));
 
@@ -88,6 +91,10 @@ function handleCreateTeacher(e: MouseEvent) {
     emit("close-modal");
   });
 }
+
+watch([fetchClassesError], () =>
+  notify("error", "Ошибка при загрузке страницы")
+);
 </script>
 
 <template>

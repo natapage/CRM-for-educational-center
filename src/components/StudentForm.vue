@@ -17,7 +17,11 @@ import { useFetch } from "../composable/useFetch";
 import { useNotificationHandler } from "../composable/useNotification";
 
 const { error: createError, createItem } = useCreateEntity();
-const { data: classes, refetch: refetchClasses } = useFetch<Class[]>("classes");
+const {
+  data: classes,
+  refetch: refetchClasses,
+  error: refetchClassesError,
+} = useFetch<Class[]>("classes");
 const { notify } = useNotificationHandler();
 const formRef = ref<FormInst | null>(null);
 
@@ -54,13 +58,18 @@ const rules = {
   },
 };
 
-watch(createError, () => notify("error", "Ошибка добавления нового ученика"));
-
-onMounted(() => refetchClasses());
+onMounted(async () => {
+  await refetchClasses();
+});
 
 const emit = defineEmits<{
   (e: "close-modal"): void;
 }>();
+
+watch(createError, () => notify("error", "Ошибка добавления нового ученика"));
+watch([refetchClassesError], () =>
+  notify("error", "Ошибка загруpки странички")
+);
 
 const classOptionsList = computed(() =>
   classes.value?.map((item) => ({
