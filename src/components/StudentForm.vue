@@ -68,7 +68,7 @@ const emit = defineEmits<{
 
 watch(createError, () => notify("error", "Ошибка добавления нового ученика"));
 watch([refetchClassesError], () =>
-  notify("error", "Ошибка загруpки странички")
+  notify("error", "Ошибка загрузки странички")
 );
 
 const classOptionsList = computed(() =>

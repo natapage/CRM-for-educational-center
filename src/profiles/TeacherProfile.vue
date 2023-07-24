@@ -10,9 +10,10 @@ import {
   NSpace,
   NInput,
   NSelect,
+  NSpin,
 } from "naive-ui";
 import { useRoute } from "vue-router";
-import router from "../router/router.ts";
+import router from "../router/router";
 import { useFetch } from "../composable/useFetch";
 import { useEditEntity } from "../composable/useEditEntity";
 import { useNotificationHandler } from "../composable/useNotification";
@@ -36,6 +37,7 @@ const classToCreate = ref<string | number>("");
 const {
   data: classes,
   refetch: refetchClasses,
+  showSpinner,
   error: refetchClassesError,
 } = useFetch<Class[]>("classes");
 
@@ -68,7 +70,6 @@ async function handleEditTeacher() {
       connect: [classToCreate.value],
     };
   }
-  // TODO: изменить тип unknown
   await editItem(body);
   if (!editError.value) {
     notify("success", "Данные педагога отредактированы");
@@ -101,17 +102,26 @@ watch([refetchClassesError, refetchTeacherError], () =>
     >
     <n-space horizontal justify="space-between" align="center">
       <h2>Данные о педагоге</h2>
-      <n-button type="primary" @click="setEditMode" v-if="!isEditing">
+      <n-button
+        type="primary"
+        @click="setEditMode"
+        v-if="!isEditing && !showSpinner"
+      >
         Редактировать данные</n-button
       >
       <n-space horizontal v-else>
-        <n-button @click="isEditing = false"> Отменить изменения</n-button>
-        <n-button type="primary" @click="handleEditTeacher">
+        <n-button v-if="!showSpinner" @click="isEditing = false">
+          Отменить изменения</n-button
+        >
+        <n-button v-if="!showSpinner" type="primary" @click="handleEditTeacher">
           Сохранить изменения</n-button
         >
       </n-space>
     </n-space>
-    <n-list>
+    <div class="spinner-container" v-if="showSpinner">
+      <n-spin size="medium" />
+    </div>
+    <n-list v-if="!showSpinner">
       <n-list-item>
         <n-thing title="Имя педагога">
           <div v-if="!isEditing">{{ teacher?.attributes.name }}</div>

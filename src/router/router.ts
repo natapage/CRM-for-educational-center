@@ -5,10 +5,10 @@ import ScheduleView from "../views/ScheduleView.vue";
 import StudentsView from "../views/StudentsView.vue";
 import TasksView from "../views/TasksView.vue";
 import TeachersView from "../views/TeachersView.vue";
-import StudentProfile from "../pages/StudentProfile.vue";
-import TeacherProfile from "../pages/TeacherProfile.vue";
-import ClassProfile from "../pages/ClassProfile.vue";
-import TaskProfile from "../pages/TaskProfile.vue";
+import StudentProfile from "../profiles/StudentProfile.vue";
+import TeacherProfile from "../profiles/TeacherProfile.vue";
+import ClassProfile from "../profiles/ClassProfile.vue";
+import TaskProfile from "../profiles/TaskProfile.vue";
 
 import { createRouter, createWebHistory } from "vue-router";
 

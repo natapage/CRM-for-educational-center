@@ -10,11 +10,10 @@ export interface StudentAttributes {
   phone: string;
   description: string;
   class?: {
-    data: Class
+    data: Class;
   };
 }
 
 export interface StudentsResponse extends EntitiesResponse {
   data: Student[];
 }
-

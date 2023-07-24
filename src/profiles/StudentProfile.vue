@@ -12,9 +12,10 @@ import {
   NInput,
   NDatePicker,
   NSelect,
+  NSpin,
 } from "naive-ui";
 import { useRoute } from "vue-router";
-import router from "../router/router.ts";
+import router from "../router/router";
 import { useFetch } from "../composable/useFetch";
 import { useEditEntity } from "../composable/useEditEntity";
 import { useNotificationHandler } from "../composable/useNotification";
@@ -40,6 +41,7 @@ const classToCreate = ref<string | number>();
 const {
   data: classes,
   refetch: refetchClasses,
+  showSpinner,
   error: refetchClassesError,
 } = useFetch<Class[]>("classes");
 
@@ -122,17 +124,26 @@ function setEditMode() {
     >
     <n-space horizontal justify="space-between" align="center">
       <h2>Данные об ученике</h2>
-      <n-button type="primary" @click="setEditMode" v-if="!isEditing">
+      <n-button
+        type="primary"
+        @click="setEditMode"
+        v-if="!isEditing && !showSpinner"
+      >
         Редактировать данные</n-button
       >
       <n-space horizontal v-else>
-        <n-button @click="isEditing = false"> Отменить изменения</n-button>
-        <n-button type="primary" @click="handleEditStudent">
+        <n-button v-if="!showSpinner" @click="isEditing = false">
+          Отменить изменения</n-button
+        >
+        <n-button v-if="!showSpinner" type="primary" @click="handleEditStudent">
           Сохранить изменения</n-button
         >
       </n-space>
     </n-space>
-    <n-list>
+    <div class="spinner-container" v-if="showSpinner">
+      <n-spin size="medium" />
+    </div>
+    <n-list v-if="!showSpinner">
       <n-list-item>
         <n-thing title="Имя ученика">
           <div v-if="!isEditing">{{ student?.attributes.name }}</div>
@@ -147,7 +158,7 @@ function setEditMode() {
           <n-date-picker
             v-else
             :is-date-disabled="dateDisabled"
-            format="dd-MM-yyyy"
+            format="yyyy-MM-dd"
             v-model="dateToCreate"
             :default-formatted-value="student?.attributes.date"
             type="date"

@@ -9,9 +9,10 @@ import {
   NSpace,
   NInput,
   NDatePicker,
+  NSpin,
 } from "naive-ui";
 import { useRoute } from "vue-router";
-import router from "../router/router.ts";
+import router from "../router/router";
 import { useFetch } from "../composable/useFetch";
 import { useEditEntity } from "../composable/useEditEntity";
 import { useNotificationHandler } from "../composable/useNotification";
@@ -36,6 +37,7 @@ const { refetch: refetchTasks, error: refetchTasksError } =
 const {
   data: task,
   error: fetchTaskError,
+  showSpinner,
   refetch: refetchTask,
 } = useFetch<Task>(`tasks/${taskId.value}`);
 
@@ -98,17 +100,26 @@ watch([refetchTasksError, fetchTaskError], () =>
     >
     <n-space horizontal justify="space-between" align="center">
       <h2>Информация о задаче</h2>
-      <n-button type="primary" @click="setEditMode" v-if="!isEditing">
+      <n-button
+        type="primary"
+        @click="setEditMode"
+        v-if="!isEditing && !showSpinner"
+      >
         Редактировать данные</n-button
       >
       <n-space horizontal v-else>
-        <n-button @click="isEditing = false"> Отменить изменения</n-button>
-        <n-button type="primary" @click="handleEditTask">
+        <n-button v-if="!showSpinner" @click="isEditing = false">
+          Отменить изменения</n-button
+        >
+        <n-button v-if="!showSpinner" type="primary" @click="handleEditTask">
           Сохранить изменения</n-button
         >
       </n-space>
     </n-space>
-    <n-list>
+    <div class="spinner-container" v-if="showSpinner">
+      <n-spin size="medium" />
+    </div>
+    <n-list v-if="!showSpinner">
       <n-list-item>
         <n-thing title="Описание задачи">
           <div v-if="!isEditing">{{ task?.attributes.description }}</div>
@@ -127,7 +138,7 @@ watch([refetchTasksError, fetchTaskError], () =>
           </div>
           <n-date-picker
             v-else
-            format="dd-MM-yyyy"
+            format="yyyy-MM-dd"
             :is-date-disabled="dateDisabled"
             v-model="dateToCreate"
             type="date"
