@@ -4,24 +4,28 @@
   "info": {
     "singularName": "lesson",
     "pluralName": "lessons",
-    "displayName": "Lesson"
+    "displayName": "Lessons",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
   },
   "pluginOptions": {},
   "attributes": {
-    "Date": {
-      "type": "date"
-    },
-    "Time": {
-      "type": "time"
-    },
     "class": {
       "type": "relation",
-      "relation": "oneToOne",
+      "relation": "manyToOne",
       "target": "api::class.class",
-      "inversedBy": "lesson"
+      "inversedBy": "lessons"
+    },
+    "name": {
+      "type": "string"
+    },
+    "description": {
+      "type": "richtext"
+    },
+    "duration": {
+      "type": "integer"
     }
   }
 }

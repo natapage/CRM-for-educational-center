@@ -18,12 +18,6 @@
       "target": "api::student.student",
       "mappedBy": "class"
     },
-    "lesson": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::lesson.lesson",
-      "mappedBy": "class"
-    },
     "schedule": {
       "type": "relation",
       "relation": "manyToOne",
@@ -41,6 +35,12 @@
       "relation": "manyToOne",
       "target": "api::teacher.teacher",
       "inversedBy": "classes"
+    },
+    "lessons": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::lesson.lesson",
+      "mappedBy": "class"
     }
   }
 }

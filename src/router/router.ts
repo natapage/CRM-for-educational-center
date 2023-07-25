@@ -9,6 +9,7 @@ import StudentProfile from "../profiles/StudentProfile.vue";
 import TeacherProfile from "../profiles/TeacherProfile.vue";
 import ClassProfile from "../profiles/ClassProfile.vue";
 import TaskProfile from "../profiles/TaskProfile.vue";
+import LessonProfile from "../profiles/LessonProfile.vue";
 
 import { createRouter, createWebHistory } from "vue-router";
 
@@ -37,6 +38,11 @@ const routes = [
     path: "/lessons",
     component: LessonsView,
     name: "lessons",
+  },
+  {
+    path: "/lessons/:id",
+    component: LessonProfile,
+    name: "lesson-profile",
   },
   {
     path: "/students",
