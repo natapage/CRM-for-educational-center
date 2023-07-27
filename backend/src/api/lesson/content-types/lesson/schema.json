@@ -12,12 +12,6 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "class": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "api::class.class",
-      "inversedBy": "lessons"
-    },
     "name": {
       "type": "string"
     },

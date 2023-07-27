@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Lesson, LessonsResponse } from "../types/LessonsTypes";
-import { ref, computed, onMounted, watch } from "vue";
+import { ref, onMounted } from "vue";
 import {
   NList,
   NThing,
@@ -8,7 +8,6 @@ import {
   NButton,
   NSpace,
   NInput,
-  NSelect,
   NSpin,
 } from "naive-ui";
 import { useRoute } from "vue-router";
@@ -60,10 +59,10 @@ async function handleEditLesson() {
 
   await editItem(body);
   if (!editLessonError.value) {
-    notify("success", "Группа успешно отредактирована");
+    notify("success", "Урок успешно отредактирован");
   }
   if (editLessonError.value) {
-    notify("error", "Невозможно отредактировать группу");
+    notify("error", "Невозможно отредактировать урок");
   }
   refetchLesson();
   isEditing.value = false;
@@ -113,7 +112,7 @@ async function handleEditLesson() {
       <n-list-item>
         <n-thing title="Продолжительность урока в минутах">
           <div v-if="!isEditing">{{ lesson?.attributes.duration }}</div>
-          <n-input v-else v-model:value="durationToCreate" />
+          <n-input v-else v-model="durationToCreate" />
         </n-thing>
       </n-list-item>
     </n-list>

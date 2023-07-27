@@ -1,9 +1,9 @@
 'use strict';
 
 /**
- * schedule controller
+ * slot controller
  */
 
 const { createCoreController } = require('@strapi/strapi').factories;
 
-module.exports = createCoreController('api::schedule.schedule');
+module.exports = createCoreController('api::slot.slot');

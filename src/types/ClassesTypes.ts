@@ -1,11 +1,19 @@
 import { SharedAttributes, EntitiesResponse, Entity } from "./GeneralTypes";
 import { Teacher } from "./TeachersTypes";
+import { Slot } from "./SlotsTypes";
+import { Student } from "./StudentsTypes";
 
 export interface ClassesAttributes {
   name: "string";
   description: "string";
+  student?: {
+    data: Student;
+  };
   teacher?: {
     data: Teacher;
+  };
+  slots?: {
+    data: Slot;
   };
 }
 

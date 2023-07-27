@@ -1,0 +1,45 @@
+{
+  "kind": "collectionType",
+  "collectionName": "slots",
+  "info": {
+    "singularName": "slot",
+    "pluralName": "slots",
+    "displayName": "Slots",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "lesson": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::lesson.lesson"
+    },
+    "dayofweek": {
+      "type": "enumeration",
+      "enum": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday"
+      ]
+    },
+    "order": {
+      "type": "enumeration",
+      "enum": [
+        "урок 1",
+        "урок 2",
+        "урок 3"
+      ]
+    },
+    "class": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::class.class",
+      "inversedBy": "slots"
+    }
+  }
+}
