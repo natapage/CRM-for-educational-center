@@ -1,31 +1,27 @@
 <script setup lang="ts">
 import { NGrid, NGridItem, NSelect } from "naive-ui";
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
 import { Class } from "../types/ClassesTypes";
 import { Lesson } from "../types/LessonsTypes";
 import { Slot, SlotsResponse } from "../types/SlotsTypes";
 import { useFetch } from "../composable/useFetch";
+import { useCreateEntity } from "../composable/useCreateEntity";
 import { useEditEntityById } from "../composable/useEditEntityById";
 import { useNotificationHandler } from "../composable/useNotification";
+import { daysOfWeek, lessonsOrder } from "../constants/constаnts.ts";
 
 onMounted(async () => {
   await refetchClasses();
   await refetchSlots();
   await refetchLessons();
 });
-const daysOfWeek: string[] = [
-  "Monday",
-  "Tuesday",
-  "Wednesday",
-  "Thursday",
-  "Friday",
-];
-const lessonsOrder = ["урок 1", "урок 2", "урок 3"];
+
 const selectedClass = ref<number>();
 const selectedLesson = ref<number>();
-const isEditing = ref<boolean>(false);
 const selectedSlot = ref<Slot>();
-const slotId = ref<number | undefined>();
+const selectedDay = ref<string>("");
+const selectedOrder = ref<string>("");
+const isSelectShow = ref<boolean>(false);
 
 const { notify } = useNotificationHandler();
 
@@ -35,6 +31,7 @@ const {
   // showSpinner,
   refetch: refetchClasses,
 } = useFetch<Class[]>("classes");
+
 const {
   data: lessons,
   // error: fetchClassesError,
@@ -48,6 +45,13 @@ const {
   // showSpinner,
   refetch: refetchSlots,
 } = useFetch<Slot[]>("slots");
+
+const { error: editSlotError, editItemById: editSlot } = useEditEntityById<
+  SlotsResponse,
+  Slot
+>(`slots`);
+
+const { error: createError, createItem: createSlot } = useCreateEntity();
 
 const filteredSlots = computed(() => {
   if (selectedClass.value) {
@@ -81,17 +85,11 @@ function getSlot(dayOfWeek: string, lessonOrder: string) {
 }
 
 function handleClick(day: string, order: string) {
-  const slot = getSlot(day, order);
-  slotId.value = slot?.id;
-  isEditing.value = true;
-  const currentSlot = getSlot(day, order);
-  selectedSlot.value = currentSlot;
+  selectedDay.value = day;
+  selectedOrder.value = order;
+  selectedSlot.value = getSlot(day, order);
+  isSelectShow.value = true;
 }
-
-const { error: editSlotError, editItemById: editSlot } = useEditEntityById<
-  SlotsResponse,
-  Slot
->(`slots`);
 
 async function handleEditLesson(day: string, order: string) {
   const body: any = {
@@ -108,6 +106,9 @@ async function handleEditLesson(day: string, order: string) {
       connect: [selectedClass.value],
     };
   }
+  if (!selectedSlot.value) {
+    await createSlot(body, "slots");
+  }
 
   if (selectedSlot.value) {
     await editSlot(selectedSlot.value.id, body);
@@ -118,12 +119,13 @@ async function handleEditLesson(day: string, order: string) {
     if (editSlotError.value) {
       notify("error", "Невозможно отредактировать урок");
     }
-
-    refetchSlots();
-    refetchLessons();
-    isEditing.value = false;
   }
+  isSelectShow.value = false;
+  refetchSlots();
+  refetchLessons();
 }
+
+watch(createError, () => notify("error", "Ошибка загрузки странички"));
 </script>
 <template>
   <div>
@@ -160,24 +162,17 @@ async function handleEditLesson(day: string, order: string) {
               v-for="(order, orderIndex) in lessonsOrder"
               :key="orderIndex"
             >
-              <div
-                @click="handleClick(day, order)"
-                :class="[
-                  'slot',
-                  'colored',
-                  {
-                    editing: isEditing && selectedSlot === getSlot(day, order),
-                  },
-                ]"
-              >
-                {{
-                  getSlot(day, order)?.attributes?.lesson?.data.attributes.name
-                }}
+              <div @click="handleClick(day, order)" class="slot colored">
+                <div>
+                  {{
+                    getSlot(day, order)?.attributes.lesson?.data.attributes.name
+                  }}
+                </div>
                 <n-select
                   v-if="
-                    getSlot(day, order) &&
-                    isEditing &&
-                    selectedSlot === getSlot(day, order)
+                    isSelectShow &&
+                    selectedDay === day &&
+                    selectedOrder === order
                   "
                   v-model:value="selectedLesson"
                   tag
@@ -200,6 +195,7 @@ async function handleEditLesson(day: string, order: string) {
   height: 50px;
   padding: 15px;
   text-align: center;
+  border-radius: 4px;
 }
 .colored {
   background-color: rgba(0, 128, 0, 0.12);

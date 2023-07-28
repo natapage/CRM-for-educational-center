@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Lesson, LessonsResponse } from "../types/LessonsTypes";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import {
   NList,
   NThing,
@@ -68,6 +68,8 @@ async function handleEditLesson() {
   isEditing.value = false;
   router.push(`/lessons`);
 }
+
+watch(refetchLessonError, () => notify("error", "Ошибка загрузки странички"));
 </script>
 
 <template>
