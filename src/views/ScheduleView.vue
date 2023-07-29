@@ -11,9 +11,7 @@ import { useNotificationHandler } from "../composable/useNotification";
 import { daysOfWeek, lessonsOrder } from "../constants/constаnts.ts";
 
 onMounted(async () => {
-  await refetchClasses();
-  await refetchSlots();
-  await refetchLessons();
+  await Promise.all([refetchClasses(), refetchSlots(), refetchLessons()]);
 });
 
 const selectedClass = ref<number>();
@@ -145,10 +143,10 @@ watch(createError, () => notify("error", "Ошибка загрузки стра
     </div>
     <n-grid :x-gap="8" :cols="6" v-if="selectedClass">
       <n-grid-item>
-        <div class="slot"></div>
+        <div class="lesson"></div>
         <n-grid :y-gap="8" :rows="3" :cols="1">
           <n-grid-item v-for="order in lessonsOrder" :key="order">
-            <div class="slot bold-text">
+            <div class="lesson bold-text">
               {{ order }}
             </div>
           </n-grid-item>
@@ -156,20 +154,21 @@ watch(createError, () => notify("error", "Ошибка загрузки стра
       </n-grid-item>
       <n-grid-item v-for="day in daysOfWeek">
         <div>
-          <div class="slot bold-text">{{ day }}</div>
+          <div class="lesson bold-text">{{ day }}</div>
           <n-grid :y-gap="8" :rows="3" :cols="1">
             <n-grid-item
               v-for="(order, orderIndex) in lessonsOrder"
               :key="orderIndex"
             >
-              <div @click="handleClick(day, order)" class="slot colored">
+              <div @click="handleClick(day, order)" class="lesson colored">
                 <div>
                   {{
                     getSlot(day, order)?.attributes.lesson?.data.attributes.name
                   }}
                 </div>
+
                 <n-select
-                  v-if="
+                  v-show="
                     isSelectShow &&
                     selectedDay === day &&
                     selectedOrder === order
@@ -179,6 +178,7 @@ watch(createError, () => notify("error", "Ошибка загрузки стра
                   :options="lessonsOptionsList"
                   placeholder="Выберите урок"
                   @update:value="handleEditLesson(day, order)"
+                  @blur="isSelectShow = false"
                 >
                 </n-select>
               </div>
@@ -191,7 +191,7 @@ watch(createError, () => notify("error", "Ошибка загрузки стра
 </template>
 
 <style scoped>
-.slot {
+.lesson {
   height: 50px;
   padding: 15px;
   text-align: center;

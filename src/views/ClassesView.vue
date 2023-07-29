@@ -53,44 +53,46 @@ function goToProfile(groupId: number | string) {
   <div>
     <n-space align="stretch" vertical>
       <h2>Список учебных групп</h2>
-      <n-table :bordered="false" :single-line="false" full-width>
-        <thead>
-          <tr>
-            <th>Название</th>
-            <th>Педагог</th>
-            <th>Ученики</th>
-            <th>Образовательные задачи</th>
-            <th></th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            v-for="group in classes"
-            :key="group.id"
-            class="row"
-            @click="goToProfile(group.id)"
-          >
-            <td>{{ group.attributes.name }}</td>
-            <td>{{ group.attributes.teacher?.data?.attributes?.name }}</td>
-            <td>{{}}</td>
-            <td>{{ group.attributes.description }}</td>
-            <td>
-              <n-button type="primary" ghost @click="goToProfile(group.id)"
-                >Редактировать группу</n-button
-              >
-            </td>
-            <td>
-              <n-button
-                type="error"
-                ghost
-                @click.stop="handleConfirmation(group.id)"
-                >Удалить</n-button
-              >
-            </td>
-          </tr>
-        </tbody>
-      </n-table>
+      <div class="table container">
+        <n-table :bordered="false" :single-line="false" full-width>
+          <thead>
+            <tr>
+              <th>Название</th>
+              <th>Педагог</th>
+              <th>Ученики</th>
+              <th>Образовательные задачи</th>
+              <th></th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="group in classes"
+              :key="group.id"
+              class="row"
+              @click="goToProfile(group.id)"
+            >
+              <td>{{ group.attributes.name }}</td>
+              <td>{{ group.attributes.teacher?.data?.attributes?.name }}</td>
+              <td>{{}}</td>
+              <td>{{ group.attributes.description }}</td>
+              <td>
+                <n-button type="primary" ghost @click="goToProfile(group.id)"
+                  >Редактировать группу</n-button
+                >
+              </td>
+              <td>
+                <n-button
+                  type="error"
+                  ghost
+                  @click.stop="handleConfirmation(group.id)"
+                  >Удалить</n-button
+                >
+              </td>
+            </tr>
+          </tbody>
+        </n-table>
+      </div>
       <div class="spinner-container" v-if="showSpinner">
         <n-spin size="medium" />
       </div>
