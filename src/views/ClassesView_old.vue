@@ -1,24 +1,15 @@
 <script setup lang="ts">
 import ClassForm from "../components/ClassForm.vue";
 import { Class } from "../types/ClassesTypes.ts";
-import { ClassTable } from "../types/TablesTypes";
-import { watch, onMounted, h, computed } from "vue";
+import { watch, onMounted } from "vue";
 import router from "../router/router.ts";
-import {
-  NButton,
-  NSpace,
-  NModal,
-  DataTableColumns,
-  NDataTable,
-} from "naive-ui";
+import { NTable, NButton, NSpace, NModal, NSpin } from "naive-ui";
 import { useFetch } from "../composable/useFetch";
 import { useNotificationHandler } from "../composable/useNotification";
 import { useDeleteEntity } from "../composable/useDeleteEntity";
 import { useCreateEntity } from "../composable/useCreateEntity";
 
-onMounted(async () => {
-  await refetch();
-});
+onMounted(async () => await refetch());
 
 const { notify } = useNotificationHandler();
 
@@ -56,66 +47,6 @@ watch([fetchError, deleteError], () =>
 function goToProfile(groupId: number | string) {
   router.push({ name: "class-profile", params: { id: groupId } });
 }
-
-const columns = computed(() =>
-  createColumns({ goToProfile, handleConfirmation })
-);
-
-const createColumns = ({
-  goToProfile,
-  handleConfirmation,
-}): DataTableColumns<ClassTable> => [
-  {
-    title: "Название",
-    key: "name",
-  },
-  {
-    title: "Педагог",
-    key: "teacher",
-  },
-  {
-    title: "Описание",
-    key: "description",
-  },
-  {
-    title: "",
-    key: "actions",
-    render(row) {
-      return h(NSpace, [
-        h(
-          NButton,
-          {
-            type: "primary",
-            ghost: true,
-            onClick: () => goToProfile(row.id),
-          },
-          { default: () => "Перейти в профиль" }
-        ),
-        h(
-          NButton,
-          {
-            type: "error",
-            ghost: true,
-
-            onClick: () => handleConfirmation(),
-          },
-          { default: () => "Удалить" }
-        ),
-      ]);
-    },
-  },
-];
-
-const data: ClassTable[] = computed(() => {
-  return classes.value?.map((group) => {
-    return {
-      id: group.id,
-      name: group.attributes.name,
-      teacher: group.attributes.teacher?.data?.attributes?.name,
-      description: group.attributes.description,
-    };
-  });
-});
 </script>
 
 <template>
@@ -123,14 +54,47 @@ const data: ClassTable[] = computed(() => {
     <n-space align="stretch" vertical>
       <h2>Список учебных групп</h2>
       <div class="table container">
-        <n-data-table
-          :loading="showSpinner"
-          :columns="columns"
-          :data="data"
-          :bordered="false"
-          :max-height="400"
-          virtual-scroll
-        />
+        <n-table :bordered="false" :single-line="false" full-width>
+          <thead>
+            <tr>
+              <th>Название</th>
+              <th>Педагог</th>
+              <th>Ученики</th>
+              <th>Образовательные задачи</th>
+              <th></th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="group in classes"
+              :key="group.id"
+              class="row"
+              @click="goToProfile(group.id)"
+            >
+              <td>{{ group.attributes.name }}</td>
+              <td>{{ group.attributes.teacher?.data?.attributes?.name }}</td>
+              <td>{{}}</td>
+              <td>{{ group.attributes.description }}</td>
+              <td>
+                <n-button type="primary" ghost @click="goToProfile(group.id)"
+                  >Редактировать группу</n-button
+                >
+              </td>
+              <td>
+                <n-button
+                  type="error"
+                  ghost
+                  @click.stop="handleConfirmation(group.id)"
+                  >Удалить</n-button
+                >
+              </td>
+            </tr>
+          </tbody>
+        </n-table>
+      </div>
+      <div class="spinner-container" v-if="showSpinner">
+        <n-spin size="medium" />
       </div>
       <n-button
         class="add-button"
@@ -158,6 +122,9 @@ const data: ClassTable[] = computed(() => {
 </template>
 
 <style scoped>
+.spinner-container {
+  margin-top: 20px;
+}
 .row:hover > td {
   cursor: pointer;
   background-color: rgba(24, 160, 88, 0.1);
