@@ -11,3 +11,10 @@ export type LessonTable = {
   description: "string";
   duration: "number";
 };
+
+export type StudentTable = {
+  id: "number";
+  name: "string";
+  description: "string";
+  duration: "number";
+};

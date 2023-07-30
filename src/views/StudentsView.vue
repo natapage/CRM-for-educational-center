@@ -1,15 +1,24 @@
 <script setup lang="ts">
 import StudentForm from "../components/StudentForm.vue";
 import { Student } from "../types/StudentsTypes.ts";
+// import { StudentTable } from "../types/TablesTypes.ts";
+
 import router from "../router/router.ts";
-import { watch, onMounted } from "vue";
-import { NTable, NButton, NSpace, NModal, NSpin } from "naive-ui";
+import { watch, onMounted, h, computed } from "vue";
+import {
+  NDataTable,
+  NButton,
+  NSpace,
+  NModal,
+  NSpin,
+  DataTableColumns,
+} from "naive-ui";
 import { useFetch } from "../composable/useFetch";
 import { useDeleteEntity } from "../composable/useDeleteEntity";
 import { useCreateEntity } from "../composable/useCreateEntity";
 import { useNotificationHandler } from "../composable/useNotification";
 
-onMounted( async() => await refetch());
+onMounted(async () => await refetch());
 
 const { notify } = useNotificationHandler();
 
@@ -46,12 +55,90 @@ watch([fetchError, deleteError], () =>
 function goToProfile(studentId: number | string) {
   router.push({ name: "student-profile", params: { id: studentId } });
 }
+
+const columns = computed(() =>
+  createColumns({ goToProfile, handleConfirmation })
+);
+
+const createColumns = ({
+  goToProfile,
+  handleConfirmation,
+}): DataTableColumns<Student> => [
+  {
+    title: "Имя ученика",
+    key: "name",
+  },
+  {
+    title: "Дата рождения",
+    key: "date",
+  },
+  {
+    title: "Номер телефона",
+    key: "phone",
+  },
+  {
+    title: "Группа",
+    key: "class",
+  },
+  {
+    title: "Особые указания",
+    key: "description",
+  },
+
+  {
+    title: "",
+    key: "actions",
+    render(row) {
+      return h(NSpace, {}, () => [
+        h(
+          NButton,
+          {
+            type: "primary",
+            ghost: true,
+            onClick: () => goToProfile(row.id),
+          },
+          () => "Перейти в профиль"
+        ),
+        h(
+          NButton,
+          {
+            type: "error",
+            ghost: true,
+            onClick: () => handleConfirmation(),
+          },
+          () => "Удалить"
+        ),
+      ]);
+    },
+  },
+];
+
+const data: Student[] = computed(() => {
+  return students.value?.map((student) => {
+    return {
+      id: student.id,
+      name: student.attributes.name,
+      date: new Date(student.attributes.date).toLocaleDateString(),
+      phone: student.attributes.phone,
+      class: student?.attributes?.class?.data.attributes.name,
+      description: student.attributes.description,
+    };
+  });
+});
 </script>
 
 <template>
   <n-space align="stretch" vertical>
     <h2>Список учащихся</h2>
-    <n-table :bordered="false" :single-line="false">
+    <n-data-table
+      :loading="showSpinner"
+      :columns="columns"
+      :data="data"
+      :bordered="false"
+      :max-height="400"
+      virtual-scroll
+    />
+    <!-- <n-table :bordered="false" :single-line="false">
       <thead>
         <tr>
           <th>Имя ученика</th>
@@ -90,7 +177,7 @@ function goToProfile(studentId: number | string) {
           </td>
         </tr>
       </tbody>
-    </n-table>
+    </n-table> -->
     <div class="spinner-container" v-if="showSpinner">
       <n-spin size="medium" />
     </div>
