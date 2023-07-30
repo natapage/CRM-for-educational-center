@@ -41,7 +41,7 @@ const {
 const { error: editLessonError, editItem } = useEditEntity<
   LessonsResponse,
   Lesson
->(`classes/${lessonId.value}`);
+>(`lessons/${lessonId.value}`);
 
 function setEditMode() {
   isEditing.value = true;

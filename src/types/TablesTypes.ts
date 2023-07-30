@@ -4,3 +4,10 @@ export type ClassTable = {
   teacher: "string";
   description: "string";
 };
+
+export type LessonTable = {
+  id: "number";
+  name: "string";
+  description: "string";
+  duration: "number";
+};

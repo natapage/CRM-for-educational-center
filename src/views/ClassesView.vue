@@ -81,7 +81,7 @@ const createColumns = ({
     title: "",
     key: "actions",
     render(row) {
-      return h(NSpace, [
+      return h(NSpace, {}, () => [
         h(
           NButton,
           {
@@ -89,17 +89,16 @@ const createColumns = ({
             ghost: true,
             onClick: () => goToProfile(row.id),
           },
-          { default: () => "Перейти в профиль" }
+          () => "Перейти в профиль"
         ),
         h(
           NButton,
           {
             type: "error",
             ghost: true,
-
-            onClick: () => handleConfirmation(),
+            onClick: () => handleConfirmation(row.id),
           },
-          { default: () => "Удалить" }
+          () => "Удалить"
         ),
       ]);
     },

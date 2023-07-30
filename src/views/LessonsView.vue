@@ -1,9 +1,16 @@
 <script setup lang="ts">
 import LessonForm from "../components/LessonForm.vue";
 import { Lesson } from "../types/LessonsTypes.ts";
-import { watch, onMounted } from "vue";
+import { LessonTable } from "../types/TablesTypes.ts";
+import { watch, onMounted, computed, h } from "vue";
 import router from "../router/router";
-import { NTable, NButton, NSpace, NModal, NSpin } from "naive-ui";
+import {
+  NButton,
+  NSpace,
+  NModal,
+  NDataTable,
+  DataTableColumns,
+} from "naive-ui";
 import { useFetch } from "../composable/useFetch";
 import { useNotificationHandler } from "../composable/useNotification";
 import { useDeleteEntity } from "../composable/useDeleteEntity";
@@ -25,7 +32,7 @@ const {
   deleteItem,
   handleConfirmation,
   isShowModalConfirm,
-} = useDeleteEntity<Lesson>("classes");
+} = useDeleteEntity<Lesson>("lessons");
 
 async function handleDelete() {
   console.log(lessons.value);
@@ -47,50 +54,78 @@ watch([fetchError, deleteError], () =>
 function goToProfile(lessonId: number | string) {
   router.push({ name: "lesson-profile", params: { id: lessonId } });
 }
+const columns = computed(() =>
+  createColumns({ goToProfile, handleConfirmation })
+);
+const createColumns = ({
+  goToProfile,
+  handleConfirmation,
+}): DataTableColumns<LessonTable> => [
+  {
+    title: "Название урока",
+    key: "name",
+  },
+  {
+    title: "Цели и задачи урока",
+    key: "description",
+  },
+  {
+    title: "Продолжительность",
+    key: "duration",
+  },
+  {
+    title: "",
+    key: "actions",
+    render(row) {
+      return h(NSpace, {}, () => [
+        h(
+          NButton,
+          {
+            type: "primary",
+            ghost: true,
+            onClick: () => goToProfile(row.id),
+          },
+          () => "Перейти в профиль"
+        ),
+        h(
+          NButton,
+          {
+            type: "error",
+            ghost: true,
+            onClick: () => handleConfirmation(),
+          },
+          () => "Удалить"
+        ),
+      ]);
+    },
+  },
+];
+
+const data: LessonTable[] = computed(() => {
+  return lessons.value?.map((lesson) => {
+    return {
+      id: lesson.id,
+      name: lesson.attributes.name,
+      description: lesson.attributes.description,
+      duration: lesson.attributes.duration,
+    };
+  });
+});
 </script>
 
 <template>
   <div>
     <n-space align="stretch" vertical>
       <h2>Список уроков</h2>
-      <n-table :bordered="false" :single-line="false" full-width>
-        <thead>
-          <tr>
-            <th>Название</th>
-            <th>Описание</th>
-            <th>Продолжительность</th>
-            <th></th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            v-for="lesson in lessons"
-            :key="lesson.id"
-            class="row"
-            @click="goToProfile(lesson.id)"
-          >
-            <td>{{ lesson.attributes.name }}</td>
-            <td>{{ lesson.attributes.description }}</td>
-            <td>{{ lesson.attributes.duration }}</td>
-            <td>
-              <n-button type="primary" ghost @click="goToProfile(lesson.id)"
-                >Редактировать урок</n-button
-              >
-            </td>
-            <td>
-              <n-button
-                type="error"
-                ghost
-                @click.stop="handleConfirmation(lesson.id)"
-                >Удалить</n-button
-              >
-            </td>
-          </tr>
-        </tbody>
-      </n-table>
-      <div class="spinner-container" v-if="showSpinner">
-        <n-spin size="medium" />
+      <div class="table container">
+        <n-data-table
+          :loading="showSpinner"
+          :columns="columns"
+          :data="data"
+          :bordered="false"
+          :max-height="400"
+          virtual-scroll
+        />
       </div>
       <n-button
         class="add-button"
@@ -98,7 +133,7 @@ function goToProfile(lessonId: number | string) {
         @click="isShowModalCreate = true"
         v-if="!showSpinner"
       >
-        Добавить урок
+        Добавить группу
       </n-button>
     </n-space>
     <n-modal v-model:show="isShowModalCreate" @close-modal="handleCreateLesson">
