@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import ClassForm from "../components/ClassForm.vue";
 import { Class } from "../types/ClassesTypes.ts";
-import { ClassTable } from "../types/TablesTypes";
 import { watch, onMounted, h, computed } from "vue";
 import router from "../router/router.ts";
 import {
@@ -64,7 +63,7 @@ const columns = computed(() =>
 const createColumns = ({
   goToProfile,
   handleConfirmation,
-}): DataTableColumns<ClassTable> => [
+}): DataTableColumns<Class> => [
   {
     title: "Название",
     key: "name",

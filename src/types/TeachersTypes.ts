@@ -1,7 +1,6 @@
 import { SharedAttributes, EntitiesResponse, Entity } from "./GeneralTypes";
-import {Class} from "../types/ClassesTypes"
+import { Class } from "../types/ClassesTypes";
 import { Task } from "./TasksTypes";
-
 
 export interface TeachersAttributes {
   name: string;
@@ -11,6 +10,9 @@ export interface TeachersAttributes {
   };
   tasks: {
     data: Task[];
+  };
+  photo?: {
+    data: Photo[];
   };
 }
 
@@ -22,3 +24,20 @@ export interface TeachersResponse extends EntitiesResponse {
   data: Teacher[];
 }
 
+export interface Photo {
+  id: string;
+  attributes: {
+    name: string;
+    formats: {
+      thumbnail: {
+        name: string;
+        url: string;
+      };
+      small: {
+        name: string;
+        url: string;
+      };
+    };
+    url: string;
+  };
+}

@@ -24,19 +24,21 @@
     "phone": {
       "type": "biginteger"
     },
-    "Foto": {
-      "type": "media",
-      "multiple": false,
-      "required": false,
-      "allowedTypes": [
-        "images"
-      ]
-    },
     "tasks": {
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::task.task",
       "mappedBy": "teacher"
+    },
+    "photo": {
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ],
+      "type": "media",
+      "multiple": true
     }
   }
 }

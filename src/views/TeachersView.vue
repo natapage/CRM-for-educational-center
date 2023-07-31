@@ -4,9 +4,11 @@ import { Teacher } from "../types/TeachersTypes.ts";
 import { Task } from "../types/TasksTypes";
 import { BASE } from "../constants/constаnts.ts";
 import router from "../router/router.ts";
-import { watch, onMounted } from "vue";
+import { watch, onMounted, h, computed } from "vue";
 import {
   NTable,
+  NAvatar,
+  NDataTable,
   NButton,
   NModal,
   NCollapse,
@@ -14,12 +16,14 @@ import {
   NSpin,
   NSpace,
   NCheckbox,
+  DataTableColumns,
 } from "naive-ui";
 import { deleteEntity } from "../API/requestsApi";
 import { useFetch } from "../composable/useFetch";
 import { useDeleteEntity } from "../composable/useDeleteEntity";
 import { useCreateEntity } from "../composable/useCreateEntity";
 import { useNotificationHandler } from "../composable/useNotification";
+// import { getPhoto } from "../API/requestsApi";
 
 onMounted(async () => await refetch());
 
@@ -64,11 +68,99 @@ async function updateTaskList(taskId: number) {
 function goToProfile(teacherID: number | string) {
   router.push({ name: "teacher-profile", params: { id: teacherID } });
 }
+
+// const columns = computed(() =>
+//   createColumns({ goToProfile, handleConfirmation })
+// );
+
+// const createColumns = ({
+//   goToProfile,
+//   handleConfirmation,
+// }): DataTableColumns<Teacher> => [
+//   {
+//     title: "Имя педагога",
+//     key: "name",
+//   },
+//   {
+//     title: "Номер телефона",
+//     key: "phone",
+//   },
+//   // {
+//   //   title: "Группа",
+//   //   key: "classes",
+//   // },
+//   // {
+//   //   title: "Задачи",
+//   //   key: "tasks",
+//   // },
+//   // {
+//   //   title: "Фото",
+//   //   key: "photo",
+//   //   render(row) {
+//   //     return h("img", {
+//   //       src: row.attributes.photo,
+//   //     });
+//   //   },
+//   // },
+//   {
+//     title: "",
+//     key: "actions",
+//     render(row) {
+//       return h(NSpace, {}, () => [
+//         h(
+//           NButton,
+//           {
+//             type: "primary",
+//             ghost: true,
+//             onClick: () => goToProfile(row.id),
+//           },
+//           () => "Перейти в профиль"
+//         ),
+//         h(
+//           NButton,
+//           {
+//             type: "error",
+//             ghost: true,
+//             onClick: () => handleConfirmation(),
+//           },
+//           () => "Удалить"
+//         ),
+//       ]);
+//     },
+//   },
+// ];
+
+// const data: Teacher[] = computed(async () => {
+//   return teachers.value?.map((teacher) => {
+//     // let photoUrl: string = "";
+//     console.log(teacher.attributes.photo);
+//     // if (teacher.attributes.photo) {
+//     //   const blobData = teacher.attributes.photo; // Здесь должен быть Blob-объект с данными изображения
+//     //   photoUrl = URL.createObjectURL(blobData);
+//     // }
+//     return {
+//       id: teacher.id,
+//       name: teacher.attributes.name,
+//       phone: teacher.attributes.phone,
+//       // classes: "группы",
+//       // tasks: "задачи",
+//       // photo: photoUrl,
+//     };
+//   });
+// });
 </script>
 <template>
   <div>
     <n-space vertical>
       <h2>Список учителей</h2>
+      <!-- <n-data-table
+        :loading="showSpinner"
+        :columns="columns"
+        :data="data"
+        :bordered="false"
+        :max-height="400"
+        virtual-scroll
+      /> -->
       <n-table :bordered="false" :single-line="false">
         <thead>
           <tr>
@@ -114,7 +206,18 @@ function goToProfile(teacherID: number | string) {
                 </n-collapse>
               </div>
             </td>
-            <td>фото</td>
+            <td>
+              <n-avatar
+                round
+                size="large"
+                v-if="teacher.attributes.photo?.data[0].attributes.url"
+                :src="
+                  'http://localhost:1337' +
+                  teacher.attributes.photo?.data[0].attributes.formats.thumbnail
+                    .url
+                "
+              />
+            </td>
             <td>
               <n-button type="primary" ghost @click="goToProfile(teacher.id)"
                 >Перейти в профиль</n-button
@@ -171,4 +274,3 @@ function goToProfile(teacherID: number | string) {
   background-color: rgba(24, 160, 88, 0.1);
 }
 </style>
-../constants/constаnts.ts

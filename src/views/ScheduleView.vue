@@ -15,7 +15,7 @@ onMounted(async () => {
 });
 
 const selectedClass = ref<number>();
-const selectedLesson = ref<number>();
+const selectedLesson = ref<number | null>();
 const selectedSlot = ref<Slot>();
 const selectedDay = ref<string>("");
 const selectedOrder = ref<string>("");
@@ -52,6 +52,7 @@ const { error: editSlotError, editItemById: editSlot } = useEditEntityById<
 const { error: createError, createItem: createSlot } = useCreateEntity();
 
 const filteredSlots = computed(() => {
+  isSelectShow.value = false;
   if (selectedClass.value) {
     return slots.value?.filter(
       (slot) => slot.attributes?.class?.data.id === selectedClass.value
@@ -83,6 +84,7 @@ function getSlot(dayOfWeek: string, lessonOrder: string) {
 }
 
 function handleClick(day: string, order: string) {
+  selectedLesson.value = null;
   selectedDay.value = day;
   selectedOrder.value = order;
   selectedSlot.value = getSlot(day, order);
@@ -161,14 +163,18 @@ watch(createError, () => notify("error", "Ошибка загрузки стра
               :key="orderIndex"
             >
               <div @click="handleClick(day, order)" class="lesson colored">
-                <div>
+                <div
+                  v-if="
+                    getSlot(day, order)?.attributes.lesson?.data.attributes.name
+                  "
+                >
                   {{
                     getSlot(day, order)?.attributes.lesson?.data.attributes.name
                   }}
                 </div>
-
+                <div v-else>нет урока</div>
                 <n-select
-                  v-show="
+                  v-if="
                     isSelectShow &&
                     selectedDay === day &&
                     selectedOrder === order

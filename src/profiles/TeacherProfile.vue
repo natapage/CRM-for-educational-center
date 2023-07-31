@@ -2,6 +2,7 @@
 import { Teacher, TeachersResponse } from "../types/TeachersTypes";
 import { Class } from "../types/ClassesTypes";
 import { ref, computed, onMounted, watch } from "vue";
+import { BASE } from "../constants/constаnts";
 import {
   NList,
   NThing,
@@ -11,6 +12,7 @@ import {
   NInput,
   NSelect,
   NSpin,
+  NUpload,
 } from "naive-ui";
 import { useRoute } from "vue-router";
 import router from "../router/router";
@@ -28,6 +30,7 @@ const { notify } = useNotificationHandler();
 const route = useRoute();
 
 const teacherId = ref<number>(Number(route.params.id));
+// const fetchFotoUrl = `${BASE}/uploads/files/${teacherId}`;
 
 const isEditing = ref<boolean>(false);
 const nameToCreate = ref<string | undefined>();
@@ -156,6 +159,21 @@ watch([refetchClassesError, refetchTeacherError], () =>
             filterable
             tag
           />
+        </n-thing>
+      </n-list-item>
+      <n-list-item>
+        <n-thing title="Фото">
+          <n-upload
+            action="http://localhost:1337/api/upload/"
+            :headers="{
+              'naive-info': 'hello!',
+            }"
+            :data="{
+              'naive-data': 'cool! naive!',
+            }"
+          >
+            <n-button>Загрузить фото</n-button>
+          </n-upload>
         </n-thing>
       </n-list-item>
     </n-list>

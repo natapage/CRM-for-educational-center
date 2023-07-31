@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import LessonForm from "../components/LessonForm.vue";
 import { Lesson } from "../types/LessonsTypes.ts";
-import { LessonTable } from "../types/TablesTypes.ts";
 import { watch, onMounted, computed, h } from "vue";
 import router from "../router/router";
 import {
@@ -60,7 +59,7 @@ const columns = computed(() =>
 const createColumns = ({
   goToProfile,
   handleConfirmation,
-}): DataTableColumns<LessonTable> => [
+}): DataTableColumns<Lesson> => [
   {
     title: "Название урока",
     key: "name",
