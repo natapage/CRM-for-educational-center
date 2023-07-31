@@ -2,9 +2,9 @@
 import { Teacher, TeachersResponse } from "../types/TeachersTypes";
 import { Class } from "../types/ClassesTypes";
 import { ref, computed, onMounted, watch } from "vue";
-import { BASE } from "../constants/constаnts";
 import {
   NList,
+  NImage,
   NThing,
   NListItem,
   NButton,
@@ -103,7 +103,7 @@ watch([refetchClassesError, refetchTeacherError], () =>
     <n-button type="tertiary" @click="router.push({ name: 'teachers' })"
       >Назад</n-button
     >
-    <n-space horizontal justify="space-between" align="center">
+    <n-space vertical>
       <h2>Данные о педагоге</h2>
       <n-button
         type="primary"
@@ -112,6 +112,7 @@ watch([refetchClassesError, refetchTeacherError], () =>
       >
         Редактировать данные</n-button
       >
+
       <n-space horizontal v-else>
         <n-button v-if="!showSpinner" @click="isEditing = false">
           Отменить изменения</n-button
@@ -124,59 +125,69 @@ watch([refetchClassesError, refetchTeacherError], () =>
     <div class="spinner-container" v-if="showSpinner">
       <n-spin size="medium" />
     </div>
-    <n-list v-if="!showSpinner">
-      <n-list-item>
-        <n-thing title="Имя педагога">
-          <div v-if="!isEditing">{{ teacher?.attributes.name }}</div>
-          <n-input
-            v-else
-            v-model:value="nameToCreate"
-            type="text"
-            :placeholder="teacher?.attributes.name"
-          />
-        </n-thing>
-      </n-list-item>
-      <n-list-item>
-        <n-thing title="Номер телефона">
-          <div v-if="!isEditing">{{ teacher?.attributes.phone }}</div>
-          <n-input
-            v-else
-            v-model:value="phoneToCreate"
-            type="text"
-            :placeholder="teacher?.attributes.phone"
-          />
-        </n-thing>
-      </n-list-item>
-      <n-list-item>
-        <n-thing title="Группа">
-          <div v-if="!isEditing">
-            {{ teacher?.attributes.classes.data[0].attributes.name }}
-          </div>
-          <n-select
-            v-else
-            v-model:value="classToCreate"
-            :options="classOptionsList"
-            filterable
-            tag
-          />
-        </n-thing>
-      </n-list-item>
-      <n-list-item>
-        <n-thing title="Фото">
-          <n-upload
-            action="http://localhost:1337/api/upload/"
-            :headers="{
-              'naive-info': 'hello!',
-            }"
-            :data="{
-              'naive-data': 'cool! naive!',
-            }"
-          >
-            <n-button>Загрузить фото</n-button>
-          </n-upload>
-        </n-thing>
-      </n-list-item>
-    </n-list>
+    <div class="profile-container">
+      <n-list v-if="!showSpinner">
+        <n-list-item>
+          <n-thing title="Имя педагога">
+            <div v-if="!isEditing">{{ teacher?.attributes.name }}</div>
+            <n-input
+              v-else
+              v-model:value="nameToCreate"
+              type="text"
+              :placeholder="teacher?.attributes.name"
+            />
+          </n-thing>
+        </n-list-item>
+        <n-list-item>
+          <n-thing title="Номер телефона">
+            <div v-if="!isEditing">{{ teacher?.attributes.phone }}</div>
+            <n-input
+              v-else
+              v-model:value="phoneToCreate"
+              type="text"
+              :placeholder="teacher?.attributes.phone"
+            />
+          </n-thing>
+        </n-list-item>
+        <n-list-item>
+          <n-thing title="Группа">
+            <div v-if="!isEditing">
+              {{ teacher?.attributes.classes.data[0].attributes.name }}
+            </div>
+            <n-select
+              v-else
+              v-model:value="classToCreate"
+              :options="classOptionsList"
+              filterable
+              tag
+            />
+          </n-thing>
+        </n-list-item>
+        <n-list-item>
+          <n-thing title="Фото">
+            <n-upload
+              action="http://localhost:1337/api/upload/"
+              :data="{
+                refId: teacherId.toString(),
+                field: 'photo',
+                ref: 'api::teacher.teacher',
+              }"
+              name="files"
+            >
+              <n-button>Загрузить фото</n-button>
+            </n-upload>
+          </n-thing>
+        </n-list-item>
+      </n-list>
+      <n-image
+        width="300"
+        height="300"
+        :src="
+          'http://localhost:1337' +
+          teacher?.attributes.photo?.data?.attributes.formats.small.url
+        "
+      ></n-image>
+    </div>
   </div>
 </template>
 
@@ -186,5 +197,9 @@ watch([refetchClassesError, refetchTeacherError], () =>
 }
 .container {
   width: 900px;
+}
+.profile-container {
+  display: flex;
+  justify-content: space-between;
 }
 </style>

@@ -98,7 +98,7 @@ function goToProfile(teacherID: number | string) {
 //   //   key: "photo",
 //   //   render(row) {
 //   //     return h("img", {
-//   //       src: row.attributes.photo,
+//   //       src: ,
 //   //     });
 //   //   },
 //   // },
@@ -210,10 +210,10 @@ function goToProfile(teacherID: number | string) {
               <n-avatar
                 round
                 size="large"
-                v-if="teacher.attributes.photo?.data[0].attributes.url"
+                v-if="teacher.attributes.photo?.data?.attributes.url"
                 :src="
                   'http://localhost:1337' +
-                  teacher.attributes.photo?.data[0].attributes.formats.thumbnail
+                  teacher.attributes.photo?.data.attributes.formats.thumbnail
                     .url
                 "
               />

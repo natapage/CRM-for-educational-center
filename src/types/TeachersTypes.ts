@@ -12,7 +12,7 @@ export interface TeachersAttributes {
     data: Task[];
   };
   photo?: {
-    data: Photo[];
+    data: Photo;
   };
 }
 
