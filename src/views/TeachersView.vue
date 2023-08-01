@@ -57,12 +57,6 @@ watch([fetchError, deleteTeacherError], () =>
   notify("error", "Ошибка загрузки страницы")
 );
 
-// async function updateTaskList(taskId: number) {
-//   const url = `${BASE}/api/tasks/${taskId}`;
-//   await deleteEntity<Task>(url);
-//   setTimeout(refetch, 1000);
-// }
-
 function goToProfile(teacherId: number | string) {
   router.push({ name: "teacher-profile", params: { id: teacherId } });
 }

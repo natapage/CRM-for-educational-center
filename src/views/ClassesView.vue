@@ -67,10 +67,12 @@ const createColumns = ({
   {
     title: "Название",
     key: "name",
+    width: "220",
   },
   {
     title: "Педагог",
     key: "teacher",
+    width: "300",
   },
   {
     title: "Описание",
@@ -104,7 +106,7 @@ const createColumns = ({
   },
 ];
 
-const data: ClassTable[] = computed(() => {
+const data = computed(() => {
   return classes.value?.map((group) => {
     return {
       id: group.id,

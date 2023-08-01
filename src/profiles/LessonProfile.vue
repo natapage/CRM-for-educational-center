@@ -29,7 +29,7 @@ const lessonId = ref<number>(Number(route.params.id));
 const isEditing = ref<boolean>(false);
 const nameToCreate = ref<string | undefined>("");
 const descriptionToCreate = ref<string | undefined>("");
-const durationToCreate = ref<string | undefined | number>("");
+const durationToCreate = ref<undefined | string>("");
 
 const {
   data: lesson,
@@ -54,7 +54,7 @@ async function handleEditLesson() {
   const body: any = {
     name: nameToCreate.value,
     description: descriptionToCreate.value,
-    duration: durationToCreate.value,
+    duration: Number(durationToCreate.value),
   };
 
   await editItem(body);
@@ -114,7 +114,7 @@ watch(refetchLessonError, () => notify("error", "Ошибка загрузки �
       <n-list-item>
         <n-thing title="Продолжительность урока в минутах">
           <div v-if="!isEditing">{{ lesson?.attributes.duration }}</div>
-          <n-input v-else v-model="durationToCreate" />
+          <n-input v-else v-model:value="durationToCreate" />
         </n-thing>
       </n-list-item>
     </n-list>

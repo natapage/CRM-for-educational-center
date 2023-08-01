@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import StudentForm from "../components/StudentForm.vue";
 import { Student } from "../types/StudentsTypes.ts";
-// import { StudentTable } from "../types/TablesTypes.ts";
-
 import router from "../router/router.ts";
 import { watch, onMounted, h, computed } from "vue";
 import {
   NDataTable,
+  NCheckbox,
   NButton,
   NSpace,
   NModal,
@@ -67,18 +66,22 @@ const createColumns = ({
   {
     title: "Имя ученика",
     key: "name",
+    width: "180",
   },
   {
     title: "Дата рождения",
     key: "date",
+    width: "150",
   },
   {
     title: "Номер телефона",
     key: "phone",
+    width: "150",
   },
   {
     title: "Группа",
     key: "class",
+    width: "150",
   },
   {
     title: "Особые указания",

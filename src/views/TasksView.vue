@@ -1,21 +1,25 @@
 <script setup lang="ts">
+import { BASE } from "../constants/constants";
 import TaskForm from "../components/TaskForm.vue";
 import { Task } from "../types/TasksTypes.ts";
 import { Teacher } from "../types/TeachersTypes.ts";
 import router from "../router/router";
-import { watch, ref, computed, onMounted } from "vue";
+import { watch, ref, computed, onMounted, h } from "vue";
 import {
-  NTable,
+  NDataTable,
+  DataTableColumns,
   NButton,
   NModal,
-  NSpin,
   NSelect,
+  NCheckbox,
   NGradientText,
+  NSpace,
 } from "naive-ui";
 import { useFetch } from "../composable/useFetch";
 import { useNotificationHandler } from "../composable/useNotification";
 import { useDeleteEntity } from "../composable/useDeleteEntity";
 import { useCreateEntity } from "../composable/useCreateEntity";
+import { deleteEntity } from "../API/requestsApi";
 
 const { notify } = useNotificationHandler();
 
@@ -75,9 +79,89 @@ const filteredTasks = computed(() => {
   return tasks.value;
 });
 
+async function updateTaskList(taskId: number) {
+  const url = `${BASE}/api/tasks/${taskId}`;
+  await deleteEntity<Task>(url);
+  setTimeout(() => refetchTasks(), 1000);
+}
+
 function goToProfile(taskId: number | string) {
   router.push({ name: "task-profile", params: { id: taskId } });
 }
+
+const columns = computed(() =>
+  createColumns({ goToProfile, handleConfirmation })
+);
+
+const createColumns = ({
+  goToProfile,
+  handleConfirmation,
+}): DataTableColumns<Task> => [
+  {
+    title: "Педагог",
+    key: "name",
+    width: "200",
+  },
+  {
+    title: "Описание Задачи",
+    key: "description",
+    width: "350",
+  },
+  {
+    title: "Дата выполнения",
+    key: "date",
+    width: "160",
+  },
+  {
+    title: "Выполнено",
+    key: "done",
+    width: "170",
+    render(row) {
+      return h(
+        NCheckbox,
+        { sizee: "large", update: () => updateTaskList(row.id) },
+        () => ""
+      );
+    },
+  },
+  {
+    title: "",
+    key: "actions",
+    render(row) {
+      return h(NSpace, {}, () => [
+        h(
+          NButton,
+          {
+            type: "primary",
+            ghost: true,
+            onClick: () => goToProfile(row.id),
+          },
+          () => "Перейти в профиль"
+        ),
+        h(
+          NButton,
+          {
+            type: "error",
+            ghost: true,
+            onClick: () => handleConfirmation(row.id),
+          },
+          () => "Удалить"
+        ),
+      ]);
+    },
+  },
+];
+
+const data = computed(() => {
+  return filteredTasks.value?.map((task) => {
+    return {
+      id: task.id,
+      name: task.attributes.teacher?.data?.attributes?.name,
+      description: task.attributes.description,
+      date: new Date(task.attributes.date).toLocaleDateString(),
+    };
+  });
+});
 </script>
 
 <template>
@@ -94,50 +178,29 @@ function goToProfile(taskId: number | string) {
       >
       </n-select>
     </div>
-    <n-table :bordered="false" :single-line="false" full-width>
-      <thead>
-        <tr>
-          <th>Педагог</th>
-          <th>Описание задачи</th>
-          <th>Дата выполнения</th>
-          <th></th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        <n-gradient-text v-if="!filteredTasks?.length" type="warning">
-          У педагога нет текущих задач
-        </n-gradient-text>
-        <tr v-for="task in filteredTasks" :key="task.id" class="row">
-          <td>{{ task.attributes.teacher?.data?.attributes?.name }}</td>
-          <td>{{ task.attributes.description }}</td>
-          <td>
-            {{ new Date(task.attributes.date).toLocaleDateString() }}
-          </td>
-          <td>
-            <n-button @click.stop="goToProfile(task.id)" type="primary" ghost
-              >Редактировать задачу</n-button
-            >
-          </td>
-          <td>
-            <n-button type="error" ghost @click="handleConfirmation(task.id)"
-              >Удалить</n-button
-            >
-          </td>
-        </tr>
-      </tbody>
-    </n-table>
-    <div class="spinner-container" v-if="showSpinner">
-      <n-spin size="medium" />
-    </div>
-    <n-button
-      class="add-button"
-      type="primary"
-      @click="isShowModalCreate = true"
-      v-if="!showSpinner"
-    >
-      Добавить задачу
-    </n-button>
+    <n-space vertical>
+      <n-gradient-text v-if="filteredTasks?.length === 0" type="warning">
+        Нет текущих задач для выбранного педагога
+      </n-gradient-text>
+      <n-data-table
+        v-else
+        :loading="showSpinner"
+        :columns="columns"
+        :data="data"
+        :bordered="false"
+        :max-height="400"
+        virtual-scroll
+      />
+
+      <n-button
+        class="add-button"
+        type="primary"
+        @click="isShowModalCreate = true"
+        v-if="!showSpinner"
+      >
+        Добавить задачу
+      </n-button>
+    </n-space>
     <n-modal v-model:show="isShowModalCreate" @close-modal="handleCreateTask">
       <task-form></task-form>
     </n-modal>
