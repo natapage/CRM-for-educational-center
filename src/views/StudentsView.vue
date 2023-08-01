@@ -5,11 +5,9 @@ import router from "../router/router.ts";
 import { watch, onMounted, h, computed } from "vue";
 import {
   NDataTable,
-  NCheckbox,
   NButton,
   NSpace,
   NModal,
-  NSpin,
   DataTableColumns,
 } from "naive-ui";
 import { useFetch } from "../composable/useFetch";
@@ -116,7 +114,7 @@ const createColumns = ({
   },
 ];
 
-const data: Student[] = computed(() => {
+const data = computed(() => {
   return students.value?.map((student) => {
     return {
       id: student.id,
@@ -141,49 +139,6 @@ const data: Student[] = computed(() => {
       :max-height="400"
       virtual-scroll
     />
-    <!-- <n-table :bordered="false" :single-line="false">
-      <thead>
-        <tr>
-          <th>Имя ученика</th>
-          <th>Дата рождения</th>
-          <th>Номер телефона</th>
-          <th>Группа</th>
-          <th>Особая информация</th>
-          <th></th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          v-for="student in students"
-          :key="student.id"
-          class="row"
-          @click="goToProfile(student.id)"
-        >
-          <td>{{ student.attributes.name }}</td>
-          <td>{{ new Date(student.attributes.date).toLocaleDateString() }}</td>
-          <td>{{ student.attributes.phone }}</td>
-          <td>{{ student?.attributes?.class?.data.attributes.name }}</td>
-          <td>{{ student.attributes.description }}</td>
-          <td>
-            <n-button type="primary" ghost @click="goToProfile(student.id)"
-              >Перейти в профиль</n-button
-            >
-          </td>
-          <td>
-            <n-button
-              type="error"
-              ghost
-              @click.stop="handleConfirmation(student.id)"
-              >Удалить</n-button
-            >
-          </td>
-        </tr>
-      </tbody>
-    </n-table> -->
-    <div class="spinner-container" v-if="showSpinner">
-      <n-spin size="medium" />
-    </div>
     <n-button
       class="add-button"
       type="primary"
@@ -208,9 +163,6 @@ const data: Student[] = computed(() => {
 </template>
 
 <style scoped>
-.spinner-container {
-  margin-top: 20px;
-}
 .row:hover > td {
   cursor: pointer;
   background-color: rgba(24, 160, 88, 0.1);

@@ -10,7 +10,6 @@ import {
   NDataTable,
   NButton,
   NModal,
-  NSpin,
   NSpace,
   DataTableColumns,
   NDropdown,
@@ -187,9 +186,6 @@ const data = computed(() => {
       >
         Добавить учителя
       </n-button>
-      <div class="spinner-container" v-if="showSpinner">
-        <n-spin size="medium" />
-      </div>
       <n-modal
         v-model:show="isShowModalConfirm"
         preset="dialog"
@@ -211,9 +207,7 @@ const data = computed(() => {
 </template>
 
 <style scoped>
-.spinner-container {
-  margin-top: 20px;
-}
+
 .row:hover > td {
   cursor: pointer;
   background-color: rgba(24, 160, 88, 0.1);

@@ -218,9 +218,7 @@ const data = computed(() => {
 </template>
 
 <style scoped>
-.spinner-container {
-  margin-top: 20px;
-}
+
 .select-container {
   width: 400px; /* Задайте желаемую ширину для контейнера выпадающего списка */
   margin-bottom: 10px; /* Опционально: задайте отступ снизу, если требуется */
