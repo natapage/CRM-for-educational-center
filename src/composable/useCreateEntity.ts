@@ -1,6 +1,6 @@
 import { ref, Ref } from "vue";
 import { createEntity } from "../API/requestsApi";
-import { BASE } from "../constants/constаnts.ts";
+import { BASE } from "../constants/constants.ts";
 
 export function useCreateEntity<T>() {
   const isShowModalCreate = ref<boolean>(false);

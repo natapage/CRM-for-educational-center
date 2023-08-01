@@ -1,13 +1,13 @@
 import { ref, Ref } from "vue";
 import { deleteEntity } from "../API/requestsApi";
-import { BASE } from "../constants/constаnts.ts";
+import { BASE } from "../constants/constants.ts";
 
 export function useDeleteEntity<T>(entity: string) {
   const isShowModalConfirm = ref<boolean>(false);
   const classIdToDelete = ref<number>();
   const error: Ref<string | null> = ref(null);
 
-  function handleConfirmation(id: number) {
+  function handleConfirmation(id: number): void {
     isShowModalConfirm.value = true;
     classIdToDelete.value = id;
   }

@@ -8,7 +8,7 @@ import { useFetch } from "../composable/useFetch";
 import { useCreateEntity } from "../composable/useCreateEntity";
 import { useEditEntityById } from "../composable/useEditEntityById";
 import { useNotificationHandler } from "../composable/useNotification";
-import { daysOfWeek, lessonsOrder } from "../constants/constаnts.ts";
+import { daysOfWeek, lessonsOrder } from "../constants/constants.ts";
 
 onMounted(async () => {
   await Promise.all([refetchClasses(), refetchSlots(), refetchLessons()]);
@@ -215,3 +215,4 @@ watch(createError, () => notify("error", "Ошибка загрузки стра
   margin-bottom: 10px; /* Опционально: задайте отступ снизу, если требуется */
 }
 </style>
+../constants/constants.ts

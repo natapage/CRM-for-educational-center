@@ -64,19 +64,3 @@ export const editEntity = async <R, T>(body: T, url: string): Promise<R> => {
   }
 };
 
-export const getPhoto = async (id: number): Promise<Blob> => {
-  const photoUrl = `http://localhost:1337/api/upload/files/${id}`;
-  try {
-    const response = await fetch(photoUrl);
-    if (!response.ok) {
-      throw new Error("Failed to fetch photo");
-    }
-    return response.blob();
-  } catch (error: unknown) {
-    throw new Error(
-      error instanceof Error
-        ? error.message
-        : "Unknown error while fetching photo"
-    );
-  }
-};

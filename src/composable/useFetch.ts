@@ -1,4 +1,4 @@
-import { BASE } from "../constants/constаnts.ts";
+import { BASE } from "../constants/constants.ts";
 import { getEntity } from "../API/requestsApi.ts";
 import { Ref, ref } from "vue";
 
