@@ -207,7 +207,6 @@ const data = computed(() => {
 </template>
 
 <style scoped>
-
 .row:hover > td {
   cursor: pointer;
   background-color: rgba(24, 160, 88, 0.1);
