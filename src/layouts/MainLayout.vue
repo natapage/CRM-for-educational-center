@@ -101,7 +101,7 @@ const menuOptions: MenuOption[] = [
 <template>
   <div class="container">
     <n-layout>
-      <n-layout-header>Header</n-layout-header>
+      <n-layout-header>Dana Tulga</n-layout-header>
       <n-layout has-sider position="absolute" style="top: 64px; bottom: 64px">
         <n-layout-sider bordered content-style="padding: 24px;">
           <n-menu
@@ -124,7 +124,7 @@ const menuOptions: MenuOption[] = [
         bordered
         position="absolute"
         style="height: 64px; padding: 24px"
-        >Footer</n-layout-footer
+        >Учебный центр для детей</n-layout-footer
       >
     </n-layout>
   </div>
