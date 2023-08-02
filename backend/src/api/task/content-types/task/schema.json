@@ -23,6 +23,9 @@
     },
     "date": {
       "type": "datetime"
+    },
+    "isDone": {
+      "type": "boolean"
     }
   }
 }

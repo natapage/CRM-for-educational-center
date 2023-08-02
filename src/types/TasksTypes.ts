@@ -7,6 +7,7 @@ export interface TasksAttributes {
   teacher: {
     data: Teacher;
   };
+  isDone: boolean;
 }
 
 export interface Task extends Entity {
@@ -16,4 +17,3 @@ export interface Task extends Entity {
 export interface TasksResponse extends EntitiesResponse {
   data: Task[];
 }
-

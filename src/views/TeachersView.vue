@@ -56,7 +56,7 @@ watch([fetchError, deleteTeacherError], () =>
   notify("error", "Ошибка загрузки страницы")
 );
 
-function goToProfile(teacherId: number | string) {
+function goToProfile(teacherId: number | string): void {
   router.push({ name: "teacher-profile", params: { id: teacherId } });
 }
 
@@ -71,6 +71,9 @@ const columns = computed(() =>
 const createColumns = ({
   goToProfile,
   handleConfirmation,
+}: {
+  goToProfile;
+  handleConfirmation;
 }): DataTableColumns<Teacher> => [
   {
     title: "Фото",

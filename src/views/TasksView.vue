@@ -19,7 +19,7 @@ import { useFetch } from "../composable/useFetch";
 import { useNotificationHandler } from "../composable/useNotification";
 import { useDeleteEntity } from "../composable/useDeleteEntity";
 import { useCreateEntity } from "../composable/useCreateEntity";
-import { deleteEntity } from "../API/requestsApi";
+import { editEntity } from "../API/requestsApi";
 
 const { notify } = useNotificationHandler();
 
@@ -79,10 +79,13 @@ const filteredTasks = computed(() => {
   return tasks.value;
 });
 
-async function updateTaskList(taskId: number) {
+async function handleToggle(taskId: number, value: boolean) {
   const url = `${BASE}/api/tasks/${taskId}`;
-  await deleteEntity<Task>(url);
-  setTimeout(() => refetchTasks(), 1000);
+  const task = (tasks.value || []).find((task) => task.id === taskId);
+  if (task) {
+    await editEntity<Task, unknown>({ ...task, isDone: value }, url);
+    refetchTasks();
+  }
 }
 
 function goToProfile(taskId: number | string) {
@@ -93,10 +96,21 @@ const columns = computed(() =>
   createColumns({ goToProfile, handleConfirmation })
 );
 
+type RowType = {
+  id: number;
+  name: string;
+  description: string;
+  date: Date;
+  isDone: boolean;
+};
+
 const createColumns = ({
   goToProfile,
   handleConfirmation,
-}): DataTableColumns<Task> => [
+}: {
+  goToProfile: (id: string | number) => void;
+  handleConfirmation: (id: number) => void;
+}): DataTableColumns<RowType> => [
   {
     title: "Педагог",
     key: "name",
@@ -117,11 +131,25 @@ const createColumns = ({
     key: "done",
     width: "170",
     render(row) {
-      return h(
-        NCheckbox,
-        { sizee: "large", update: () => updateTaskList(row.id) },
-        () => ""
-      );
+      return h("div", [
+        row.isDone
+          ? "Выполнено"
+          : h(NCheckbox, {
+              size: "large",
+              onUpdateChecked: (value) => handleToggle(row.id, value),
+            }),
+        // row.isDone
+        //   ? h(
+        //       NButton,
+        //       {
+        //         type: "primary",
+        //         ghost: true,
+        //         onClick: () => handleToggle(row.id, false),
+        //       },
+        //       () => "Отмена"
+        //     )
+        //   : null,
+      ]);
     },
   },
   {
@@ -152,6 +180,10 @@ const createColumns = ({
   },
 ];
 
+function rowClassName(row: RowType) {
+  return row.isDone ? "inactive-row" : "";
+}
+
 const data = computed(() => {
   return filteredTasks.value?.map((task) => {
     return {
@@ -159,6 +191,7 @@ const data = computed(() => {
       name: task.attributes.teacher?.data?.attributes?.name,
       description: task.attributes.description,
       date: new Date(task.attributes.date).toLocaleDateString(),
+      isDone: task.attributes.isDone,
     };
   });
 });
@@ -190,6 +223,7 @@ const data = computed(() => {
         :bordered="false"
         :max-height="400"
         virtual-scroll
+        :row-class-name="rowClassName"
       />
 
       <n-button
@@ -218,13 +252,20 @@ const data = computed(() => {
 </template>
 
 <style scoped>
-
 .select-container {
-  width: 400px; /* Задайте желаемую ширину для контейнера выпадающего списка */
-  margin-bottom: 10px; /* Опционально: задайте отступ снизу, если требуется */
+  width: 400px;
+  margin-bottom: 10px;
 }
 .row:hover > td {
   cursor: pointer;
   background-color: rgba(24, 160, 88, 0.1);
 }
+:deep(.inactive-row td) {
+  opacity: 0.5;
+  pointer-events: none;
+}
+/* :deep(.inactive-row button) {
+  /* opacity: 1; */
+/* pointer-events: all; */
+/* } */
 </style>
