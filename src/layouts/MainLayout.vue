@@ -7,6 +7,8 @@ import {
   NLayoutFooter,
   NIcon,
   NMenu,
+  NAvatar,
+  NSpace,
 } from "naive-ui";
 import { h, ref, Component, onMounted } from "vue";
 import type { MenuOption } from "naive-ui";
@@ -101,7 +103,16 @@ const menuOptions: MenuOption[] = [
 <template>
   <div class="container">
     <n-layout>
-      <n-layout-header>Dana Tulga</n-layout-header>
+      <n-layout-header>
+        <n-space horizontal align="center">
+          <n-avatar
+            round
+            size="large"
+            src="http://localhost:1337/uploads/thumbnail_277_2779206_view_ads_in_education_learning_classified_category_dr_apj_abdul_kalam_technical_843eb398ef.png"
+          ></n-avatar>
+          <h1 style="padding: 0; margin: 0">Dana Tulga</h1>
+        </n-space>
+      </n-layout-header>
       <n-layout has-sider position="absolute" style="top: 64px; bottom: 64px">
         <n-layout-sider bordered content-style="padding: 24px;">
           <n-menu
@@ -124,7 +135,9 @@ const menuOptions: MenuOption[] = [
         bordered
         position="absolute"
         style="height: 64px; padding: 24px"
-        >Учебный центр для детей</n-layout-footer
+        ><a href="https://github.com/natapage/CRM-for-educational-center">
+          GitHub</a
+        ></n-layout-footer
       >
     </n-layout>
   </div>
@@ -133,7 +146,7 @@ const menuOptions: MenuOption[] = [
 <style scoped>
 .n-layout-header {
   background-color: #bfbfbf59;
-  padding: 24px;
+  padding: 12px 24px;
 }
 
 .n-layout-sider {

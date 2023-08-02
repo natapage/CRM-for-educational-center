@@ -134,23 +134,11 @@ const createColumns = ({
     width: "170",
     render(row) {
       return h("div", [
-        row.isDone
-          ? "Выполнено"
-          : h(NCheckbox, {
-              size: "large",
-              onUpdateChecked: (value) => handleToggle(row.id, value),
-            }),
-        // row.isDone
-        //   ? h(
-        //       NButton,
-        //       {
-        //         type: "primary",
-        //         ghost: true,
-        //         onClick: () => handleToggle(row.id, false),
-        //       },
-        //       () => "Отмена"
-        //     )
-        //   : null,
+        h(NCheckbox, {
+          size: "large",
+          onUpdateChecked: (value) => handleToggle(row.id, value),
+          checked: row.isDone,
+        }),
       ]);
     },
   },
@@ -263,11 +251,6 @@ const data = computed(() => {
   background-color: rgba(24, 160, 88, 0.1);
 }
 :deep(.inactive-row td) {
-  opacity: 0.5;
-  pointer-events: none;
+  background-color: rgba(162, 162, 162, 0.1);
 }
-/* :deep(.inactive-row button) {
-  /* opacity: 1; */
-/* pointer-events: all; */
-/* } */
 </style>
