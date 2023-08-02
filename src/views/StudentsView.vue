@@ -57,10 +57,22 @@ const columns = computed(() =>
   createColumns({ goToProfile, handleConfirmation })
 );
 
+type RowType = {
+  id: number;
+  name: string;
+  date: Date;
+  phone: number;
+  class: string;
+  description: string;
+};
+
 const createColumns = ({
   goToProfile,
   handleConfirmation,
-}): DataTableColumns<Student> => [
+}: {
+  goToProfile: (id: string | number) => void;
+  handleConfirmation: (id: number) => void;
+}): DataTableColumns<RowType> => [
   {
     title: "Имя ученика",
     key: "name",
@@ -105,7 +117,7 @@ const createColumns = ({
           {
             type: "error",
             ghost: true,
-            onClick: () => handleConfirmation(),
+            onClick: () => handleConfirmation(row.id),
           },
           () => "Удалить"
         ),

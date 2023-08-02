@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import TeacherForm from "../components/TeacherForm.vue";
 import { Teacher } from "../types/TeachersTypes.ts";
-// import { Task } from "../types/TasksTypes";
-// import { BASE } from "../constants/constants";
 import router from "../router/router";
 import { watch, onMounted, h, computed, Component } from "vue";
 import {
@@ -16,7 +14,6 @@ import {
   NIcon,
 } from "naive-ui";
 import { CheckmarkCircleOutline } from "@vicons/ionicons5";
-// import { deleteEntity } from "../API/requestsApi";
 import { useFetch } from "../composable/useFetch";
 import { useDeleteEntity } from "../composable/useDeleteEntity";
 import { useCreateEntity } from "../composable/useCreateEntity";
@@ -68,13 +65,22 @@ const columns = computed(() =>
   createColumns({ goToProfile, handleConfirmation })
 );
 
+type RowType = {
+  id: number;
+  photo: string;
+  name: string;
+  phone: number;
+  description: string;
+  tasks: {}[];
+};
+
 const createColumns = ({
   goToProfile,
   handleConfirmation,
 }: {
-  goToProfile;
-  handleConfirmation;
-}): DataTableColumns<Teacher> => [
+  goToProfile: (id: string | number) => void;
+  handleConfirmation: (id: number) => void;
+}): DataTableColumns<RowType> => [
   {
     title: "Фото",
     key: "photo",
@@ -133,7 +139,7 @@ const createColumns = ({
           {
             type: "error",
             ghost: true,
-            onClick: () => handleConfirmation(),
+            onClick: () => handleConfirmation(row.id),
           },
           () => "Удалить"
         ),
