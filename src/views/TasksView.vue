@@ -76,7 +76,9 @@ const filteredTasks = computed(() => {
         task.attributes.teacher.data.attributes.name === selectedTeacher.value
     );
   }
-  return tasks.value;
+  return tasks.value?.sort((a, b) =>
+    !b.attributes.isDone && a.attributes.isDone ? 1 : -1
+  );
 });
 
 async function handleToggle(taskId: number, value: boolean) {
