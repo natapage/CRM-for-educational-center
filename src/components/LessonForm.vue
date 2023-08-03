@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, watch } from "vue";
 import { NButton, FormInst, NForm, NFormItem, NInput } from "naive-ui";
-// import { Lesson } from "../types/LessonsTypes.ts";
 import { useCreateEntity } from "../composable/useCreateEntity";
 import { useNotificationHandler } from "../composable/useNotification";
 
@@ -35,7 +34,7 @@ const rules = {
   },
 };
 
-watch(createError, () => notify("error", "Ошибка добавления урока"));
+watch(createError, () => notify("error", "Ошибка добавления нового урока"));
 
 function handleCreateLesson(e: MouseEvent) {
   e.preventDefault();

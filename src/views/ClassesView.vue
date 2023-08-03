@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import ClassForm from "../components/ClassForm.vue";
-import { Class } from "../types/ClassesTypes.ts";
+import { Class, RowType } from "../types/ClassesTypes.ts";
 import { watch, onMounted, h, computed } from "vue";
 import router from "../router/router.ts";
 import {
@@ -56,6 +56,8 @@ function goToProfile(groupId: number | string) {
   router.push({ name: "class-profile", params: { id: groupId } });
 }
 
+
+
 const columns = computed(() =>
   createColumns({ goToProfile, handleConfirmation })
 );
@@ -63,7 +65,10 @@ const columns = computed(() =>
 const createColumns = ({
   goToProfile,
   handleConfirmation,
-}): DataTableColumns<Class> => [
+}: {
+  goToProfile: (id: string | number) => void;
+  handleConfirmation: (id: number) => void;
+}): DataTableColumns<RowType> => [
   {
     title: "Название",
     key: "name",

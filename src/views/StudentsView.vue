@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import StudentForm from "../components/StudentForm.vue";
-import { Student } from "../types/StudentsTypes.ts";
+import { Student, RowType } from "../types/StudentsTypes.ts";
 import router from "../router/router.ts";
 import { watch, onMounted, h, computed } from "vue";
 import {
@@ -56,15 +56,6 @@ function goToProfile(studentId: number | string) {
 const columns = computed(() =>
   createColumns({ goToProfile, handleConfirmation })
 );
-
-type RowType = {
-  id: number;
-  name: string;
-  date: Date;
-  phone: number;
-  class: string;
-  description: string;
-};
 
 const createColumns = ({
   goToProfile,

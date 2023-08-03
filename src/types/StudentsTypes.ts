@@ -17,3 +17,12 @@ export interface StudentAttributes {
 export interface StudentsResponse extends EntitiesResponse {
   data: Student[];
 }
+
+export type RowType = {
+  id: number;
+  name: string;
+  date: Date;
+  phone: number;
+  class: string;
+  description: string;
+};

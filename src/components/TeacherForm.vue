@@ -19,8 +19,8 @@ import { useNotificationHandler } from "../composable/useNotification";
 const { error: createError, createItem } = useCreateEntity();
 const {
   data: classes,
-  refetch: useFetchClasses,
-  error: fetchClassesError,
+  refetch: refetchClasses,
+  error: refetchClassesError,
 } = useFetch<Class[]>("classes");
 
 const { notify } = useNotificationHandler();
@@ -30,9 +30,12 @@ const emit = defineEmits<{
   (e: "close-modal"): void;
 }>();
 
-onMounted(async () => await useFetchClasses());
+onMounted(async () => await refetchClasses());
 
-watch(createError, () => notify("error", "Ошибка загрузки страницы"));
+watch(createError, () => notify("error", "Ошибка добавления нового учителя"));
+watch([refetchClassesError], () =>
+  notify("error", "Ошибка при загрузке страницы")
+);
 
 const model = ref({
   teacherName: null,
@@ -81,7 +84,6 @@ function handleCreateTeacher(e: MouseEvent) {
           connect: [model.value.teacherClass],
         };
       }
-      // TODO: изменить тип unknown
       await createItem(body, "teachers");
 
       if (!createError.value) {
@@ -91,10 +93,6 @@ function handleCreateTeacher(e: MouseEvent) {
     emit("close-modal");
   });
 }
-
-watch([fetchClassesError], () =>
-  notify("error", "Ошибка при загрузке страницы")
-);
 </script>
 
 <template>
@@ -130,11 +128,6 @@ watch([fetchClassesError], () =>
           :options="classOptionsList"
         />
       </n-form-item>
-      <!-- <n-form-item label="Фото" path="uploadValue">
-        <n-upload>
-          <n-button>Загрузить фото</n-button>
-        </n-upload>
-      </n-form-item> -->
     </n-form>
     <n-button
       round

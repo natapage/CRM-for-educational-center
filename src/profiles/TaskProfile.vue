@@ -52,7 +52,6 @@ async function handleEditTask() {
     date: dateToCreate.value || task.value?.attributes.date,
   };
 
-  // TODO: изменить тип unknown
   await editItem(body);
   if (!editError.value) {
     notify("success", "Задача успешно отредактирована");

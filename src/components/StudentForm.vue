@@ -97,7 +97,6 @@ function handleCreateStudent(e: MouseEvent) {
           connect: [model.value.studentClass],
         },
       };
-      // TODO: изменить тип unknown
       await createItem(body, "students");
       if (!createError.value) {
         notify("success", "Ученик успешно добавлен");

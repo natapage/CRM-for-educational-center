@@ -17,3 +17,10 @@ export interface Task extends Entity {
 export interface TasksResponse extends EntitiesResponse {
   data: Task[];
 }
+export type RowType = {
+  id: number;
+  name: string;
+  description: string;
+  date: Date;
+  isDone: boolean;
+};

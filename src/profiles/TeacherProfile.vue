@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { Teacher, TeachersResponse } from "../types/TeachersTypes";
 import { Class } from "../types/ClassesTypes";
+import { Teacher, TeachersResponse } from "../types/TeachersTypes";
 import { ref, computed, onMounted, watch } from "vue";
 import {
   NList,
@@ -30,7 +30,6 @@ const { notify } = useNotificationHandler();
 const route = useRoute();
 
 const teacherId = ref<number>(Number(route.params.id));
-// const fetchFotoUrl = `${BASE}/uploads/files/${teacherId}`;
 
 const isEditing = ref<boolean>(false);
 const nameToCreate = ref<string | undefined>();

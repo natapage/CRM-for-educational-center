@@ -17,3 +17,10 @@ export interface Lesson extends Entity {
 export interface LessonsResponse extends EntitiesResponse {
   data: Lesson[];
 }
+
+export type RowType = {
+  id: number;
+  name: string;
+  duration: number;
+  description: string;
+};

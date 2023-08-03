@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import TeacherForm from "../components/TeacherForm.vue";
-import { Teacher } from "../types/TeachersTypes.ts";
+import { Teacher, RowType } from "../types/TeachersTypes.ts";
 import router from "../router/router";
 import { watch, onMounted, h, computed, Component } from "vue";
 import {
@@ -65,15 +65,6 @@ const columns = computed(() =>
   createColumns({ goToProfile, handleConfirmation })
 );
 
-type RowType = {
-  id: number;
-  photo: string;
-  name: string;
-  phone: number;
-  description: string;
-  tasks: {}[];
-};
-
 const createColumns = ({
   goToProfile,
   handleConfirmation,
@@ -94,7 +85,7 @@ const createColumns = ({
     },
   },
   {
-    title: "Имя педагога",
+    title: "Имя учителя",
     key: "name",
   },
   {

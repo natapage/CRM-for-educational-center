@@ -41,3 +41,12 @@ export interface Photo {
     url: string;
   };
 }
+
+export type RowType = {
+  id: number;
+  photo: string;
+  name: string;
+  phone: number;
+  description: string;
+  tasks: {}[];
+};

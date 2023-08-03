@@ -21,6 +21,13 @@ export interface Class extends Entity {
   attributes: SharedAttributes & ClassesAttributes;
 }
 
+export type RowType = {
+  id: number;
+  name: string;
+  teacher: string;
+  description: string;
+};
+
 export interface ClassesResponse extends EntitiesResponse {
   data: Class[];
 }

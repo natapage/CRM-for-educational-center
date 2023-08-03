@@ -57,6 +57,7 @@ const rules = {
     message: "Пожалуйста, выберете педагога",
   },
 };
+
 watch(createError, () => notify("error", "Ошибка добавления новой задачи"));
 watch([refetchTeachersError], () =>
   notify("error", "Ошибка при загрузке страницы")

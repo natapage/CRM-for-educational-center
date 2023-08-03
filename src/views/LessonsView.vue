@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import LessonForm from "../components/LessonForm.vue";
-import { Lesson } from "../types/LessonsTypes.ts";
+import { Lesson, RowType } from "../types/LessonsTypes.ts";
 import { watch, onMounted, computed, h } from "vue";
 import router from "../router/router";
 import {
@@ -53,13 +53,18 @@ watch([fetchError, deleteError], () =>
 function goToProfile(lessonId: number | string) {
   router.push({ name: "lesson-profile", params: { id: lessonId } });
 }
+
 const columns = computed(() =>
   createColumns({ goToProfile, handleConfirmation })
 );
+
 const createColumns = ({
   goToProfile,
   handleConfirmation,
-}): DataTableColumns<Lesson> => [
+}: {
+  goToProfile: (id: string | number) => void;
+  handleConfirmation: (id: number) => void;
+}): DataTableColumns<RowType> => [
   {
     title: "Название урока",
     key: "name",
@@ -91,7 +96,7 @@ const createColumns = ({
           {
             type: "error",
             ghost: true,
-            onClick: () => handleConfirmation(),
+            onClick: () => handleConfirmation(row.id),
           },
           () => "Удалить"
         ),
@@ -100,7 +105,7 @@ const createColumns = ({
   },
 ];
 
-const data: LessonTable[] = computed(() => {
+const data = computed(() => {
   return lessons.value?.map((lesson) => {
     return {
       id: lesson.id,

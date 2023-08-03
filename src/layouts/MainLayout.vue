@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { h, ref, Component, onMounted } from "vue";
 import {
   NLayout,
   NLayoutContent,
@@ -10,7 +11,6 @@ import {
   NAvatar,
   NSpace,
 } from "naive-ui";
-import { h, ref, Component, onMounted } from "vue";
 import type { MenuOption } from "naive-ui";
 import {
   BookOutline as BookIcon,
@@ -37,13 +37,12 @@ onMounted(() => {
 
 function updateActiveKey(value: string) {
   activeKey.value = value;
-  // Сохранить значение в localStorage при изменении
   localStorage.setItem("activeKey", value);
 }
 
 const menuOptions: MenuOption[] = [
   {
-    label: "Home",
+    label: "Учебный центр",
     key: "Home",
     icon: renderIcon(HomeIcon),
     onClick: () => {
@@ -51,7 +50,7 @@ const menuOptions: MenuOption[] = [
     },
   },
   {
-    label: "Students",
+    label: "Ученики",
     key: "Students",
     icon: renderIcon(PersonIcon),
     onClick: () => {
@@ -59,7 +58,7 @@ const menuOptions: MenuOption[] = [
     },
   },
   {
-    label: "Teachers",
+    label: "Учителя",
     key: "Teachers",
     icon: renderIcon(PersonIcon),
     onClick: () => {
@@ -67,7 +66,7 @@ const menuOptions: MenuOption[] = [
     },
   },
   {
-    label: "Classes",
+    label: "Группы",
     key: "Classes",
     icon: renderIcon(PeopleOutline),
     onClick: () => {
@@ -75,7 +74,7 @@ const menuOptions: MenuOption[] = [
     },
   },
   {
-    label: "Lessons",
+    label: "Предметы",
     key: "Lessons",
     icon: renderIcon(SchoolOutline),
     onClick: () => {
@@ -83,7 +82,7 @@ const menuOptions: MenuOption[] = [
     },
   },
   {
-    label: "Schedule",
+    label: "Расписание",
     key: "Schedule",
     icon: renderIcon(BookIcon),
     onClick: () => {
@@ -91,7 +90,7 @@ const menuOptions: MenuOption[] = [
     },
   },
   {
-    label: "Tasks",
+    label: "Задачи для учителей",
     key: "Tasks",
     icon: renderIcon(ListOutline),
     onClick: () => {
@@ -114,7 +113,11 @@ const menuOptions: MenuOption[] = [
         </n-space>
       </n-layout-header>
       <n-layout has-sider position="absolute" style="top: 64px; bottom: 64px">
-        <n-layout-sider bordered content-style="padding: 24px;">
+        <n-layout-sider
+          :native-scrollbar="false"
+          bordered
+          content-style="padding: 24px;"
+        >
           <n-menu
             v-model:value="activeKey"
             mode="vertical"
@@ -123,11 +126,7 @@ const menuOptions: MenuOption[] = [
             @update:value="updateActiveKey"
           />
         </n-layout-sider>
-        <n-layout-content
-          content-style="padding: 24px;"
-          :native-scrollbar="false"
-          class="content"
-        >
+        <n-layout-content content-style="padding: 0 20px;">
           <slot></slot>
         </n-layout-content>
       </n-layout>
@@ -162,9 +161,5 @@ const menuOptions: MenuOption[] = [
   flex-direction: column;
   min-height: 100vh;
   height: 100%;
-}
-.content {
-  text-align: left;
-  overflow-y: auto;
 }
 </style>

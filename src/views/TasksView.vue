@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { BASE } from "../constants/constants";
 import TaskForm from "../components/TaskForm.vue";
-import { Task } from "../types/TasksTypes.ts";
+import { Task, RowType } from "../types/TasksTypes.ts";
 import { Teacher } from "../types/TeachersTypes.ts";
 import router from "../router/router";
 import { useRoute } from "vue-router";
@@ -76,7 +76,7 @@ watch([fetchError, deleteError], () =>
 const teachersOptionsList = computed(() =>
   teachers.value?.map((item) => ({
     label: item.attributes.name,
-    value: item.id,
+    value: item.attributes.name,
   }))
 );
 
@@ -109,14 +109,6 @@ const columns = computed(() =>
   createColumns({ goToProfile, handleConfirmation })
 );
 
-type RowType = {
-  id: number;
-  name: string;
-  description: string;
-  date: Date;
-  isDone: boolean;
-};
-
 const createColumns = ({
   goToProfile,
   handleConfirmation,
@@ -125,7 +117,7 @@ const createColumns = ({
   handleConfirmation: (id: number) => void;
 }): DataTableColumns<RowType> => [
   {
-    title: "Педагог",
+    title: "Учитель",
     key: "name",
     width: "200",
   },
@@ -200,19 +192,19 @@ const data = computed(() => {
 
 <template>
   <div>
-    <h2>Задачи для педагогов</h2>
-    <div class="select-container">
-      <n-select
-        v-model:value="selectedTeacher"
-        filterable
-        tag
-        :options="teachersOptionsList"
-        clearable
-        placeholder="Выберите учителя"
-      >
-      </n-select>
-    </div>
     <n-space vertical>
+      <h2>Задачи для педагогов</h2>
+      <div class="select-container">
+        <n-select
+          v-model:value="selectedTeacher"
+          filterable
+          tag
+          :options="teachersOptionsList"
+          clearable
+          placeholder="Выберите учителя"
+        >
+        </n-select>
+      </div>
       <n-gradient-text v-if="filteredTasks?.length === 0" type="warning">
         Нет текущих задач для выбранного педагога
       </n-gradient-text>
@@ -255,7 +247,6 @@ const data = computed(() => {
 <style scoped>
 .select-container {
   width: 400px;
-  margin-bottom: 10px;
 }
 .row:hover > td {
   cursor: pointer;

@@ -1,6 +1,6 @@
 export const BASE = "http://localhost:1337";
 
-export const daysOfWeek: string[] = [
+export const DAYS: string[] = [
   "Monday",
   "Tuesday",
   "Wednesday",
@@ -8,4 +8,4 @@ export const daysOfWeek: string[] = [
   "Friday",
 ];
 
-export const lessonsOrder = ["урок 1", "урок 2", "урок 3"];
+export const ORDER = ["урок 1", "урок 2", "урок 3"];

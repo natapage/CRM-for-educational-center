@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import { NGrid, NGridItem, NSelect } from "naive-ui";
-import { ref, computed, onMounted, watch } from "vue";
+import { DAYS, ORDER } from "../constants/constants.ts";
 import { Class } from "../types/ClassesTypes";
 import { Lesson } from "../types/LessonsTypes";
 import { Slot, SlotsResponse } from "../types/SlotsTypes";
+import { NGrid, NGridItem, NSelect } from "naive-ui";
+import { ref, computed, onMounted, watch } from "vue";
 import { useFetch } from "../composable/useFetch";
 import { useCreateEntity } from "../composable/useCreateEntity";
 import { useEditEntityById } from "../composable/useEditEntityById";
 import { useNotificationHandler } from "../composable/useNotification";
-import { daysOfWeek, lessonsOrder } from "../constants/constants.ts";
 
 onMounted(async () => {
   await Promise.all([refetchClasses(), refetchSlots(), refetchLessons()]);
@@ -25,22 +25,19 @@ const { notify } = useNotificationHandler();
 
 const {
   data: classes,
-  // error: fetchClassesError,
-  // showSpinner,
+  error: fetchClassesError,
   refetch: refetchClasses,
 } = useFetch<Class[]>("classes");
 
 const {
   data: lessons,
-  // error: fetchClassesError,
-  // showSpinner,
+  error: fetchLessonsError,
   refetch: refetchLessons,
 } = useFetch<Lesson[]>("lessons");
 
 const {
   data: slots,
-  // error: fetchError,
-  // showSpinner,
+  error: fetchError,
   refetch: refetchSlots,
 } = useFetch<Slot[]>("slots");
 
@@ -126,6 +123,9 @@ async function handleEditLesson(day: string, order: string) {
 }
 
 watch(createError, () => notify("error", "Ошибка загрузки странички"));
+watch([fetchClassesError, fetchLessonsError, fetchError], () =>
+  notify("error", "Ошибка загрущки странички")
+);
 </script>
 <template>
   <div>
@@ -147,21 +147,18 @@ watch(createError, () => notify("error", "Ошибка загрузки стра
       <n-grid-item>
         <div class="lesson"></div>
         <n-grid :y-gap="8" :rows="3" :cols="1">
-          <n-grid-item v-for="order in lessonsOrder" :key="order">
+          <n-grid-item v-for="order in ORDER" :key="order">
             <div class="lesson bold-text">
               {{ order }}
             </div>
           </n-grid-item>
         </n-grid>
       </n-grid-item>
-      <n-grid-item v-for="day in daysOfWeek">
+      <n-grid-item v-for="day in DAYS">
         <div>
           <div class="lesson bold-text">{{ day }}</div>
           <n-grid :y-gap="8" :rows="3" :cols="1">
-            <n-grid-item
-              v-for="(order, orderIndex) in lessonsOrder"
-              :key="orderIndex"
-            >
+            <n-grid-item v-for="(order, orderIndex) in ORDER" :key="orderIndex">
               <div @click="handleClick(day, order)" class="lesson colored">
                 <div
                   v-if="
@@ -211,8 +208,8 @@ watch(createError, () => notify("error", "Ошибка загрузки стра
   font-weight: bold;
 }
 .select-container {
-  width: 400px; /* Задайте желаемую ширину для контейнера выпадающего списка */
-  margin-bottom: 10px; /* Опционально: задайте отступ снизу, если требуется */
+  width: 400px; 
+  margin-bottom: 10px;
 }
 </style>
-../constants/constants.ts
+

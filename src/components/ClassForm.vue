@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { ref, watch, computed, onMounted } from "vue";
-
 import { NButton, FormInst, NForm, NFormItem, NInput, NSelect } from "naive-ui";
-
 import { Teacher } from "../types/TeachersTypes";
 import { useCreateEntity } from "../composable/useCreateEntity";
 import { useNotificationHandler } from "../composable/useNotification";
@@ -18,7 +16,7 @@ const emit = defineEmits<{
 
 const { error: createError, createItem } = useCreateEntity();
 const { notify } = useNotificationHandler();
-// const teacherId = ref<string | number>("");
+
 const {
   data: teachers,
   refetch: refetchTeachers,
@@ -54,9 +52,10 @@ const rules = {
     message: "Пожалуйста, выберете педагога",
   },
 };
+
 watch(createError, () => notify("error", "Ошибка добавления группы"));
 watch([refetchTeachersError], () =>
-  notify("error", "Ошибка загруpки странички")
+  notify("error", "Ошибка загрузки странички")
 );
 
 function handleCreateClass(e: MouseEvent) {
@@ -73,7 +72,6 @@ function handleCreateClass(e: MouseEvent) {
           connect: [model.value.teacherName],
         };
       }
-      // TODO: изменить тип unknown
       await createItem(body, "classes");
       if (!createError.value) {
         notify("success", "Группа успешно добавлена");
