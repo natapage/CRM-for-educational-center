@@ -4,6 +4,7 @@ import TaskForm from "../components/TaskForm.vue";
 import { Task } from "../types/TasksTypes.ts";
 import { Teacher } from "../types/TeachersTypes.ts";
 import router from "../router/router";
+import { useRoute } from "vue-router";
 import { watch, ref, computed, onMounted, h } from "vue";
 import {
   NDataTable,
@@ -22,6 +23,18 @@ import { useCreateEntity } from "../composable/useCreateEntity";
 import { editEntity } from "../API/requestsApi";
 
 const { notify } = useNotificationHandler();
+
+const route = useRoute();
+
+const selectedTeacher = ref<string>();
+
+watch(
+  () => route.query.name as string,
+  (newValue) => {
+    selectedTeacher.value = newValue;
+  },
+  { immediate: true }
+);
 
 const {
   data: tasks,
@@ -63,11 +76,9 @@ watch([fetchError, deleteError], () =>
 const teachersOptionsList = computed(() =>
   teachers.value?.map((item) => ({
     label: item.attributes.name,
-    value: item.attributes.name,
+    value: item.id,
   }))
 );
-
-const selectedTeacher = ref<string>();
 
 const filteredTasks = computed(() => {
   if (selectedTeacher.value) {

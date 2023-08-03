@@ -57,8 +57,8 @@ function goToProfile(teacherId: number | string): void {
   router.push({ name: "teacher-profile", params: { id: teacherId } });
 }
 
-function goToTasks() {
-  router.push({ name: "tasks" });
+function goToTasks(name: string) {
+  router.push({ name: "tasks", query: { name: name } });
 }
 
 const columns = computed(() =>
@@ -114,7 +114,11 @@ const createColumns = ({
       return h(NDropdown, { trigger: "hover", options: row.tasks }, () => [
         h(
           NButton,
-          { type: "success", quaternary: true, onClick: () => goToTasks() },
+          {
+            type: "success",
+            quaternary: true,
+            onClick: () => goToTasks(row.name),
+          },
           () => "Задачи"
         ),
       ]);

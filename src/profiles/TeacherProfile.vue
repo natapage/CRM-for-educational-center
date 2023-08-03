@@ -125,7 +125,7 @@ watch([refetchClassesError, refetchTeacherError], () =>
     <div class="spinner-container" v-if="showSpinner">
       <n-spin size="medium" />
     </div>
-    <div class="profile-container">
+    <n-space justify="space-between">
       <n-list v-if="!showSpinner">
         <n-list-item>
           <n-thing title="Имя педагога">
@@ -165,17 +165,22 @@ watch([refetchClassesError, refetchTeacherError], () =>
         </n-list-item>
         <n-list-item>
           <n-thing title="Фото">
-            <n-upload
-              action="http://localhost:1337/api/upload/"
-              :data="{
-                refId: teacherId.toString(),
-                field: 'photo',
-                ref: 'api::teacher.teacher',
-              }"
-              name="files"
-            >
-              <n-button>Загрузить фото</n-button>
-            </n-upload>
+            <n-space>
+              <n-upload
+                action="http://localhost:1337/api/upload/"
+                :data="{
+                  refId: teacherId.toString(),
+                  field: 'photo',
+                  ref: 'api::teacher.teacher',
+                }"
+                name="files"
+              >
+                <n-button>Выбрать файл</n-button>
+              </n-upload>
+              <n-button @click="refetchTeacher" type="primary"
+                >Загрузить фото</n-button
+              >
+            </n-space>
           </n-thing>
         </n-list-item>
       </n-list>
@@ -187,7 +192,7 @@ watch([refetchClassesError, refetchTeacherError], () =>
           teacher?.attributes.photo?.data?.attributes.formats.small.url
         "
       ></n-image>
-    </div>
+    </n-space>
   </div>
 </template>
 
