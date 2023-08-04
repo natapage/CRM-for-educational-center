@@ -56,8 +56,6 @@ function goToProfile(groupId: number | string) {
   router.push({ name: "class-profile", params: { id: groupId } });
 }
 
-
-
 const columns = computed(() =>
   createColumns({ goToProfile, handleConfirmation })
 );
@@ -133,7 +131,7 @@ const data = computed(() => {
           :columns="columns"
           :data="data"
           :bordered="false"
-          :max-height="400"
+          :max-height="384"
           virtual-scroll
         />
       </div>

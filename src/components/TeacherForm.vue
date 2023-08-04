@@ -5,7 +5,7 @@ import {
   NButton,
   FormItemRule,
   FormInst,
-  // NUpload,
+  NGradientText,
   NInput,
   NFormItem,
   NForm,
@@ -63,12 +63,16 @@ const rules = {
   },
 };
 
-const classOptionsList = computed(() =>
-  classes.value?.map((item) => ({
+const classOptionsList = computed(() => {
+  const classesWithoutTeachers = classes.value?.filter(
+    (item) => !item.attributes?.teacher?.data
+  );
+
+  return classesWithoutTeachers?.map((item) => ({
     label: item.attributes.name,
     value: item.id,
-  }))
-);
+  }));
+});
 
 function handleCreateTeacher(e: MouseEvent) {
   e.preventDefault();
@@ -97,7 +101,12 @@ function handleCreateTeacher(e: MouseEvent) {
 
 <template>
   <div class="container">
+    <n-gradient-text v-if="classOptionsList?.length === 0">
+      У всех групп уже есть педагоги. Добавьте, пожалуйста, новую
+      группу.</n-gradient-text
+    >
     <n-form
+      v-else
       ref="formRef"
       :model="model"
       :rules="rules"
@@ -130,6 +139,7 @@ function handleCreateTeacher(e: MouseEvent) {
       </n-form-item>
     </n-form>
     <n-button
+      v-if="classOptionsList?.length !== 0"
       round
       :disabled="model.teacherName === null || model.teacherPhone === null"
       class="add-button"

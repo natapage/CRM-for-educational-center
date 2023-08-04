@@ -192,8 +192,8 @@ const data = computed(() => {
 
 <template>
   <div>
+    <h2>Задачи для педагогов</h2>
     <n-space vertical>
-      <h2>Задачи для педагогов</h2>
       <div class="select-container">
         <n-select
           v-model:value="selectedTeacher"
@@ -214,11 +214,10 @@ const data = computed(() => {
         :columns="columns"
         :data="data"
         :bordered="false"
-        :max-height="400"
+        :max-height="370"
         virtual-scroll
         :row-class-name="rowClassName"
       />
-
       <n-button
         class="add-button"
         type="primary"

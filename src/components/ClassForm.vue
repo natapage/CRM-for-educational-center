@@ -48,7 +48,6 @@ const rules = {
     message: "Пожалуйста, опишите задачи и цели",
   },
   teacherName: {
-    required: true,
     message: "Пожалуйста, выберете педагога",
   },
 };
