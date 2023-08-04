@@ -22,7 +22,7 @@
       "inversedBy": "tasks"
     },
     "date": {
-      "type": "datetime"
+      "type": "date"
     },
     "isDone": {
       "type": "boolean"

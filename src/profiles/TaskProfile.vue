@@ -47,9 +47,8 @@ const { error: editError, editItem } = useEditEntity<TasksResponse, Task>(
 
 async function handleEditTask() {
   const body: any = {
-    description:
-      descriptionToCreate.value || task.value?.attributes.description,
-    date: dateToCreate.value || task.value?.attributes.date,
+    description: descriptionToCreate.value,
+    date: new Date(dateToCreate.value ?? 0),
   };
 
   await editItem(body);
@@ -81,6 +80,7 @@ function dateDisabled(ts: number) {
 }
 
 function setEditMode() {
+  console.log(task.value?.attributes?.date);
   if (!task.value) return;
   isEditing.value = true;
   descriptionToCreate.value = task.value?.attributes.description;
@@ -137,11 +137,11 @@ watch([refetchTasksError, fetchTaskError], () =>
           </div>
           <n-date-picker
             v-else
-            format="yyyy-MM-dd"
             :is-date-disabled="dateDisabled"
+            format="yyyy-MM-dd"
             v-model="dateToCreate"
-            type="date"
             :default-formatted-value="task?.attributes.date"
+            type="date"
           />
         </n-thing>
       </n-list-item>

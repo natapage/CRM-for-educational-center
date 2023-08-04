@@ -75,7 +75,7 @@ function handleCreateTask(e: MouseEvent) {
     if (!errors) {
       const body = {
         description: model.value.taskDescription,
-        date: model.value.taskDate,
+        date: new Date(model.value.taskDate ?? 0),
         teacher: {
           connect: [model.value.teacherName],
         },
@@ -119,7 +119,7 @@ function handleCreateTask(e: MouseEvent) {
         <n-date-picker
           :is-date-disabled="dateDisabled"
           v-model:value="model.taskDate"
-          type="datetime"
+          type="date"
           format="dd-MM-yyyy"
           placeholder="Выберите дату"
         />

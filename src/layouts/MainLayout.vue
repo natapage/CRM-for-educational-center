@@ -126,7 +126,7 @@ const menuOptions: MenuOption[] = [
             @update:value="updateActiveKey"
           />
         </n-layout-sider>
-        <n-layout-content content-style="padding: 0 20px;">
+        <n-layout-content content-style="padding: 24px;">
           <slot></slot>
         </n-layout-content>
       </n-layout>
