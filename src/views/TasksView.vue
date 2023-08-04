@@ -157,7 +157,7 @@ const createColumns = ({
             ghost: true,
             onClick: () => goToProfile(row.id),
           },
-          () => "Перейти в профиль"
+          () => "Перейти к задаче"
         ),
         h(
           NButton,
