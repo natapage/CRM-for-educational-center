@@ -173,6 +173,7 @@ watch([refetchClassesError, refetchTeacherError], () =>
                   ref: 'api::teacher.teacher',
                 }"
                 name="files"
+                :show-file-list="false"
               >
                 <n-button>Выбрать файл</n-button>
               </n-upload>
@@ -184,6 +185,7 @@ watch([refetchClassesError, refetchTeacherError], () =>
         </n-list-item>
       </n-list>
       <n-image
+        v-if="teacher"
         width="300"
         height="300"
         :src="
@@ -202,8 +204,19 @@ watch([refetchClassesError, refetchTeacherError], () =>
 .container {
   width: 900px;
 }
-.profile-container {
+.teacher_info {
+  flex: 1; /* Занимает все доступное пространство, оставшееся после фотографии */
+  padding-left: 20px; /* Добавьте отступ слева для разделения от фотографии */
+}
+
+.profile_container {
   display: flex;
   justify-content: space-between;
+  align-items: center; /* Выравнивание по вертикали */
+}
+
+.teacher_photo {
+  width: 300px; /* Задайте фиксированную ширину для фотографии */
+  height: 300px; /* Задайте фиксированную высоту для фотографии */
 }
 </style>

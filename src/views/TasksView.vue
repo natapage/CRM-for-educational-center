@@ -81,6 +81,7 @@ const teachersOptionsList = computed(() =>
 );
 
 const filteredTasks = computed(() => {
+  console.log(history.back);
   if (selectedTeacher.value) {
     return tasks.value?.filter(
       (task) =>
@@ -192,6 +193,7 @@ const data = computed(() => {
 
 <template>
   <div>
+    <n-button class="btn_back" @click="router.back()"> Назад</n-button>
     <h2>Задачи для педагогов</h2>
     <n-space vertical>
       <div class="select-container">
@@ -214,7 +216,7 @@ const data = computed(() => {
         :columns="columns"
         :data="data"
         :bordered="false"
-        :max-height="370"
+        :max-height="335"
         virtual-scroll
         :row-class-name="rowClassName"
       />
