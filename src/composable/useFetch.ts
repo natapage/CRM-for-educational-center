@@ -1,9 +1,10 @@
-import { BASE } from "../constants/constants.ts";
 import { getEntity } from "../API/requestsApi.ts";
 import { Ref, ref } from "vue";
 
 export function useFetch<T>(entity: string) {
-  const url: string = `${BASE}/api/${entity}?populate=*`;
+  const url: string = `${
+    import.meta.env.VITE_API_BASE_URL
+  }/api/${entity}?populate=*`;
   const data: Ref<T | null> = ref(null);
   const error: Ref<string | null> = ref(null);
   const showSpinner = ref<boolean>(true);

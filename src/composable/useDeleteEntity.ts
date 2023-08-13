@@ -1,6 +1,5 @@
 import { ref, Ref } from "vue";
 import { deleteEntity } from "../API/requestsApi";
-import { BASE } from "../constants/constants.ts";
 
 export function useDeleteEntity<T>(entity: string) {
   const isShowModalConfirm = ref<boolean>(false);
@@ -14,7 +13,9 @@ export function useDeleteEntity<T>(entity: string) {
 
   async function deleteItem() {
     const idToDelete = classIdToDelete.value;
-    const url = `${BASE}/api/${entity}/${idToDelete}`;
+    const url = `${
+      import.meta.env.VITE_API_BASE_URL
+    }/api/${entity}/${idToDelete}`;
     try {
       await deleteEntity<T>(url);
       error.value = null;

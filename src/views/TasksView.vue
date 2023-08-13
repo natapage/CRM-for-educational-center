@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { BASE } from "../constants/constants";
 import TaskForm from "../components/TaskForm.vue";
 import { Task, RowType } from "../types/TasksTypes.ts";
 import { Teacher } from "../types/TeachersTypes.ts";
@@ -94,7 +93,7 @@ const filteredTasks = computed(() => {
 });
 
 async function handleToggle(taskId: number, value: boolean) {
-  const url = `${BASE}/api/tasks/${taskId}`;
+  const url = `${import.meta.env.VITE_API_BASE_URL}/api/tasks/${taskId}`;
   const task = (tasks.value || []).find((task) => task.id === taskId);
   if (task) {
     await editEntity<Task, unknown>({ ...task, isDone: value }, url);

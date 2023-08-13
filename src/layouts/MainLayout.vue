@@ -28,6 +28,9 @@ function renderIcon(icon: Component) {
   return () => h(NIcon, null, { default: () => h(icon) });
 }
 
+const url: string =
+  `${import.meta.env.VITE_API_BASE_URL}` +
+  "/uploads/thumbnail_277_2779206_view_ads_in_education_learning_classified_category_dr_apj_abdul_kalam_technical_843eb398ef.png";
 onMounted(() => {
   const savedActiveKey = localStorage.getItem("activeKey");
   if (savedActiveKey) {
@@ -104,11 +107,7 @@ const menuOptions: MenuOption[] = [
     <n-layout>
       <n-layout-header>
         <n-space horizontal align="center">
-          <n-avatar
-            round
-            size="large"
-            src="http://localhost:1337/uploads/thumbnail_277_2779206_view_ads_in_education_learning_classified_category_dr_apj_abdul_kalam_technical_843eb398ef.png"
-          ></n-avatar>
+          <n-avatar round size="large" :src="url"></n-avatar>
           <h1 style="padding: 0; margin: 0">Dana Tulga</h1>
         </n-space>
       </n-layout-header>

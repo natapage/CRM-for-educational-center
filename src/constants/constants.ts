@@ -1,4 +1,4 @@
-export const BASE = "http://localhost:1337";
+
 
 export const DAYS: string[] = [
   "Monday",

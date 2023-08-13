@@ -35,6 +35,9 @@ const isEditing = ref<boolean>(false);
 const nameToCreate = ref<string | undefined>();
 const phoneToCreate = ref<string | undefined>();
 const classToCreate = ref<string | number>("");
+const urlUpload = ref<string>(
+  `${import.meta.env.VITE_API_BASE_URL}/api/upload/`
+);
 
 const {
   data: classes,
@@ -57,6 +60,11 @@ const {
   refetch: refetchTeacher,
   error: refetchTeacherError,
 } = useFetch<Teacher>(`teachers/${teacherId.value}`);
+
+const urlImage = ref<string>(
+  `${import.meta.env.VITE_API_BASE_URL}` +
+    teacher?.value?.attributes.photo?.data?.attributes.formats.small.url
+);
 
 const { error: editError, editItem } = useEditEntity<TeachersResponse, Teacher>(
   `teachers/${teacherId.value}`
@@ -166,7 +174,7 @@ watch([refetchClassesError, refetchTeacherError], () =>
           <n-thing title="Фото">
             <n-space>
               <n-upload
-                action="http://localhost:1337/api/upload/"
+                :action="urlUpload"
                 :data="{
                   refId: teacherId.toString(),
                   field: 'photo',
@@ -188,10 +196,7 @@ watch([refetchClassesError, refetchTeacherError], () =>
         v-if="teacher"
         width="300"
         height="300"
-        :src="
-          'http://localhost:1337' +
-          teacher?.attributes.photo?.data?.attributes.formats.small.url
-        "
+        :src="urlImage"
       ></n-image>
     </n-space>
   </div>

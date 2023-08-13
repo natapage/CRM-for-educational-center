@@ -1,13 +1,12 @@
 import { ref, Ref } from "vue";
 import { createEntity } from "../API/requestsApi";
-import { BASE } from "../constants/constants.ts";
 
 export function useCreateEntity<T>() {
   const isShowModalCreate = ref<boolean>(false);
   const error: Ref<string | null> = ref(null);
 
   async function createItem(body: T, entity: string) {
-    const url = `${BASE}/api/${entity}`;
+    const url = `${import.meta.env.VITE_API_BASE_URL}/api/${entity}`;
     try {
       await createEntity<unknown, T>(body, url);
       error.value = null;

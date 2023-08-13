@@ -80,7 +80,7 @@ const createColumns = ({
       return h(NAvatar, {
         round: true,
         size: "large",
-        src: "http://localhost:1337" + row.photo,
+        src: `${import.meta.env.VITE_API_BASE_URL}` + row.photo,
       });
     },
   },
